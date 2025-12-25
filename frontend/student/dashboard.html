@@ -810,15 +810,15 @@
         return;
       }
 
-      // Get the unit_wise template ID
-      const templateId = getTemplateId('unit_wise');
+      // Get the unit_practice template ID
+      const templateId = getTemplateId('unit_practice');
       if (!templateId) {
         Toast.error('No unit practice template available. Please contact support.');
         return;
       }
 
       try {
-        const exam = await api.startExam(templateId, 'unit_wise', selectedUnits);
+        const exam = await api.startExam(templateId, 'unit_practice', selectedUnits);
         Toast.success('Exam started successfully!');
         setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_id}`, 1000);
       } catch (error) {
