@@ -817,8 +817,8 @@
     function updateUnits(classValue, selectElement) {
       selectElement.innerHTML = '<option value="">Select Unit</option>';
       if (classValue && units[classValue]) {
-        units[classValue].forEach((unit, index) => {
-          selectElement.innerHTML += `<option value="${index + 1}">${unit}</option>`;
+        units[classValue].forEach((unit) => {
+          selectElement.innerHTML += `<option value="${unit}">${unit}</option>`;
         });
       }
     }
@@ -981,28 +981,28 @@
           imageUrl = uploadResult.url;
         }
 
-        // Prepare question data
+        // Prepare question data matching backend schema
         const questionData = {
           question_type: questionType,
-          class: document.getElementById('questionClass').value,
-          unit: parseInt(document.getElementById('questionUnit').value),
-          topic: document.getElementById('questionTopic').value,
+          class_level: document.getElementById('questionClass').value,
+          unit: document.getElementById('questionUnit').value,
+          topic: document.getElementById('questionTopic').value || null,
           difficulty: document.getElementById('questionDifficulty').value,
           marks: parseInt(document.getElementById('questionMarks').value),
           question_text: document.getElementById('questionText').value,
-          explanation: document.getElementById('questionExplanation').value,
-          image_url: imageUrl,
+          model_answer: document.getElementById('questionExplanation').value || null,
+          question_image_url: imageUrl,
         };
 
-        // Add MCQ specific fields
+        // Add MCQ specific fields - options must be a List[str], not a dict
         if (questionType === 'MCQ') {
-          questionData.options = {
-            A: document.getElementById('optionA').value,
-            B: document.getElementById('optionB').value,
-            C: document.getElementById('optionC').value,
-            D: document.getElementById('optionD').value,
-          };
-          questionData.correct_answer = document.querySelector('input[name="correctOption"]:checked').value;
+          questionData.options = [
+            document.getElementById('optionA').value,
+            document.getElementById('optionB').value,
+            document.getElementById('optionC').value,
+            document.getElementById('optionD').value,
+          ];
+          questionData.correct_option = document.querySelector('input[name="correctOption"]:checked').value;
         }
 
         // Create or update question

@@ -55,7 +55,20 @@ class ApiClient {
       // Handle non-2xx responses
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.detail || `HTTP ${response.status}: ${response.statusText}`);
+        // Handle FastAPI validation errors (array of objects)
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        if (error.detail) {
+          if (Array.isArray(error.detail)) {
+            // FastAPI validation errors: [{loc: [...], msg: "...", type: "..."}, ...]
+            errorMessage = error.detail.map(e => {
+              const field = e.loc ? e.loc.slice(1).join('.') : 'unknown';
+              return `${field}: ${e.msg}`;
+            }).join('; ');
+          } else if (typeof error.detail === 'string') {
+            errorMessage = error.detail;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       // Parse JSON response
