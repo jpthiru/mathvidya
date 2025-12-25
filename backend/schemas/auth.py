@@ -42,13 +42,6 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class TokenResponse(BaseModel):
-    """JWT token response"""
-    access_token: str
-    token_type: str = "bearer"
-    user: "UserResponse"
-
-
 class UserResponse(BaseModel):
     """User information response"""
     user_id: str
@@ -65,6 +58,13 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class TokenResponse(BaseModel):
+    """JWT token response"""
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
 
 
 class PasswordChangeRequest(BaseModel):
