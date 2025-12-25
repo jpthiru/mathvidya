@@ -172,7 +172,12 @@ class ApiClient {
   // ==================== Questions ====================
 
   async getQuestions(filters = {}) {
-    return this.get('/questions', filters);
+    // Backend uses POST /questions/search for listing
+    return this.post('/questions/search', filters);
+  }
+
+  async getQuestionStats() {
+    return this.get('/questions/stats/overview');
   }
 
   async createQuestion(questionData) {
@@ -233,7 +238,11 @@ class ApiClient {
   // ==================== Evaluations (Teacher) ====================
 
   async getPendingEvaluations() {
-    return this.get('/evaluations/pending');
+    return this.get('/evaluations/my-pending');
+  }
+
+  async getTeacherWorkload() {
+    return this.get('/evaluations/teacher/workload');
   }
 
   async startEvaluation(evaluationId) {

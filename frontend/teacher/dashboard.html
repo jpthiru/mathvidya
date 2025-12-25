@@ -353,19 +353,21 @@
     // Load dashboard data
     async function loadDashboard() {
       try {
-        // Get pending evaluations count
-        const pending = await api.getPendingEvaluations();
-        document.getElementById('pendingCount').textContent = pending.length || 0;
+        // Get pending evaluations count (paginated response)
+        const response = await api.getPendingEvaluations();
+        document.getElementById('pendingCount').textContent = response.total || 0;
       } catch (error) {
         console.log('Could not load pending evaluations:', error);
+        document.getElementById('pendingCount').textContent = '0';
       }
 
       try {
-        // Get questions count
-        const questions = await api.getQuestions();
-        document.getElementById('questionsCount').textContent = questions.length || 0;
+        // Get questions stats
+        const stats = await api.getQuestionStats();
+        document.getElementById('questionsCount').textContent = stats.total_questions || 0;
       } catch (error) {
         console.log('Could not load questions:', error);
+        document.getElementById('questionsCount').textContent = '0';
       }
     }
 
