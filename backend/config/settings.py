@@ -37,7 +37,15 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",  # React dev server
         "http://localhost:3001",
+        "http://localhost:8080",  # Frontend dev server
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:8080",
+        "http://ec2-13-202-49-76.ap-south-1.compute.amazonaws.com",
+        "https://ec2-13-202-49-76.ap-south-1.compute.amazonaws.com",
+        "http://mathvidya.com",
+        "https://mathvidya.com",
+        "http://www.mathvidya.com",
+        "https://www.mathvidya.com",
     ]
 
     # AWS Configuration

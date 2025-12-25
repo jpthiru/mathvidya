@@ -3,7 +3,12 @@
  * Handles all backend communication
  */
 
-const API_BASE_URL = '/api/v1';
+// Detect environment and set appropriate API base URL
+// - localhost: Use port 8000 where uvicorn runs
+// - Production (EC2): Use relative path (nginx proxies to backend)
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/api/v1'
+    : '/api/v1';
 
 class ApiClient {
   constructor() {

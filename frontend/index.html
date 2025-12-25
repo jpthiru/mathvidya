@@ -1,737 +1,811 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mathvidya - Master CBSE Mathematics | Expert-Evaluated Practice Platform</title>
-  <meta name="description" content="Online mathematics practice platform for CBSE Classes X & XII with same-day evaluation by expert teachers, personalized analytics, and predicted board scores.">
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome 6 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="css/main.css">
-
-  <style>
-    /* Landing Page Specific Styles */
-
-    /* Navigation */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: var(--z-sticky);
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow-sm);
-      transition: all var(--transition-base);
-    }
-
-    .navbar.scrolled {
-      box-shadow: var(--shadow-md);
-    }
-
-    .navbar-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .navbar-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: var(--font-heading);
-      font-size: var(--text-2xl);
-      font-weight: 700;
-      background: var(--gradient-primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .navbar-menu {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    .navbar-link {
-      font-weight: 500;
-      color: var(--color-gray-700);
-      transition: color var(--transition-fast);
-    }
-
-    .navbar-link:hover {
-      color: var(--color-primary);
-    }
-
-    /* Hero Section */
-    .hero {
-      margin-top: 80px;
-      padding: 4rem 2rem;
-      background: var(--gradient-primary);
-      color: white;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-      background-size: cover;
-      opacity: 0.5;
-    }
-
-    .hero-content {
-      position: relative;
-      max-width: 800px;
-      margin: 0 auto;
-      z-index: 1;
-    }
-
-    .hero h1 {
-      font-size: var(--text-5xl);
-      margin-bottom: 1.5rem;
-      color: white;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      font-size: var(--text-xl);
-      margin-bottom: 2rem;
-      opacity: 0.95;
-    }
-
-    .hero-cta {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-hero {
-      background: white;
-      color: var(--color-primary);
-      padding: 1rem 2rem;
-      font-size: var(--text-lg);
-    }
-
-    .btn-hero-secondary {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 2px solid white;
-    }
-
-    .btn-hero-secondary:hover {
-      background: white;
-      color: var(--color-primary);
-    }
-
-    /* Features Section */
-    .features {
-      padding: 4rem 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    .section-title {
-      font-size: var(--text-4xl);
-      margin-bottom: 1rem;
-    }
-
-    .section-subtitle {
-      font-size: var(--text-lg);
-      color: var(--color-gray-600);
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-    }
-
-    .feature-card {
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .feature-icon {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 1.5rem;
-      background: var(--gradient-primary);
-      border-radius: var(--radius-xl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-    }
-
-    .feature-title {
-      font-size: var(--text-xl);
-      margin-bottom: 0.75rem;
-      color: var(--color-gray-800);
-    }
-
-    .feature-description {
-      color: var(--color-gray-600);
-      line-height: 1.6;
-    }
-
-    /* Pricing Section */
-    .pricing {
-      padding: 4rem 2rem;
-      background: var(--color-gray-50);
-    }
-
-    .pricing-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .pricing-card {
-      background: white;
-      border-radius: var(--radius-xl);
-      padding: 2rem;
-      box-shadow: var(--shadow-md);
-      transition: all var(--transition-base);
-      border: 2px solid transparent;
-    }
-
-    .pricing-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-xl);
-      border-color: var(--color-primary);
-    }
-
-    .pricing-card.featured {
-      border-color: var(--color-primary);
-      position: relative;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
-    }
-
-    .featured-badge {
-      position: absolute;
-      top: -12px;
-      right: 20px;
-      background: var(--gradient-primary);
-      color: white;
-      padding: 0.25rem 1rem;
-      border-radius: var(--radius-full);
-      font-size: var(--text-xs);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .pricing-header {
-      text-align: center;
-      padding-bottom: 1.5rem;
-      border-bottom: 2px solid var(--color-gray-100);
-    }
-
-    .pricing-name {
-      font-size: var(--text-2xl);
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .pricing-price {
-      font-size: var(--text-4xl);
-      font-weight: 700;
-      color: var(--color-primary);
-      margin-bottom: 0.25rem;
-    }
-
-    .pricing-period {
-      font-size: var(--text-sm);
-      color: var(--color-gray-600);
-    }
-
-    .pricing-features {
-      list-style: none;
-      padding: 1.5rem 0;
-    }
-
-    .pricing-features li {
-      padding: 0.75rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .pricing-features i {
-      color: var(--color-accent);
-      font-size: 1rem;
-    }
-
-    .pricing-cta {
-      width: 100%;
-    }
-
-    /* How It Works Section */
-    .how-it-works {
-      padding: 4rem 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .step-card {
-      position: relative;
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .step-number {
-      width: 50px;
-      height: 50px;
-      margin: 0 auto 1.5rem;
-      background: var(--gradient-primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: var(--text-2xl);
-      font-weight: 700;
-    }
-
-    .step-title {
-      font-size: var(--text-xl);
-      margin-bottom: 0.75rem;
-    }
-
-    .step-description {
-      color: var(--color-gray-600);
-    }
-
-    /* Footer */
-    .footer {
-      background: var(--color-gray-800);
-      color: white;
-      padding: 3rem 2rem 1.5rem;
-    }
-
-    .footer-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    .footer-section h4 {
-      color: white;
-      margin-bottom: 1rem;
-    }
-
-    .footer-links {
-      list-style: none;
-    }
-
-    .footer-links li {
-      margin-bottom: 0.5rem;
-    }
-
-    .footer-links a {
-      color: var(--color-gray-400);
-      transition: color var(--transition-fast);
-    }
-
-    .footer-links a:hover {
-      color: white;
-    }
-
-    .footer-bottom {
-      padding-top: 2rem;
-      border-top: 1px solid var(--color-gray-700);
-      text-align: center;
-      color: var(--color-gray-400);
-      font-size: var(--text-sm);
-    }
-
-    /* Mobile Menu Toggle */
-    .navbar-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: var(--color-gray-700);
-      cursor: pointer;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .navbar-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        padding: 1rem;
-        box-shadow: var(--shadow-lg);
-      }
-
-      .navbar-menu.active {
-        display: flex;
-      }
-
-      .navbar-toggle {
-        display: block;
-      }
-
-      .hero h1 {
-        font-size: var(--text-4xl);
-      }
-
-      .hero p {
-        font-size: var(--text-lg);
-      }
-
-      .hero-cta {
-        flex-direction: column;
-      }
-
-      .pricing-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathvidya - Master CBSE Mathematics Online</title>
+    <meta name="description" content="Practice unlimited CBSE board exam questions online. Get expert guidance, real-time evaluation, and track your progress with AI-powered analytics.">
+    <link rel="stylesheet" href="css/landing.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Navigation -->
-  <nav class="navbar" id="navbar">
-    <div class="navbar-container">
-      <a href="#" class="navbar-logo">
-        <i class="fas fa-calculator"></i>
-        Mathvidya
-      </a>
-      <button class="navbar-toggle" id="navbarToggle">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="navbar-menu" id="navbarMenu">
-        <a href="#features" class="navbar-link">Features</a>
-        <a href="#pricing" class="navbar-link">Pricing</a>
-        <a href="#how-it-works" class="navbar-link">How it Works</a>
-        <a href="login.html" class="btn btn-primary btn-sm">Login</a>
-      </div>
-    </div>
-  </nav>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="/" class="logo">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                    </div>
+                    <span>Mathvidya</span>
+                </a>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1 class="animate-slideUp">Master CBSE Mathematics with Expert Guidance</h1>
-      <p class="animate-slideUp">Practice board exams with personalized evaluation by expert teachers. Get same-day feedback, detailed analytics, and predicted board scores.</p>
-      <div class="hero-cta animate-slideUp">
-        <a href="login.html" class="btn btn-hero btn-lg">
-          <i class="fas fa-rocket"></i>
-          Start Free Practice
-        </a>
-        <a href="#how-it-works" class="btn btn-hero-secondary btn-lg">
-          <i class="fas fa-play-circle"></i>
-          How it Works
-        </a>
-      </div>
-    </div>
-  </section>
+                <div class="nav-links" id="navLinks">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#contact">Contact</a>
+                </div>
 
-  <!-- Features Section -->
-  <section class="features" id="features">
-    <div class="section-header">
-      <h2 class="section-title">Why Choose Mathvidya?</h2>
-      <p class="section-subtitle">Everything you need to excel in CBSE Mathematics</p>
-    </div>
-    <div class="features-grid">
-      <div class="card feature-card animate-slideUp">
-        <div class="feature-icon">
-          <i class="fas fa-chalkboard-teacher"></i>
+                <div class="nav-actions">
+                    <a href="login.html" class="btn btn-ghost">Login</a>
+                    <a href="login.html" class="btn btn-primary">Sign Up</a>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+                <div class="mobile-menu-actions">
+                    <a href="login.html" class="btn btn-ghost btn-full">Login</a>
+                    <a href="login.html" class="btn btn-primary btn-full">Sign Up</a>
+                </div>
+            </div>
         </div>
-        <h3 class="feature-title">Expert Teacher Evaluation</h3>
-        <p class="feature-description">Every answer evaluated by experienced CBSE mathematics teachers, ensuring accurate and constructive feedback.</p>
-      </div>
+    </nav>
 
-      <div class="card feature-card animate-slideUp">
-        <div class="feature-icon">
-          <i class="fas fa-clock"></i>
-        </div>
-        <h3 class="feature-title">Same-Day Evaluation</h3>
-        <p class="feature-description">Get your answers evaluated on the same working day with our Centum plan. Never wait long for feedback.</p>
-      </div>
-
-      <div class="card feature-card animate-slideUp">
-        <div class="feature-icon">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <h3 class="feature-title">Performance Analytics</h3>
-        <p class="feature-description">Detailed unit-wise analysis, performance trends, and predicted board examination scores.</p>
-      </div>
-
-      <div class="card feature-card animate-slideUp">
-        <div class="feature-icon">
-          <i class="fas fa-book"></i>
-        </div>
-        <h3 class="feature-title">CBSE-Aligned Practice</h3>
-        <p class="feature-description">Practice exams perfectly aligned with latest CBSE patterns for Classes X and XII.</p>
-      </div>
-
-      <div class="card feature-card animate-slideUp">
-        <div class="feature-icon">
-          <i class="fas fa-trophy"></i>
-        </div>
-        <h3 class="feature-title">Leaderboards</h3>
-        <p class="feature-description">Compete with peers and track your rank on class-wise leaderboards (Premium & Centum plans).</p>
-      </div>
-
-      <div class="card feature-card animate-slideUp">
-        <div class="feature-icon">
-          <i class="fas fa-lock"></i>
-        </div>
-        <h3 class="feature-title">Secure & Private</h3>
-        <p class="feature-description">Your data is secure with encryption, AWS India hosting, and mandatory parent access for minors.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pricing Section -->
-  <section class="pricing" id="pricing">
-    <div class="pricing-container">
-      <div class="section-header">
-        <h2 class="section-title">Choose Your Perfect Plan</h2>
-        <p class="section-subtitle">Flexible pricing for every student's needs</p>
-      </div>
-      <div class="pricing-grid">
-        <!-- Basic Plan -->
-        <div class="pricing-card animate-slideUp">
-          <div class="pricing-header">
-            <h3 class="pricing-name">Basic</h3>
-            <div class="pricing-price">₹299</div>
-            <div class="pricing-period">per month (annual)</div>
-          </div>
-          <ul class="pricing-features">
-            <li><i class="fas fa-check-circle"></i> 5 exams per month</li>
-            <li><i class="fas fa-check-circle"></i> Board exam practice only</li>
-            <li><i class="fas fa-check-circle"></i> 1hr teacher interaction</li>
-            <li><i class="fas fa-check-circle"></i> 48hr evaluation SLA</li>
-            <li><i class="fas fa-times-circle" style="color: var(--color-gray-400);"></i> Leaderboard access</li>
-          </ul>
-          <a href="login.html" class="btn btn-outline pricing-cta">Get Started</a>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <div class="hero-blob hero-blob-1"></div>
+            <div class="hero-blob hero-blob-2"></div>
+            <div class="hero-blob hero-blob-3"></div>
         </div>
 
-        <!-- Premium MCQ Plan -->
-        <div class="pricing-card animate-slideUp">
-          <div class="pricing-header">
-            <h3 class="pricing-name">Premium MCQ</h3>
-            <div class="pricing-price">₹499</div>
-            <div class="pricing-period">per month (annual)</div>
-          </div>
-          <ul class="pricing-features">
-            <li><i class="fas fa-check-circle"></i> 15 exams per month</li>
-            <li><i class="fas fa-check-circle"></i> MCQ practice only</li>
-            <li><i class="fas fa-check-circle"></i> Instant auto-evaluation</li>
-            <li><i class="fas fa-check-circle"></i> Unit-wise practice</li>
-            <li><i class="fas fa-times-circle" style="color: var(--color-gray-400);"></i> Leaderboard access</li>
-          </ul>
-          <a href="login.html" class="btn btn-outline pricing-cta">Get Started</a>
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <span class="badge badge-primary">CBSE Classes IX - XII</span>
+                    <h1>Master Mathematics with <span class="gradient-text">Mathvidya</span></h1>
+                    <p class="hero-description">
+                        Practice unlimited CBSE board exam questions online. Get expert guidance,
+                        real-time evaluation, and track your progress with AI-powered analytics.
+                        Excel in your board exams with confidence.
+                    </p>
+
+                    <div class="hero-cta">
+                        <a href="login.html" class="btn btn-primary btn-lg">
+                            Start Free Trial
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline btn-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Watch Demo
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">50,000+</div>
+                            <div class="stat-label">Students</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">10,000+</div>
+                            <div class="stat-label">Questions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">95%</div>
+                            <div class="stat-label">Success Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-image">
+                    <div class="hero-image-glow"></div>
+                    <img src="https://images.unsplash.com/photo-1623303366639-0e330d7c3d9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBzdHVkZW50cyUyMHN0dWR5aW5nfGVufDF8fHx8MTc2NjYxMzA0N3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="Indian students studying mathematics" loading="lazy">
+
+                    <div class="floating-card floating-card-top">
+                        <div class="floating-card-icon green">98%</div>
+                        <div class="floating-card-text">
+                            <div>Board Exam</div>
+                            <div class="text-muted">Score</div>
+                        </div>
+                    </div>
+
+                    <div class="floating-card floating-card-bottom">
+                        <div class="floating-card-icon orange">&#127942;</div>
+                        <div class="floating-card-text">
+                            <div>Top 10</div>
+                            <div class="text-muted">Leaderboard</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- Premium Plan -->
-        <div class="pricing-card featured animate-slideUp">
-          <span class="featured-badge">Popular</span>
-          <div class="pricing-header">
-            <h3 class="pricing-name">Premium</h3>
-            <div class="pricing-price">₹1,999</div>
-            <div class="pricing-period">per month</div>
-          </div>
-          <ul class="pricing-features">
-            <li><i class="fas fa-check-circle"></i> 50 exams per month</li>
-            <li><i class="fas fa-check-circle"></i> Board + Unit-wise practice</li>
-            <li><i class="fas fa-check-circle"></i> 1hr coaching per month</li>
-            <li><i class="fas fa-check-circle"></i> 48hr evaluation SLA</li>
-            <li><i class="fas fa-check-circle"></i> Leaderboard access</li>
-          </ul>
-          <a href="login.html" class="btn btn-primary pricing-cta">Get Started</a>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything You Need to <span class="gradient-text">Excel in Math</span></h2>
+                <p>Mathvidya provides all the tools and resources you need to master CBSE mathematics and ace your board exams</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <h3>Comprehensive Question Bank</h3>
+                    <p>10,000+ questions covering all CBSE units - Relations, Algebra, Calculus, Vectors, Linear Programming & Probability</p>
+                    <div class="feature-hover-line"></div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon purple">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                    </div>
+                    <h3>Multiple Practice Modes</h3>
+                    <p>Practice full board exams, section-wise (MCQ, VSA, SA, LA), or unit-wise. Choose what works best for you</p>
+                    <div class="feature-hover-line"></div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon indigo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3>Expert Teacher Evaluation</h3>
+                    <p>Get your descriptive answers evaluated by experienced mathematics teachers with detailed feedback</p>
+                    <div class="feature-hover-line"></div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon green">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h3>Smart Answer Scanning</h3>
+                    <p>Write on paper, scan your answers using camera, and upload for evaluation. Easy and convenient</p>
+                    <div class="feature-hover-line"></div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon orange">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                            <path d="M4 22h16"></path>
+                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                        </svg>
+                    </div>
+                    <h3>Performance Analytics</h3>
+                    <p>Track your progress with detailed analytics, unit-wise performance, predicted scores, and leaderboard rankings</p>
+                    <div class="feature-hover-line"></div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon pink">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Board Exam Pattern</h3>
+                    <p>Practice exactly as per CBSE board exam pattern - MCQ, Assertion-Reason, VSA, SA, LA & Case Studies</p>
+                    <div class="feature-hover-line"></div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- Centum Plan -->
-        <div class="pricing-card animate-slideUp">
-          <div class="pricing-header">
-            <h3 class="pricing-name">Centum</h3>
-            <div class="pricing-price">₹2,999</div>
-            <div class="pricing-period">per month (annual)</div>
-          </div>
-          <ul class="pricing-features">
-            <li><i class="fas fa-check-circle"></i> 50 exams per month</li>
-            <li><i class="fas fa-check-circle"></i> Board + Unit-wise practice</li>
-            <li><i class="fas fa-check-circle"></i> Direct teacher access</li>
-            <li><i class="fas fa-check-circle"></i> <strong>Same-day</strong> evaluation</li>
-            <li><i class="fas fa-check-circle"></i> Leaderboard access</li>
-          </ul>
-          <a href="login.html" class="btn btn-primary pricing-cta">Get Started</a>
+    <!-- Practice Modes Section -->
+    <section class="practice-modes" id="practice-modes">
+        <div class="container">
+            <div class="section-header">
+                <h2>Flexible <span class="gradient-text">Practice Modes</span></h2>
+                <p>Choose how you want to practice - full exams, section-wise, or unit-wise. Customize your learning experience.</p>
+            </div>
+
+            <div class="modes-grid">
+                <div class="mode-card">
+                    <div class="mode-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                    </div>
+                    <h3>Full Board Exam</h3>
+                    <p>Practice complete question paper with all sections (MCQ, VSA, SA, LA, Case Studies)</p>
+                    <div class="mode-tags">
+                        <span class="tag tag-indigo">38 Questions</span>
+                        <span class="tag tag-purple">80 Marks</span>
+                        <span class="tag tag-pink">3 Hours</span>
+                    </div>
+                </div>
+
+                <div class="mode-card">
+                    <div class="mode-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                    </div>
+                    <h3>Section-wise Practice</h3>
+                    <p>Focus on specific sections - MCQ only, VSA only, SA only, LA only, or Case Studies</p>
+                    <div class="mode-tags">
+                        <span class="tag tag-indigo">Variable</span>
+                        <span class="tag tag-purple">Variable</span>
+                        <span class="tag tag-pink">Flexible</span>
+                    </div>
+                </div>
+
+                <div class="mode-card">
+                    <div class="mode-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                    </div>
+                    <h3>Unit-wise Practice</h3>
+                    <p>Practice questions from specific units to strengthen weak areas</p>
+                    <div class="mode-tags">
+                        <span class="tag tag-indigo">Variable</span>
+                        <span class="tag tag-purple">Variable</span>
+                        <span class="tag tag-pink">Flexible</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit Weightage -->
+            <div class="unit-weightage">
+                <div class="unit-header">
+                    <div class="unit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a8 8 0 0 1 8 8c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 8-8z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>CBSE Class XII Unit-wise Weightage</h3>
+                        <p>Practice based on board exam pattern</p>
+                    </div>
+                </div>
+
+                <div class="units-grid">
+                    <div class="unit-item">
+                        <div class="unit-info">
+                            <span>Relations and Functions</span>
+                            <span class="unit-marks blue">8M</span>
+                        </div>
+                        <div class="unit-bar">
+                            <div class="unit-progress blue" style="width: 23%"></div>
+                        </div>
+                    </div>
+                    <div class="unit-item">
+                        <div class="unit-info">
+                            <span>Algebra</span>
+                            <span class="unit-marks purple">10M</span>
+                        </div>
+                        <div class="unit-bar">
+                            <div class="unit-progress purple" style="width: 29%"></div>
+                        </div>
+                    </div>
+                    <div class="unit-item">
+                        <div class="unit-info">
+                            <span>Calculus</span>
+                            <span class="unit-marks indigo">35M</span>
+                        </div>
+                        <div class="unit-bar">
+                            <div class="unit-progress indigo" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="unit-item">
+                        <div class="unit-info">
+                            <span>Vectors and 3D Geometry</span>
+                            <span class="unit-marks green">14M</span>
+                        </div>
+                        <div class="unit-bar">
+                            <div class="unit-progress green" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div class="unit-item">
+                        <div class="unit-info">
+                            <span>Linear Programming</span>
+                            <span class="unit-marks orange">5M</span>
+                        </div>
+                        <div class="unit-bar">
+                            <div class="unit-progress orange" style="width: 14%"></div>
+                        </div>
+                    </div>
+                    <div class="unit-item">
+                        <div class="unit-info">
+                            <span>Probability</span>
+                            <span class="unit-marks pink">8M</span>
+                        </div>
+                        <div class="unit-bar">
+                            <div class="unit-progress pink" style="width: 23%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="unit-summary">
+                    <div class="summary-item">
+                        <div class="summary-label">Total Marks</div>
+                        <div class="summary-value">80 Marks</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Total Questions</div>
+                        <div class="summary-value">38 Questions</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Duration</div>
+                        <div class="summary-value">3 Hours</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Exam Pattern</div>
+                        <div class="summary-value">CBSE Board</div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- How It Works Section -->
-  <section class="how-it-works" id="how-it-works">
-    <div class="section-header">
-      <h2 class="section-title">How Mathvidya Works</h2>
-      <p class="section-subtitle">Simple steps to improve your mathematics performance</p>
-    </div>
-    <div class="steps-grid">
-      <div class="step-card animate-slideUp">
-        <div class="step-number">1</div>
-        <h3 class="step-title">Sign Up & Subscribe</h3>
-        <p class="step-description">Choose a plan that fits your needs. Parent/guardian approval is included for student safety.</p>
-      </div>
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How <span class="gradient-text">Mathvidya Works</span></h2>
+                <p>Get started in 4 simple steps and begin your journey to mastering CBSE mathematics</p>
+            </div>
 
-      <div class="step-card animate-slideUp">
-        <div class="step-number">2</div>
-        <h3 class="step-title">Take Practice Exams</h3>
-        <p class="step-description">Choose board exams, unit-wise, or section-wise practice. Answer MCQs online, write and upload VSA/SA answers.</p>
-      </div>
+            <div class="steps">
+                <div class="step step-left">
+                    <div class="step-content">
+                        <span class="step-number">01</span>
+                        <h3>Sign Up & Choose Class</h3>
+                        <p>Create your account and select your class (IX, X, XI, or XII). Upload your student ID and profile photo.</p>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-image">
+                        <div class="step-image-glow"></div>
+                        <img src="https://images.unsplash.com/photo-1582886986754-51997372b668?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600" alt="Sign Up" loading="lazy">
+                        <div class="step-badge">
+                            <div class="step-badge-icon">&#10003;</div>
+                            <div class="step-badge-text">
+                                <div>Step 1</div>
+                                <small>Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-      <div class="step-card animate-slideUp">
-        <div class="step-number">3</div>
-        <h3 class="step-title">Expert Evaluation</h3>
-        <p class="step-description">Our expert teachers evaluate your answers following CBSE marking schemes with detailed feedback.</p>
-      </div>
+                <div class="step step-right">
+                    <div class="step-image">
+                        <div class="step-image-glow"></div>
+                        <img src="https://images.unsplash.com/photo-1593442808882-775dfcd90699?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600" alt="Select Practice Mode" loading="lazy">
+                        <div class="step-badge">
+                            <div class="step-badge-icon">&#10003;</div>
+                            <div class="step-badge-text">
+                                <div>Step 2</div>
+                                <small>Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-content">
+                        <span class="step-number">02</span>
+                        <h3>Select Practice Mode</h3>
+                        <p>Choose from full board exam, section-wise (MCQ, VSA, SA, LA), or unit-wise practice based on your needs.</p>
+                        <div class="step-line"></div>
+                    </div>
+                </div>
 
-      <div class="step-card animate-slideUp">
-        <div class="step-number">4</div>
-        <h3 class="step-title">Track Progress</h3>
-        <p class="step-description">Review your performance analytics, unit-wise scores, and predicted board examination results.</p>
-      </div>
-    </div>
-  </section>
+                <div class="step step-left">
+                    <div class="step-content">
+                        <span class="step-number">03</span>
+                        <h3>Practice & Submit Answers</h3>
+                        <p>Answer MCQs online instantly. For descriptive questions, write on paper, scan, and upload your answers using our easy camera feature.</p>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-image">
+                        <div class="step-image-glow"></div>
+                        <img src="https://images.unsplash.com/photo-1623863568368-69e4cbe6cc0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600" alt="Practice & Submit" loading="lazy">
+                        <div class="step-badge">
+                            <div class="step-badge-icon">&#10003;</div>
+                            <div class="step-badge-text">
+                                <div>Step 3</div>
+                                <small>Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-grid">
-        <div class="footer-section">
-          <h4>About Mathvidya</h4>
-          <p style="color: var(--color-gray-400); line-height: 1.6;">
-            Expert-evaluated mathematics practice platform for CBSE Classes X & XII students.
-          </p>
+                <div class="step step-right">
+                    <div class="step-image">
+                        <div class="step-image-glow"></div>
+                        <img src="https://images.unsplash.com/photo-1623303366639-0e330d7c3d9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600" alt="Get Evaluated" loading="lazy">
+                        <div class="step-badge">
+                            <div class="step-badge-icon">&#10003;</div>
+                            <div class="step-badge-text">
+                                <div>Step 4</div>
+                                <small>Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-content">
+                        <span class="step-number">04</span>
+                        <h3>Get Evaluated & Improve</h3>
+                        <p>Receive instant results for MCQs and expert teacher evaluation for descriptive answers. Review mistakes, track progress, and climb the leaderboard!</p>
+                        <div class="step-line"></div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <ul class="footer-links">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#pricing">Pricing</a></li>
-            <li><a href="#how-it-works">How it Works</a></li>
-            <li><a href="login.html">Login</a></li>
-          </ul>
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-bg"></div>
+        <div class="container">
+            <div class="section-header section-header-light">
+                <h2>Trusted by Students Across India</h2>
+                <p>Join thousands of students who have improved their mathematics scores with Mathvidya</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-icon blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">50,000+</div>
+                    <div class="stat-card-label">Active Students</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-icon green">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                            <path d="M4 22h16"></path>
+                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">95%</div>
+                    <div class="stat-card-label">Success Rate</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-icon purple">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">10,000+</div>
+                    <div class="stat-card-label">Practice Questions</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-icon orange">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                            <polyline points="16 7 22 7 22 13"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">98%</div>
+                    <div class="stat-card-label">Average Score</div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="footer-section">
-          <h4>Resources</h4>
-          <ul class="footer-links">
-            <li><a href="#">CBSE Syllabus</a></li>
-            <li><a href="#">Practice Papers</a></li>
-            <li><a href="#">FAQs</a></li>
-            <li><a href="#">Contact Support</a></li>
-          </ul>
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Our <span class="gradient-text">Students Say</span></h2>
+                <p>Hear from students who have achieved excellent results with Mathvidya</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                    </div>
+                    <p class="testimonial-text">"Mathvidya transformed my approach to mathematics. The unit-wise practice helped me strengthen my weak areas, and the expert teacher guidance was invaluable!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1582886986754-51997372b668?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100" alt="Priya Sharma">
+                        <div class="author-info">
+                            <h4>Priya Sharma</h4>
+                            <p>Class XII - CBSE</p>
+                        </div>
+                        <span class="testimonial-score">98%</span>
+                    </div>
+                    <div class="quote-mark">"</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                    </div>
+                    <p class="testimonial-text">"The MCQ practice mode with instant evaluation helped me improve my speed and accuracy. I could see my progress daily on the dashboard. Highly recommend!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1593442808882-775dfcd90699?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100" alt="Rahul Verma">
+                        <div class="author-info">
+                            <h4>Rahul Verma</h4>
+                            <p>Class X - CBSE</p>
+                        </div>
+                        <span class="testimonial-score">95%</span>
+                    </div>
+                    <div class="quote-mark">"</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                    </div>
+                    <p class="testimonial-text">"The detailed explanations for each question and the scan-and-upload feature for descriptive answers made practice so convenient. Mathvidya is a game-changer!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1623863568368-69e4cbe6cc0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100" alt="Ananya Patel">
+                        <div class="author-info">
+                            <h4>Ananya Patel</h4>
+                            <p>Class XI - CBSE</p>
+                        </div>
+                        <span class="testimonial-score">96%</span>
+                    </div>
+                    <div class="quote-mark">"</div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="footer-section">
-          <h4>Legal</h4>
-          <ul class="footer-links">
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-            <li><a href="#">Child Safety Policy</a></li>
-            <li><a href="#">Refund Policy</a></li>
-          </ul>
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Choose Your <span class="gradient-text">Learning Plan</span></h2>
+                <p>Select the plan that best fits your learning needs and budget. All plans include access to our comprehensive question bank.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <span class="plan-badge gray">Basic</span>
+                    <div class="plan-price">
+                        <span class="price">&#8377;499</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="plan-billing">Billed annually</p>
+                    <p class="plan-description">Perfect for getting started</p>
+
+                    <ul class="plan-features">
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>5 practice exams per month</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Board exam type questions</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>1 hour expert teacher guidance</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Performance tracking</span></li>
+                        <li class="not-included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Leaderboard participation</span></li>
+                    </ul>
+                    <a href="login.html" class="btn btn-outline btn-full">Get Started</a>
+                </div>
+
+                <div class="pricing-card">
+                    <span class="plan-badge blue">Premium MCQ</span>
+                    <div class="plan-price">
+                        <span class="price">&#8377;799</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="plan-billing">Billed annually</p>
+                    <p class="plan-description">Focus on Multiple Choice Questions</p>
+
+                    <ul class="plan-features">
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>15 practice exams per month</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>MCQ type questions only</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Instant automated evaluation</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Progress analytics</span></li>
+                        <li class="not-included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Teacher evaluation</span></li>
+                    </ul>
+                    <a href="login.html" class="btn btn-outline btn-full">Get Started</a>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <span class="plan-badge gradient">Premium</span>
+                    <div class="plan-price">
+                        <span class="price">&#8377;1,499</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="plan-billing">Billed annually or monthly</p>
+                    <p class="plan-description">Most popular choice</p>
+
+                    <ul class="plan-features">
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>50 practice exams per month</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>All question types</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Unit-wise practice exams</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Expert coaching (1hr/month)</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Leaderboard participation</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Predicted exam score</span></li>
+                    </ul>
+                    <a href="login.html" class="btn btn-primary btn-full">Get Started</a>
+                </div>
+
+                <div class="pricing-card">
+                    <span class="plan-badge orange">Plan Centum</span>
+                    <div class="plan-price">
+                        <span class="price">&#8377;2,499</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="plan-billing">Billed annually</p>
+                    <p class="plan-description">For top performers</p>
+
+                    <ul class="plan-features">
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Unlimited practice exams</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Direct teacher appointments</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Priority evaluation (same-day)</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Personal performance review</span></li>
+                        <li class="included"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Guaranteed 90+ score support</span></li>
+                    </ul>
+                    <a href="login.html" class="btn btn-outline btn-full">Get Started</a>
+                </div>
+            </div>
         </div>
-      </div>
+    </section>
 
-      <div class="footer-bottom">
-        <p>&copy; 2024 Mathvidya. All rights reserved. Data hosted securely in AWS India.</p>
-      </div>
-    </div>
-  </footer>
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="cta-bg">
+            <div class="cta-blob cta-blob-1"></div>
+            <div class="cta-blob cta-blob-2"></div>
+        </div>
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Excel in Your Board Exams?</h2>
+                <p>Join 50,000+ students who are mastering mathematics with Mathvidya. Start your free trial today and experience the difference.</p>
 
-  <!-- Scripts -->
-  <script src="js/api.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    // Mobile menu toggle
-    const navbarToggle = document.getElementById('navbarToggle');
-    const navbarMenu = document.getElementById('navbarMenu');
+                <div class="cta-buttons">
+                    <a href="login.html" class="btn btn-white btn-lg">
+                        Start Free Trial
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                    <a href="mailto:support@mathvidya.com" class="btn btn-outline-white btn-lg">Schedule a Demo</a>
+                </div>
 
-    navbarToggle.addEventListener('click', () => {
-      navbarMenu.classList.toggle('active');
-    });
+                <div class="cta-trust">
+                    <div class="trust-item"><span class="trust-icon">&#10003;</span><span>No credit card required</span></div>
+                    <div class="trust-item"><span class="trust-icon">&#10003;</span><span>14-day free trial</span></div>
+                    <div class="trust-item"><span class="trust-icon">&#10003;</span><span>Cancel anytime</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Navbar scroll effect
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    });
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo">
+                        <div class="logo-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                            </svg>
+                        </div>
+                        <span>Mathvidya</span>
+                    </a>
+                    <p>Empowering CBSE students to excel in mathematics through innovative online practice and expert guidance.</p>
+                </div>
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Close mobile menu if open
-          navbarMenu.classList.remove('active');
-        }
-      });
-    });
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
 
-    // Observe elements for scroll animations
-    observeElements('.animate-slideUp', 'animate-slideUp');
-  </script>
+                <div class="footer-links">
+                    <h4>For Students</h4>
+                    <ul>
+                        <li><a href="#">Class IX</a></li>
+                        <li><a href="#">Class X</a></li>
+                        <li><a href="#">Class XI</a></li>
+                        <li><a href="#">Class XII</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <a href="mailto:support@mathvidya.com">support@mathvidya.com</a>
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                            <a href="tel:+911234567890">+91 123 456 7890</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Mathvidya. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Refund Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('active'));
+        mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 50));
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('animate-in'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.feature-card, .mode-card, .step, .testimonial-card, .pricing-card, .stat-card').forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>
