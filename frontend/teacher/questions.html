@@ -863,13 +863,13 @@
     async function loadQuestions() {
       try {
         const filters = {
-          question_type: filterType.value,
-          class: filterClass.value,
-          unit: filterUnit.value,
-          difficulty: filterDifficulty.value,
+          question_type: filterType.value || undefined,
+          class_level: filterClass.value || undefined,
+          unit: filterUnit.value || undefined,
+          difficulty: filterDifficulty.value || undefined,
         };
 
-        // Remove empty filters
+        // Remove empty/undefined filters
         Object.keys(filters).forEach(key => {
           if (!filters[key]) delete filters[key];
         });
@@ -880,7 +880,8 @@
 
       } catch (error) {
         console.error('Error loading questions:', error);
-        Toast.error('Failed to load questions');
+        // Show empty state instead of error toast on initial load
+        displayQuestions([], 0);
       }
     }
 
