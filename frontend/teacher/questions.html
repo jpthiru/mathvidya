@@ -435,6 +435,24 @@
       font-size: 1.1em;
     }
 
+    /* Option preview (smaller version for MCQ options) */
+    .option-preview {
+      background: var(--color-gray-50);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.75rem;
+      min-height: 32px;
+      font-size: var(--text-sm);
+      margin-top: 0.25rem;
+    }
+
+    .option-preview:empty::before {
+      content: 'Preview...';
+      color: var(--color-gray-400);
+      font-style: italic;
+      font-size: var(--text-xs);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header-container {
@@ -668,13 +686,14 @@
 
           <!-- MCQ Options (shown only for MCQ type) -->
           <div id="mcqOptions" style="display: none;">
-            <h4 style="margin-bottom: 1rem;">Answer Options</h4>
+            <h4 style="margin-bottom: 1rem;">Answer Options <span style="font-weight: normal; font-size: var(--text-sm); color: var(--color-gray-500);">(LaTeX supported: $x^2$)</span></h4>
             <div class="options-grid">
               <div class="option-input">
                 <input type="radio" name="correctOption" value="A" id="correctA">
                 <div class="form-group" style="flex: 1; margin: 0;">
                   <label class="form-label">Option A</label>
-                  <input type="text" class="form-input" id="optionA" placeholder="Enter option A">
+                  <input type="text" class="form-input" id="optionA" placeholder="e.g., $x = 2$">
+                  <div class="option-preview" id="previewA"></div>
                 </div>
               </div>
 
@@ -682,7 +701,8 @@
                 <input type="radio" name="correctOption" value="B" id="correctB">
                 <div class="form-group" style="flex: 1; margin: 0;">
                   <label class="form-label">Option B</label>
-                  <input type="text" class="form-input" id="optionB" placeholder="Enter option B">
+                  <input type="text" class="form-input" id="optionB" placeholder="e.g., $x = -2$">
+                  <div class="option-preview" id="previewB"></div>
                 </div>
               </div>
 
@@ -690,7 +710,8 @@
                 <input type="radio" name="correctOption" value="C" id="correctC">
                 <div class="form-group" style="flex: 1; margin: 0;">
                   <label class="form-label">Option C</label>
-                  <input type="text" class="form-input" id="optionC" placeholder="Enter option C">
+                  <input type="text" class="form-input" id="optionC" placeholder="e.g., $x = \pm 2$">
+                  <div class="option-preview" id="previewC"></div>
                 </div>
               </div>
 
@@ -698,7 +719,8 @@
                 <input type="radio" name="correctOption" value="D" id="correctD">
                 <div class="form-group" style="flex: 1; margin: 0;">
                   <label class="form-label">Option D</label>
-                  <input type="text" class="form-input" id="optionD" placeholder="Enter option D">
+                  <input type="text" class="form-input" id="optionD" placeholder="e.g., $x = 0$">
+                  <div class="option-preview" id="previewD"></div>
                 </div>
               </div>
             </div>
@@ -830,23 +852,28 @@
     const questionPreview = document.getElementById('questionPreview');
     let previewTimeout = null;
 
-    function updateLatexPreview() {
-      const text = questionText.value.trim();
+    // Generic function to update any LaTeX preview
+    function updatePreview(inputElement, previewElement) {
+      const text = inputElement.value.trim();
 
       if (!text) {
-        questionPreview.innerHTML = '';
+        previewElement.innerHTML = '';
         return;
       }
 
       // Set the text content (MathJax will process it)
-      questionPreview.innerHTML = text;
+      previewElement.innerHTML = text;
 
       // Typeset with MathJax if available
       if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise([questionPreview]).catch((err) => {
+        window.MathJax.typesetPromise([previewElement]).catch((err) => {
           console.log('MathJax error:', err);
         });
       }
+    }
+
+    function updateLatexPreview() {
+      updatePreview(questionText, questionPreview);
     }
 
     // Debounced preview update on input
@@ -860,6 +887,36 @@
     // Also update on blur for immediate feedback
     questionText.addEventListener('blur', updateLatexPreview);
 
+    // MCQ Option previews
+    const optionInputs = ['A', 'B', 'C', 'D'];
+    const optionTimeouts = {};
+
+    optionInputs.forEach(letter => {
+      const input = document.getElementById(`option${letter}`);
+      const preview = document.getElementById(`preview${letter}`);
+
+      if (input && preview) {
+        // Debounced preview update on input
+        input.addEventListener('input', () => {
+          if (optionTimeouts[letter]) {
+            clearTimeout(optionTimeouts[letter]);
+          }
+          optionTimeouts[letter] = setTimeout(() => updatePreview(input, preview), 300);
+        });
+
+        // Also update on blur
+        input.addEventListener('blur', () => updatePreview(input, preview));
+      }
+    });
+
+    // Function to clear all option previews
+    function clearOptionPreviews() {
+      optionInputs.forEach(letter => {
+        const preview = document.getElementById(`preview${letter}`);
+        if (preview) preview.innerHTML = '';
+      });
+    }
+
     // Modal controls
     addQuestionBtn.addEventListener('click', () => {
       questionForm.reset();
@@ -867,6 +924,7 @@
       document.getElementById('modalTitle').textContent = 'Add New Question';
       imagePreview.style.display = 'none';
       questionPreview.innerHTML = '';  // Clear LaTeX preview
+      clearOptionPreviews();  // Clear MCQ option previews
       questionModal.classList.add('active');
     });
 
