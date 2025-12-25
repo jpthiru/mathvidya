@@ -1104,12 +1104,73 @@
     // Edit question
     window.editQuestion = async (id) => {
       try {
-        // In a real app, fetch the question details
-        // For now, we'll just open the modal
-        Toast.info('Edit functionality will load question details');
+        // Fetch the question details from API
+        const question = await api.getQuestion(id);
+
+        // Reset form first
+        questionForm.reset();
+        clearOptionPreviews();
+        questionPreview.innerHTML = '';
+        imagePreview.style.display = 'none';
+
+        // Set modal title
+        document.getElementById('modalTitle').textContent = 'Edit Question';
+
+        // Populate form fields
+        document.getElementById('questionId').value = question.question_id;
+        document.getElementById('questionType').value = question.question_type;
+        document.getElementById('questionClass').value = question.class_level;
+        document.getElementById('questionDifficulty').value = question.difficulty || 'medium';
+        document.getElementById('questionMarks').value = question.marks;
+        document.getElementById('questionText').value = question.question_text;
+        document.getElementById('questionTopic').value = question.topic || '';
+        document.getElementById('questionExplanation').value = question.model_answer || '';
+
+        // Update units dropdown based on class and then set the value
+        updateUnits(question.class_level, questionUnitSelect);
+        document.getElementById('questionUnit').value = question.unit;
+
+        // Show/hide MCQ options based on question type
+        mcqOptions.style.display = question.question_type === 'MCQ' ? 'block' : 'none';
+
+        // Populate MCQ options if applicable
+        if (question.question_type === 'MCQ' && question.options && question.options.length >= 4) {
+          document.getElementById('optionA').value = question.options[0] || '';
+          document.getElementById('optionB').value = question.options[1] || '';
+          document.getElementById('optionC').value = question.options[2] || '';
+          document.getElementById('optionD').value = question.options[3] || '';
+
+          // Set correct option radio button
+          if (question.correct_option) {
+            const correctRadio = document.getElementById(`correct${question.correct_option}`);
+            if (correctRadio) correctRadio.checked = true;
+          }
+
+          // Update option previews
+          ['A', 'B', 'C', 'D'].forEach(letter => {
+            const input = document.getElementById(`option${letter}`);
+            const preview = document.getElementById(`preview${letter}`);
+            if (input && preview) {
+              updatePreview(input, preview);
+            }
+          });
+        }
+
+        // Show question image if exists
+        if (question.question_image_url) {
+          imagePreview.src = question.question_image_url;
+          imagePreview.style.display = 'block';
+        }
+
+        // Update LaTeX preview for question text
+        updateLatexPreview();
+
+        // Open the modal
         questionModal.classList.add('active');
+
       } catch (error) {
-        Toast.error('Failed to load question');
+        console.error('Error loading question:', error);
+        Toast.error('Failed to load question details');
       }
     };
 

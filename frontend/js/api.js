@@ -194,6 +194,10 @@ class ApiClient {
     return this.post('/questions/search', filters);
   }
 
+  async getQuestion(questionId) {
+    return this.get(`/questions/${questionId}`);
+  }
+
   async getQuestionStats() {
     return this.get('/questions/stats/overview');
   }
