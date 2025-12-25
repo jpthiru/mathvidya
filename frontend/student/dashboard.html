@@ -687,6 +687,9 @@
       });
     });
 
+    // Store available templates
+    let availableTemplates = [];
+
     // Load dashboard data
     async function loadDashboard() {
       try {
@@ -711,10 +714,24 @@
         // Load units for unit-wise practice
         loadUnits();
 
+        // Load available exam templates
+        try {
+          const templatesResponse = await api.getAvailableExams();
+          availableTemplates = templatesResponse.templates || [];
+        } catch (err) {
+          console.warn('Could not load exam templates:', err);
+        }
+
       } catch (error) {
         console.error('Error loading dashboard:', error);
         Toast.error('Failed to load dashboard data');
       }
+    }
+
+    // Get template ID by exam type
+    function getTemplateId(examType) {
+      const template = availableTemplates.find(t => t.exam_type === examType);
+      return template ? template.template_id : null;
     }
 
     // Load units
@@ -738,7 +755,7 @@
       const unitSelection = document.getElementById('unitSelection');
       unitSelection.innerHTML = units.map((unit, index) => `
         <label class="unit-checkbox">
-          <input type="checkbox" name="unit" value="${index + 1}" id="unit${index + 1}">
+          <input type="checkbox" name="unit" value="${unit}" id="unit${index + 1}">
           <span>${unit}</span>
         </label>
       `).join('');
@@ -786,17 +803,24 @@
     // Start unit exam
     document.getElementById('startUnitExam').addEventListener('click', async () => {
       const selectedUnits = Array.from(document.querySelectorAll('input[name="unit"]:checked'))
-        .map(cb => parseInt(cb.value));
+        .map(cb => cb.value);  // Get unit names as strings
 
       if (selectedUnits.length === 0) {
         Toast.warning('Please select at least one unit');
         return;
       }
 
+      // Get the unit_wise template ID
+      const templateId = getTemplateId('unit_wise');
+      if (!templateId) {
+        Toast.error('No unit practice template available. Please contact support.');
+        return;
+      }
+
       try {
-        const exam = await api.startExam(1, 'unit_wise', selectedUnits);
+        const exam = await api.startExam(templateId, 'unit_wise', selectedUnits);
         Toast.success('Exam started successfully!');
-        setTimeout(() => window.location.href = `take-exam.html?id=${exam.id}`, 1000);
+        setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_id}`, 1000);
       } catch (error) {
         console.error('Error starting exam:', error);
         Toast.error(error.message || 'Failed to start exam');
@@ -805,10 +829,17 @@
 
     // Start board exam
     document.getElementById('startBoardExam').addEventListener('click', async () => {
+      // Get the board_exam template ID
+      const templateId = getTemplateId('board_exam');
+      if (!templateId) {
+        Toast.error('No board exam template available. Please contact support.');
+        return;
+      }
+
       try {
-        const exam = await api.startExam(1, 'board_exam', []);
+        const exam = await api.startExam(templateId, 'board_exam', []);
         Toast.success('Board exam started successfully!');
-        setTimeout(() => window.location.href = `take-exam.html?id=${exam.id}`, 1000);
+        setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_id}`, 1000);
       } catch (error) {
         console.error('Error starting exam:', error);
         Toast.error(error.message || 'Failed to start board exam');
