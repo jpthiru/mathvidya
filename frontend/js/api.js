@@ -150,7 +150,12 @@ class ApiClient {
   }
 
   async logout() {
-    await this.post('/auth/logout');
+    // Always clear token, even if API call fails (e.g., token already expired)
+    try {
+      await this.post('/auth/logout');
+    } catch (error) {
+      console.log('Logout API call failed (token may have expired), clearing local session');
+    }
     this.clearToken();
   }
 
