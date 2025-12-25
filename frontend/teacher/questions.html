@@ -874,8 +874,9 @@
           if (!filters[key]) delete filters[key];
         });
 
-        const questions = await api.getQuestions(filters);
-        displayQuestions(questions);
+        const response = await api.getQuestions(filters);
+        // API returns paginated response: {questions: [...], total: N, ...}
+        displayQuestions(response.questions || [], response.total || 0);
 
       } catch (error) {
         console.error('Error loading questions:', error);
@@ -884,9 +885,9 @@
     }
 
     // Display questions in table
-    function displayQuestions(questions) {
+    function displayQuestions(questions, total) {
       const tbody = document.getElementById('questionsTableBody');
-      document.getElementById('questionCount').textContent = questions.length;
+      document.getElementById('questionCount').textContent = total || questions.length;
 
       if (questions.length === 0) {
         tbody.innerHTML = `
@@ -903,20 +904,19 @@
       tbody.innerHTML = questions.map(q => `
         <tr>
           <td><span class="badge badge-primary">${q.question_type}</span></td>
-          <td>Class ${q.class}</td>
-          <td>${getUnitName(q.class, q.unit)}</td>
+          <td>Class ${q.class_level}</td>
+          <td>${q.unit}</td>
           <td>
             <div class="question-text">${q.question_text}</div>
-            ${q.topic ? `<small style="color: var(--color-gray-500);">${q.topic}</small>` : ''}
           </td>
-          <td><span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty}</span></td>
+          <td><span class="difficulty-badge difficulty-${q.difficulty || 'medium'}">${q.difficulty || 'medium'}</span></td>
           <td>${q.marks}</td>
           <td>
             <div class="action-buttons">
-              <button class="btn btn-ghost btn-sm" onclick="editQuestion(${q.id})">
+              <button class="btn btn-ghost btn-sm" onclick="editQuestion('${q.question_id}')">
                 <i class="fas fa-edit"></i> Edit
               </button>
-              <button class="btn btn-ghost btn-sm" onclick="deleteQuestion(${q.id})" style="color: var(--color-error);">
+              <button class="btn btn-ghost btn-sm" onclick="deleteQuestion('${q.question_id}')" style="color: var(--color-error);">
                 <i class="fas fa-trash"></i> Delete
               </button>
             </div>
