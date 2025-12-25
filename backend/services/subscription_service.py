@@ -174,7 +174,7 @@ class SubscriptionService:
         existing = await session.execute(
             select(Subscription).where(
                 and_(
-                    Subscription.user_id == user_id,
+                    Subscription.student_user_id == user_id,
                     Subscription.status == SubscriptionStatus.ACTIVE.value
                 )
             )
@@ -222,7 +222,7 @@ class SubscriptionService:
         result = await session.execute(
             select(Subscription).where(
                 and_(
-                    Subscription.user_id == user_id,
+                    Subscription.student_user_id == user_id,
                     Subscription.status == SubscriptionStatus.ACTIVE.value
                 )
             )
