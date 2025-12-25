@@ -13,6 +13,21 @@
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="../css/main.css">
 
@@ -385,6 +400,41 @@
       border-radius: var(--radius-md);
     }
 
+    /* LaTeX Preview */
+    .latex-preview-container {
+      margin-top: 0.5rem;
+    }
+
+    .latex-preview-label {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-gray-600);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .latex-preview {
+      background: var(--color-gray-50);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      min-height: 60px;
+      font-size: var(--text-base);
+      line-height: 1.6;
+    }
+
+    .latex-preview:empty::before {
+      content: 'LaTeX preview will appear here...';
+      color: var(--color-gray-400);
+      font-style: italic;
+    }
+
+    .latex-preview .MathJax {
+      font-size: 1.1em;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header-container {
@@ -606,8 +656,14 @@
           <div class="form-group">
             <label class="form-label">Question Text *</label>
             <textarea class="form-textarea" id="questionText" rows="3" required
-              placeholder="Enter the question text. For LaTeX math, use $...$ or $$...$$ (MathJax will be supported)"></textarea>
-            <span class="form-hint">You can use LaTeX notation for mathematical expressions</span>
+              placeholder="Enter the question text. Use $...$ for inline math or $$...$$ for display math. Example: $x^2 + y^2 = r^2$"></textarea>
+            <span class="form-hint">Use LaTeX notation: $inline$ or $$display$$. Examples: $\frac{a}{b}$, $\sqrt{x}$, $\int_0^1 x dx$</span>
+            <div class="latex-preview-container">
+              <div class="latex-preview-label">
+                <i class="fas fa-eye"></i> Live Preview:
+              </div>
+              <div class="latex-preview" id="questionPreview"></div>
+            </div>
           </div>
 
           <!-- MCQ Options (shown only for MCQ type) -->
@@ -769,12 +825,48 @@
       }
     });
 
+    // LaTeX preview functionality
+    const questionText = document.getElementById('questionText');
+    const questionPreview = document.getElementById('questionPreview');
+    let previewTimeout = null;
+
+    function updateLatexPreview() {
+      const text = questionText.value.trim();
+
+      if (!text) {
+        questionPreview.innerHTML = '';
+        return;
+      }
+
+      // Set the text content (MathJax will process it)
+      questionPreview.innerHTML = text;
+
+      // Typeset with MathJax if available
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([questionPreview]).catch((err) => {
+          console.log('MathJax error:', err);
+        });
+      }
+    }
+
+    // Debounced preview update on input
+    questionText.addEventListener('input', () => {
+      if (previewTimeout) {
+        clearTimeout(previewTimeout);
+      }
+      previewTimeout = setTimeout(updateLatexPreview, 300);
+    });
+
+    // Also update on blur for immediate feedback
+    questionText.addEventListener('blur', updateLatexPreview);
+
     // Modal controls
     addQuestionBtn.addEventListener('click', () => {
       questionForm.reset();
       document.getElementById('questionId').value = '';
       document.getElementById('modalTitle').textContent = 'Add New Question';
       imagePreview.style.display = 'none';
+      questionPreview.innerHTML = '';  // Clear LaTeX preview
       questionModal.classList.add('active');
     });
 
