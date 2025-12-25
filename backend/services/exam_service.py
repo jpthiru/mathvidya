@@ -152,9 +152,9 @@ class ExamService:
 
         # Iterate through sections (MCQ, VSA, SA, LA)
         for section in sections:
-            question_count = section.get('count', 0)
-            question_type = section.get('type')
-            marks_per_question = section.get('marks_each', section.get('marks_per_question', 1))
+            question_count = section.get('question_count', section.get('count', 0))
+            question_type = section.get('question_type', section.get('type'))
+            marks_per_question = section.get('marks_per_question', section.get('marks_each', 1))
 
             if question_count == 0:
                 continue
