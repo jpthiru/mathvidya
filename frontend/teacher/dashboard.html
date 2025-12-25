@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .welcome-section {
+      margin-bottom: 2rem;
+    }
+
+    .welcome-section h1 {
+      font-size: var(--text-3xl);
+      color: var(--color-gray-800);
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-section p {
+      color: var(--color-gray-600);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .stat-icon.pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .stat-icon.completed {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .stat-icon.questions {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .stat-info h3 {
+      font-size: var(--text-2xl);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-info p {
+      color: var(--color-gray-600);
+      font-size: var(--text-sm);
+    }
+
+    .action-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      transition: all var(--transition-base);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .action-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .action-card i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .action-card h3 {
+      font-size: var(--text-xl);
+      margin-bottom: 0.5rem;
+    }
+
+    .action-card p {
+      color: var(--color-gray-600);
+      font-size: var(--text-sm);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--color-gray-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .logout-btn:hover {
+      color: var(--color-error);
+      background: #fef2f2;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <div class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link active">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+          <a href="questions.html" class="nav-link">
+            <i class="fas fa-book"></i> Question Bank
+          </a>
+          <a href="#" class="nav-link" id="evaluationsLink">
+            <i class="fas fa-check-double"></i> Evaluations
+          </a>
+        </nav>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="profile-button">
+          <div class="profile-avatar" id="userAvatar">T</div>
+          <span id="userName">Teacher</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <section class="welcome-section">
+      <h1>Welcome back, <span id="teacherName">Teacher</span>!</h1>
+      <p>Here's an overview of your teaching activities</p>
+    </section>
+
+    <!-- Stats Cards -->
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="pendingCount">0</h3>
+          <p>Pending Evaluations</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon completed">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="completedCount">0</h3>
+          <p>Completed Today</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon questions">
+          <i class="fas fa-question-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="questionsCount">0</h3>
+          <p>Questions Created</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="action-cards">
+      <a href="questions.html" class="action-card">
+        <i class="fas fa-plus-circle"></i>
+        <h3>Add Questions</h3>
+        <p>Create new questions for the question bank</p>
+      </a>
+
+      <a href="#" class="action-card" id="startEvaluationCard">
+        <i class="fas fa-edit"></i>
+        <h3>Start Evaluating</h3>
+        <p>Evaluate pending student submissions</p>
+      </a>
+
+      <a href="questions.html" class="action-card">
+        <i class="fas fa-list"></i>
+        <h3>View Question Bank</h3>
+        <p>Browse and manage all questions</p>
+      </a>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated()) {
+      window.location.href = '../login.html';
+    }
+
+    // Load user info
+    const user = getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.first_name || 'Teacher';
+      document.getElementById('teacherName').textContent = user.first_name || 'Teacher';
+      document.getElementById('userAvatar').textContent = (user.first_name || 'T').charAt(0).toUpperCase();
+    }
+
+    // Load dashboard data
+    async function loadDashboard() {
+      try {
+        // Get pending evaluations count
+        const pending = await api.getPendingEvaluations();
+        document.getElementById('pendingCount').textContent = pending.length || 0;
+      } catch (error) {
+        console.log('Could not load pending evaluations:', error);
+      }
+
+      try {
+        // Get questions count
+        const questions = await api.getQuestions();
+        document.getElementById('questionsCount').textContent = questions.length || 0;
+      } catch (error) {
+        console.log('Could not load questions:', error);
+      }
+    }
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+      } catch (error) {
+        console.log('Logout error:', error);
+      }
+      api.clearToken();
+      window.location.href = '../login.html';
+    });
+
+    // Initialize
+    loadDashboard();
+  </script>
+</body>
+</html>
