@@ -145,6 +145,7 @@
       min-width: 200px;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .filter-label {
@@ -157,15 +158,22 @@
 
     .filter-select {
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.75rem;
       border: 2px solid var(--color-gray-300);
       border-radius: var(--radius-md);
       font-family: var(--font-body);
+      font-size: var(--text-base);
+      background-color: white;
+      cursor: pointer;
+      appearance: auto;
+      -webkit-appearance: auto;
+      -moz-appearance: auto;
     }
 
     .filter-select:focus {
       outline: none;
       border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
 
     /* Questions Table */
@@ -263,15 +271,21 @@
       right: 0;
       bottom: 0;
       background: rgba(0, 0, 0, 0.5);
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
       z-index: var(--z-modal);
       padding: 1rem;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
     .modal-overlay.active {
-      display: flex;
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .modal {
@@ -487,7 +501,8 @@
         </select>
       </div>
 
-      <div class="filter-group" style="display: flex; align-items: flex-end;">
+      <div class="filter-group">
+        <label class="filter-label">&nbsp;</label>
         <button class="btn btn-primary w-full" id="addQuestionBtn">
           <i class="fas fa-plus"></i>
           Add Question
