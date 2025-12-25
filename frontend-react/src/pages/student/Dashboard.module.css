@@ -1,0 +1,336 @@
+/**
+ * Student Dashboard Styles
+ */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Welcome Section */
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.welcome h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.classTag {
+  padding: 0.5rem 1rem;
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.statIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: var(--color-gray-500);
+  margin-top: 0.25rem;
+}
+
+/* Exam Section */
+.examSection {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+}
+
+.examSection h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+/* Exam Tabs */
+.examTabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-gray-200);
+  padding-bottom: 1rem;
+}
+
+.examTab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.examTab:hover {
+  background: var(--color-gray-200);
+}
+
+.examTab.active {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+/* Unit Selection */
+.unitSelection {
+  animation: fadeIn 0.3s ease;
+}
+
+.unitGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.unitCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-gray-50);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.unitCard:hover {
+  border-color: var(--color-primary-light);
+  background: var(--color-white);
+}
+
+.unitCard.selected {
+  border-color: var(--color-primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.unitCard input[type="checkbox"] {
+  display: none;
+}
+
+.unitNumber {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-gray-600);
+  flex-shrink: 0;
+}
+
+.unitCard.selected .unitNumber {
+  background: var(--color-primary);
+  color: white;
+}
+
+.unitName {
+  flex: 1;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.unitCheck {
+  color: var(--color-gray-300);
+  font-size: 1.25rem;
+  transition: color var(--transition-fast);
+}
+
+.unitCard.selected .unitCheck {
+  color: var(--color-primary);
+}
+
+/* Board Exam Card */
+.boardExamCard {
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.boardExamInfo h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.boardExamDetails {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-gray-600);
+  font-weight: 500;
+}
+
+.detailItem svg {
+  color: var(--color-primary);
+}
+
+/* Recent Exams */
+.recentExams {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.recentExams h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-gray-500);
+}
+
+.emptyState svg {
+  color: var(--color-gray-300);
+  margin-bottom: 1rem;
+}
+
+.emptyState p {
+  font-size: 1rem;
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+  color: var(--color-gray-500);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .boardExamCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .boardExamDetails {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .examTabs {
+    flex-direction: column;
+  }
+
+  .unitGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .boardExamDetails {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

@@ -1,0 +1,202 @@
+I am building a software product and I want you to act as a world-class Product Manager and System Architect. Your goal is to help me define the Business Functional Requirements and Technical Specifications.
+Rules for this session:
+Do not generate a full document yet.
+I will give you a high-level idea of my product.
+You will then ask me exactly 5-7 targeted questions to help you understand the 'Who, What, Why, and How' of my product.
+Once I answer, you will synthesize those into a structured PRD (Product Requirements Document) that is optimized as a prompt for a coding AI (Claude).
+My product idea is: 
+I want to build Mathvidya. a software that helps school students learn mathematics by practicing answering questions online, through web or mobile. Target syllabus is Central Board of Secondary Education (CBSE) in India. Target classes IX, X, XI and XII. This application allows students to get enrolled and practice exams either through web browser or through mobile app. The students are evaluated using a standardized marking system released by CBSE board, the final examination is called board examination, which is applicable for class X and Class XII. For example, for Class XII, the following is the pattern of examination conducted based on the textbook 
+Total number of questions : 38
+Total Marks: 80
+SECTION - A: Questions no. 1 to 18 are multiple choice questions (MCQs) of 1 mark each.
+Question numbers 19 and 20 are Assertion–Reason Based Questions.
+Direction: Question numbers 19 and 20 are Assertion (A) and Reason (R) based questions carrying 1 mark each. Two statements are given, one labelled Assertion (A) and other labelled Reason (R). Select the correct answer from the options (A), (B), (C) and (D) as given below.
+(A) Both Assertion (A) and Reason (R) are true and the Reason (R) is the correct explanation of the Assertion (A).
+(B) Both Assertion (A) and Reason (R) are true, but Reason (R) is not the correct explanation of the Assertion (A).
+(C) Assertion (A) is true, but Reason (R) is false.
+(D) Assertion (A) is false, but Reason (R) is true.
+SECTION B: This section comprises very short answer (VSA) type questions of 2 marks each.
+SECTION C: This section comprises short answer (SA) type questions of 3 marks each.
+SECTION D: This section comprises long answer (LA) type questions of 5 marks each.
+SECTION E: This section comprises 3 case study-based questions of 4 marks each
+
+
+The attached PDF files are the marking scheme document issued to examiner by the CBSC board, which also contains model of the final examination question paper.
+Student persona of mathvidya.com : 
+For example, the class XII student must be able to practice exam in mathsvidya.com in following methods
+Practice complete question paper with all the sections, MCQ, VSA, SA, LA and Case Study-based questions
+Practice each sections individually, Only MCQ or Only VSA or only SA or only LA or only Case Study-based questions
+Below is the unit wise weightage for the final examination question paper, the students can practice questions unit wise 
+
+For MCQ questions students can answer on the screen. 
+On completion of practice exam Student will get to know his score, each question carries one mark
+After completion of exam, students can see the score on the screen. 
+His score is calculated as number of correct answers divided by total number of questions multiplied by 100 is the percentage. 
+Students can review the wrong answers. He must be able to see the question, multiple choices, His answer which is wrong, and the correct answer with explanation.
+For other question types VSA, SA, LA and Case study-based student answers in a paper, then using the camara feature available in the mathvidya.com students scan page by page and upload his answer. 
+Students are responsible for writing the correct question number and the correct answer
+Student must check the checkbox in the user interface called “I have not answered the questions below” , then appears check boxes for questions from 21 to 38 (if it is final board examination pattern otherwise corresponding question numbers), then he checks the questions he had not answered.
+From Dashboard student can monitor his performance as per his subscription plan
+Number practice examinations appeared Vs Available
+Score for each practice examination appeared
+Unit wise performance analysis
+Number of sessions or hours with the Expert mathematics teacher available vs utilized
+Overall rank
+System predicted final examination score
+Students must fill in the student profile form to subscribe to mathvidya.com, that collects following information
+Personal details
+Class
+School
+Scanned copy of recent passport size photograph – to be displayed in the leader board of mathvidya.com
+Scanned copy of Student ID card - uploaded as image or PDF
+Parents personal information
+Parents contact information
+Address 
+
+Mathematics Teacher persona in mathsvidya.com: 
+There exists human, Mathematics teacher in the system, who logs in evaluates each student for non-MCQ questions. 
+Onscreen evaluation, the scanned answer papers uploaded by the student are available as an image. The teacher can view each image and add a stamp either tick mark or cross mark appropriately on the image, then hits save evaluation for every page. 
+Teacher then fills up the evaluation form, by assigning marks for every question appropriately. As the teacher views the images answers uploaded by the student page by page, the score to be assigned for each question appears on the form on the right-hand side of the page. Right, top, bottom or left can be configured by the teacher, this is the UX feature for the teacher who is evaluating.
+Teacher can add questions to question bank
+System persona in mathvidya.com: 
+The system must generate questions for the practice examination, dynamically from the backend question bank.
+The properties of each question in the question bank are as below
+Question can be of two forms: 
+form 1 ) Text explaining question with mathematical notations 
+form 2)  Question as an image
+Way the questions are stored in the backend question bank
+For MCQ the system must store following information for each question
+Unit from which this question is taken from
+There are two forms: Question as text (Since it is mathematics all related notations like symbol for square root, integration, differentiation, log, limit x tends to n to m, etc) OR Question as image
+Is question containing any diagram in the form of image, if yes, the image.
+List of choices numbered or tagged as A, B, C, D, etc
+Are choices containing any image, if yes image for each choice
+The correct answer corresponding choice(s), please note a question can have one or more correct choices to choose from
+The reason and explanation for the correct answer
+For other questions type VSA, SA, LA and Case study-based following information for each question
+Unit from which this question is taken from
+Question as text (Since it is mathematics all related notations like symbol for square root, integration, differentiation, log, limit x tends to n to m, etc.) OR Question as an image
+Is question containing any diagram in the form of image, if yes, the image.
+The correct answer as text or as an image
+The reason and explanation for the correct answer
+When students select to start a practice exam, the system should randomly generate questions Each practice examination is assigned a unique number. Based on the type of examination chosen by the student, like only MCQ, or only LA, or Final board examination pattern, etc.
+Number of questions per exam is configurable parameter
+The final board examination type is standard, as described by the CBSE board, however it must also be a configurable parameter to accommodate changes in future, if any.
+System must allow Techer or Administrator to add questions to backend question bank, it will display the form that collects questions type, unit and other information as described the point number 3 of D. System persona in mathvidya.com.
+System will analyze all performances of the students and display a leader board in the home page of mathvidya.com. Top ten students along with their performance.
+Administrator persona in mathvidya.com: 
+Facilitates Teacher’s login
+Maintains the configurable parameters of the application
+Admin can add question to question bank
+See dashboard of student, teacher and overall practice examination
+Monetization of this application:
+Students must subscribe for this application to use.
+Subscription Plans are as follows:
+Basic: 
+Rupees INR XXX per month, 
+Billed annually
+Limits number of examinations 5 practice examinations per month
+Only Board Exam type questions
+An hour of teaching by Expert Mathematics Teacher
+No option to participate in the leader board
+Premium MCQ:
+Rupees INR XXX per month
+Billed annually
+Limits number of examinations 15 practice examinations per month
+Only MCQ type questions
+No option to participate in the leader board
+Premium: 
+Rupees INR XXXX per month
+Billed annually or monthly
+Limits number of examinations 50 practice examinations per month
+Board Exam type question 
+Unit wise practice examinations
+1 hour coaching session per month by Expert Mathematics Teacher
+Performance counted for the mathvidya.com leader board
+Plan Centum:
+Rupees INR XXXX per month
+Billed annually
+Limits number of examinations 50 practice examinations per month
+Board Exam type practice examinations
+Unit wise practice examinations
+Direct interaction with Expert Mathematics Teacher, student can book appointment to discuss the performance
+Performance counted for the mathvidya.com leader board
+
+
+1. Primary Buyer vs Primary User
+Who is the economic buyer for Mathvidya?
+Student directly
+Parent / guardian
+School / coaching institute
+Combination (please specify % or priority)
+This impacts onboarding flow, payments, dashboards, and messaging.
+Answer: Parent / Guardian or Student directly
+
+2. Differentiation & Success Definition
+What is the single most important outcome that should make Mathvidya better than:
+Offline coaching centers
+Existing apps like BYJU’S, Vedantu, Unacademy, etc.
+In one sentence: “A student should choose Mathvidya because ______.”
+Answer:A student should choose Mathvidya because of the mix of flexible online and personalized feedback and teaching from expert mathematics teacher.
+
+3. Evaluation Turnaround & SLA
+For non-MCQ questions (VSA/SA/LA/Case Study):
+What is the maximum acceptable turnaround time for teacher evaluation?
+e.g., 24 hours, 48 hours, same day
+Should this SLA vary by subscription plan (e.g., Plan Centum faster)?
+This directly affects teacher staffing and system architecture.
+Answer: Same day for Centum plan, for other plans 48 hours in working day, Sundays and holidays are not counted.
+
+4. Teacher Model & Scale
+How do you envision scaling teachers?
+Full-time in-house teachers
+Contract / freelance teachers
+Per-evaluation payout model
+Geography constraints (India only vs global)
+Also, can one answer sheet be evaluated by only one teacher, or do you want moderation / re-evaluation?
+Answer: Evaluating teacher is done offline and onboard. However, teachers can apply for all suggested models. No geography constraints, global accepted, however their payments will be credited only in India.
+To avoid complexity, let us keep it simple one answer sheet be evaluated by only one teacher. No re-evaluation possible.
+
+5. Automation Ambition (Short-term vs Long-term)
+What level of automation using AI do you want?
+Short term: only MCQ auto-evaluation, humans for everything else
+Medium term: AI-assisted marking suggestions for teachers
+Long term: partial or full auto-evaluation of handwritten math answers
+This affects data models, storage, and futureproofing.
+Answer: for initial version let us go with only MCQs – the short term. However future proof the  long-term plan, that is partial or full auto-evaluation of handwritten math answers.
+
+6. Compliance, Privacy & Trust
+Are there explicit requirements for:
+Indian data residency
+Child data protection (students <18)
+Audit logs for evaluations
+Parent access to student performance
+If “not sure,” say so—but this must be decided early.
+Answer: Not Sure. Let us host in AWS India data center. Parents can access student performance. Audit logs are must. I am not sure about Child data protection (students<18), the application must consider all. 
+
+7. Initial Launch Scope
+For Version 1 (first 90 days), what is the absolute must-have scope?
+Please choose one:
+Only Class X & XII (board-focused)
+Only MCQ + VSA
+Web only (no mobile app)
+Full scope as described, even if slower
+This will define architectural complexity and delivery timeline.
+Answer: Version 1, Only Class X and Class XII, board focused, Only MCQ, VSA & SA. Web only, but future proof mobile app. 
+
+1. Primary Buyer vs Primary User
+Answer: Parent / Guardian or Student directly
+2. Differentiation & Success Definition
+Answer:A student should choose Mathvidya because of the mix of flexible online and personalized feedback and teaching from expert mathematics teacher.
+3. Evaluation Turnaround & SLA
+Answer: Same day for Centum plan, for other plans 48 hours in working day, Sundays and holidays are not counted.
+4. Teacher Model & Scale
+Answer: Evaluating teacher is done offline and onboard. However, teachers can apply for all suggested models. No geography constraints, global accepted, however their payments will be credited only in India.
+To avoid complexity, let us keep it simple one answer sheet be evaluated by only one teacher. No re-evaluation possible.
+5. Automation Ambition (Short-term vs Long-term)
+Answer: for initial version let us go with only MCQs – the short term. However future proof the  long-term plan, that is partial or full auto-evaluation of handwritten math answers.
+6. Compliance, Privacy & Trust
+Answer: Not Sure. Let us host in AWS India data center. Parents can access student performance. Audit logs are must. I am not sure about Child data protection (students<18), the application must consider all. 
+7. Initial Launch Scope
+Answer: Version 1, Only Class X and Class XII, board focused, Only MCQ, VSA & SA. Web only, but future proof mobile app. 
+

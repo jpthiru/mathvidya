@@ -1,0 +1,231 @@
+Below is a clear, engineering-grade system architecture for Mathvidya, presented in two layers:
+Logical Architecture – what the system does and how responsibilities are separated
+Physical (Deployment) Architecture – how it is deployed on AWS India
+This is written so it can be directly converted into diagrams in tools like Draw.io, Lucidchart, or Miro.
+
+1. LOGICAL ARCHITECTURE (Functional View)
+This shows modules, responsibilities, and data flow, independent of cloud provider.
+
+1.1 High-Level Logical Architecture
++------------------------------------------------------+
+|                    Client Layer                      |
+|------------------------------------------------------|
+|  Web Browser (Student / Parent / Teacher / Admin)    |
+|  - Exam UI                                           |
+|  - Upload Scanned Answers                            |
+|  - Evaluation UI                                     |
+|  - Dashboards                                        |
++--------------------------|---------------------------+
+                           |
+                           v
++------------------------------------------------------+
+|                API & Access Layer                    |
+|------------------------------------------------------|
+|  API Gateway                                         |
+|  - Authentication & Authorization (RBAC)             |
+|  - Rate Limiting                                     |
+|  - Request Validation                                |
++--------------------------|---------------------------+
+                           |
+                           v
++------------------------------------------------------+
+|              Core Application Services                |
+|------------------------------------------------------|
+|  User Service        Exam Service        Analytics    |
+|  Subscription        Question Bank       Ranking     |
+|  Evaluation Service  SLA Manager          Prediction |
+|------------------------------------------------------|
+|  Audit & Logging Service                              |
++--------------------------|---------------------------+
+                           |
+                           v
++------------------------------------------------------+
+|                    Data Layer                        |
+|------------------------------------------------------|
+|  Relational DB (Transactional Data)                  |
+|  Object Storage (Images, PDFs)                       |
+|  Cache (Sessions, Counters)                          |
++------------------------------------------------------+
+
+1.2 Core Logical Components (Detailed)
+A. Client Layer
+Single Page Web Application
+Role-based UI rendering
+Math notation rendering (LaTeX/MathML)
+Image upload & preview
+Secure access to answer sheets
+
+B. API & Access Layer
+Responsibilities
+Authentication (JWT / OAuth-style tokens)
+Role-Based Access Control:
+Student
+Parent (read-only)
+Teacher
+Admin
+Subscription entitlement enforcement
+SLA timers initiation
+
+C. Core Application Services
+1. User & Profile Service
+Student profile
+Parent-student mapping
+Teacher profiles
+Admin management
+2. Subscription & Entitlement Service
+Plan validation
+Monthly exam counters
+Leaderboard eligibility
+SLA priority tagging
+3. Question Bank Service
+CRUD for questions
+Question versioning
+Unit-wise tagging
+Text + image question support
+4. Exam Generation Service
+Config-driven exam templates
+Randomized but deterministic question selection
+Exam snapshot persistence
+Unique exam ID generation
+5. Evaluation Service
+MCQ auto-evaluation
+Handwritten answer upload mapping
+Teacher annotation metadata
+Final score computation
+Immutable submission on completion
+6. SLA & Workflow Manager
+Exam evaluation timers
+Priority queues for teachers
+Working-day calculations
+SLA breach tracking
+7. Analytics & Prediction Service
+Unit-wise analysis
+Performance trends
+Rank calculation
+Rule-based board score prediction (V1)
+8. Leaderboard Service
+Top 10 computation
+Eligibility enforcement
+Read-optimized views
+9. Audit & Logging Service (Cross-cutting)
+Evaluation actions
+Score finalization
+Configuration changes
+User access events
+
+D. Data Layer (Logical)
+
+2. PHYSICAL ARCHITECTURE (AWS INDIA DEPLOYMENT)
+This maps the logical system to actual AWS services, optimized for V1 but scalable.
+
+2.1 Physical Deployment Diagram (Textual)
+Users (India / Global)
+        |
+        v
++---------------------+
+|   Amazon CloudFront |
++---------------------+
+        |
+        v
++---------------------+
+| Application Load    |
+| Balancer (ALB)      |
++---------------------+
+        |
+        v
++---------------------------------------------------+
+|               VPC (AWS India)                     |
+|---------------------------------------------------|
+|                                                   |
+|  +------------------+    +--------------------+  |
+|  |  Web/API Tier    |    | Background Workers |  |
+|  |  (ECS / EKS)     |    | (SLA, Analytics)   |  |
+|  +--------+---------+    +----------+---------+  |
+|           |                         |             |
+|           v                         v             |
+|  +------------------+    +--------------------+  |
+|  |  RDS (Postgres)  |    |  ElastiCache       |  |
+|  +------------------+    +--------------------+  |
+|           |                                     |
+|           v                                     |
+|  +------------------+                          |
+|  |   Amazon S3      |                          |
+|  | (Images, PDFs)   |                          |
+|  +------------------+                          |
+|                                                   |
++---------------------------------------------------+
+        |
+        v
++---------------------+
+| CloudWatch & Audit  |
++---------------------+
+
+2.2 AWS Service Mapping
+A. Edge & Security
+CloudFront – CDN, static assets
+AWS WAF – basic protection
+ACM – TLS certificates
+
+B. Application Layer
+ECS (Fargate) or EKS
+Stateless backend services
+Horizontally scalable
+Separate services for:
+Core APIs
+Evaluation workers
+Analytics jobs
+
+C. Data Layer
+Amazon RDS (PostgreSQL)
+Users, exams, questions, marks
+Strong consistency
+Amazon S3
+Scanned answer sheets
+Question images
+Student photos
+ElastiCache (Redis)
+Exam counters
+SLA timers
+Session tokens
+
+D. Observability & Audit
+CloudWatch Logs
+CloudWatch Metrics
+Immutable Audit Tables
+Optional: AWS CloudTrail for admin actions
+
+2.3 Security & Compliance (Physical)
+All data hosted in AWS India region
+Private subnets for DB and internal services
+S3 bucket policies with signed URLs
+Encryption:
+At rest (KMS)
+In transit (TLS)
+Parent access enforced at API level
+
+3. DATA FLOW EXAMPLES (IMPORTANT)
+3.1 MCQ Exam Flow
+Student → Start Exam
+→ Exam Service generates exam
+→ Student submits answers
+→ MCQ Auto-Evaluation
+→ Score stored
+→ Analytics updated
+→ Dashboard refreshed
+3.2 VSA/SA Evaluation Flow
+Student uploads scanned pages
+→ Exam marked "Pending Evaluation"
+→ SLA Manager assigns to teacher
+→ Teacher annotates + assigns marks
+→ Final score computed
+→ Audit log written
+→ Student & Parent notified
+
+4. WHY THIS ARCHITECTURE WORKS FOR YOU
+CBSE changes handled via configuration
+Teacher-in-the-loop preserved
+Auditability by design
+ML-ready data separation
+Mobile apps can be added without backend rewrite
+Scales teachers independently of students
+

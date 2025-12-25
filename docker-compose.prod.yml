@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: mathvidya-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mathvidya}
+      POSTGRES_USER: ${POSTGRES_USER:-mathvidya_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mathvidya_user} -d ${POSTGRES_DB:-mathvidya}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mathvidya-network
+
+  # Redis Cache & Message Broker
+  redis:
+    image: redis:6-alpine
+    container_name: mathvidya-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mathvidya-network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: mathvidya-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-mathvidya_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-mathvidya}
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DEBUG=False
+      - AWS_REGION=${AWS_REGION:-ap-south-1}
+      - S3_MEDIA_BUCKET=${S3_MEDIA_BUCKET}
+      - S3_BACKUP_BUCKET=${S3_BACKUP_BUCKET}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
+    networks:
+      - mathvidya-network
+
+  # Celery Worker
+  celery_worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: mathvidya-celery-worker
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-mathvidya_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-mathvidya}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - AWS_REGION=${AWS_REGION:-ap-south-1}
+      - S3_MEDIA_BUCKET=${S3_MEDIA_BUCKET}
+      - S3_BACKUP_BUCKET=${S3_BACKUP_BUCKET}
+    depends_on:
+      - redis
+      - postgres
+    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=2
+    networks:
+      - mathvidya-network
+
+  # Celery Beat Scheduler
+  celery_beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: mathvidya-celery-beat
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-mathvidya_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-mathvidya}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - postgres
+    command: celery -A tasks.celery_app beat --loglevel=info
+    networks:
+      - mathvidya-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  mathvidya-network:
+    driver: bridge

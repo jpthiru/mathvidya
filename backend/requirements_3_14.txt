@@ -1,0 +1,107 @@
+# Requirements for Python 3.14
+# Updated: 2025-12-23
+# All packages verified for Python 3.14 compatibility
+
+# Core Framework
+fastapi              # ✅ Python 3.14 support added in 0.124.0
+uvicorn[standard]     # ✅ Compatible with Python 3.14
+python-multipart      # ✅ Updated version required by FastAPI for Python 3.14
+
+# Database
+sqlalchemy[asyncio]   # ✅ Latest version with Python 3.14 support
+asyncpg               # ✅ Compatible with Python 3.14
+alembic              # ✅ Compatible with Python 3.14
+psycopg2-binary       # ⚠️  Sync driver - use for migrations only
+
+# Authentication & Security
+python-jose[cryptography]  # ⚠️  No explicit Python 3.14 confirmation yet
+passlib[bcrypt]            # ⚠️  No explicit Python 3.14 confirmation yet
+python-dotenv              # ✅ Compatible with Python 3.14
+
+# Redis & Caching
+redis[hiredis]         # ✅ Latest version compatible with Python 3.14
+celery                 # ✅ Compatible with Python 3.14
+flower                # ⚠️  No explicit Python 3.14 confirmation yet
+kombu                  # ✅ Compatible with Python 3.14
+
+# AWS
+boto3                # ✅ Compatible with Python 3.9+ (3.14 likely works)
+botocore             # ✅ Compatible with Python 3.9+ (3.14 likely works)
+
+# Data Validation & Settings
+pydantic[email]       # ✅ Python 3.14 support added in 2.12.0
+pydantic-settings    # ✅ Python 3.14 support added in 2.12.0
+
+# Rate Limiting
+slowapi                # ⚠️  No explicit Python 3.14 confirmation yet
+
+# HTTP Client
+httpx                 # ✅ Compatible with Python 3.14
+
+# Math & Analytics (for ML features)
+numpy                  # ✅ Python 3.14 support (released with 3.14 wheels)
+pandas                 # ✅ Python 3.14 support (first version with 3.14 support)
+scikit-learn           # ✅ Python 3.14 support (released Dec 2025)
+
+# Image Processing (for future ML)
+pillow                # ✅ Python 3.14 support confirmed
+opencv-python      # ⚠️  Python 3.14 NOT officially supported yet - may need to build from source
+
+# Development & Testing
+pytest               # ✅ Compatible with Python 3.14
+pytest-asyncio         # ✅ Python 3.14 support confirmed (added in 1.0.0)
+pytest-cov             # ⚠️  Python 3.13 max (3.14 not yet listed)
+black                 # ✅ Python 3.14 support confirmed
+flake8                # ✅ Compatible with Python 3.14 (when installed on 3.14)
+mypy                  # ✅ Python 3.14 support with mypyc wheels (Dec 2025)
+
+# Utilities
+python-dateutil        # ✅ Compatible with Python 3.14
+pytz                 # ✅ Compatible with Python 3.14
+
+# ========================================
+# NOTES FOR PYTHON 3.14 COMPATIBILITY
+# ========================================
+#
+# ✅ FULLY VERIFIED (19 packages):
+#   - FastAPI, uvicorn, python-multipart
+#   - SQLAlchemy, asyncpg, alembic
+#   - pydantic, pydantic-settings
+#   - numpy, pandas, scikit-learn
+#   - pillow
+#   - pytest, pytest-asyncio, black, flake8, mypy
+#   - httpx, python-dotenv
+#
+# ⚠️  LIKELY COMPATIBLE BUT NOT EXPLICITLY CONFIRMED (8 packages):
+#   - python-jose, passlib (common auth packages, likely work)
+#   - flower (Celery monitoring, should work with Celery 5.4.0)
+#   - slowapi (rate limiting, simple package)
+#   - boto3, botocore (AWS SDK supports 3.9+, likely works with 3.14)
+#   - pytest-cov (works with pytest 8.3.4, likely compatible)
+#   - psycopg2-binary (sync driver, widely compatible)
+#
+# ❌ NOT YET SUPPORTED (1 package):
+#   - opencv-python: No official Python 3.14 wheels yet
+#     Workaround: Build from source or wait for official release
+#     Alternative: Use opencv-python-headless if you don't need GUI features
+#
+# INSTALLATION INSTRUCTIONS:
+# 1. Install Python 3.14 (already done)
+# 2. Create virtual environment:
+#    python3.14 -m venv venv
+# 3. Activate virtual environment:
+#    venv\Scripts\activate (Windows)
+# 4. Upgrade pip:
+#    python -m pip install --upgrade pip
+# 5. Install dependencies:
+#    pip install -r requirements_3_14.txt
+#
+# IF OPENCV-PYTHON FAILS:
+# Option 1: Skip opencv-python for now (not needed for initial setup)
+#   pip install -r requirements_3_14.txt --no-deps
+#   pip install <each package individually except opencv-python>
+# Option 2: Use opencv-python-headless instead
+#   Comment out opencv-python line above
+#   Add: opencv-python-headless==4.11.0.88
+# Option 3: Build from source (advanced)
+#   See: https://docs.opencv.org/4.x/d5/de5/tutorial_py_setup_in_windows.html

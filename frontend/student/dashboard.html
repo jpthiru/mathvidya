@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    /* Dashboard Layout */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .profile-button:hover {
+      background: var(--color-gray-200);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      min-width: 200px;
+      display: none;
+      z-index: var(--z-dropdown);
+    }
+
+    .profile-menu.active {
+      display: block;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--color-gray-700);
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .profile-menu-item:first-child {
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .profile-menu-item:last-child {
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .profile-menu-item:hover {
+      background: var(--color-gray-100);
+    }
+
+    .profile-menu-item.danger {
+      color: var(--color-error);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Welcome Card */
+    .welcome-card {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-content h1 {
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-content p {
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .welcome-icon {
+      font-size: 4rem;
+      opacity: 0.2;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all var(--transition-base);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .stat-icon.primary { background: var(--gradient-primary); }
+    .stat-icon.success { background: var(--gradient-success); }
+    .stat-icon.warning { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      color: var(--color-gray-800);
+    }
+
+    /* Exam Section */
+    .exam-section {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: var(--text-2xl);
+      margin: 0;
+    }
+
+    /* Exam Tabs */
+    .exam-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--color-gray-200);
+    }
+
+    .exam-tab {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--color-gray-600);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .exam-tab:hover {
+      color: var(--color-primary);
+    }
+
+    .exam-tab.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .exam-tab-content {
+      display: none;
+    }
+
+    .exam-tab-content.active {
+      display: block;
+    }
+
+    /* Unit Selection */
+    .unit-selection {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .unit-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--color-gray-50);
+      border: 2px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .unit-checkbox:hover {
+      border-color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .unit-checkbox input:checked + label {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    /* Recent Exams Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 1rem;
+      background: var(--color-gray-50);
+      color: var(--color-gray-700);
+      font-weight: 600;
+      border-bottom: 2px solid var(--color-gray-200);
+    }
+
+    .table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .table tr:hover {
+      background: var(--color-gray-50);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+    }
+
+    .status-completed {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .status-pending {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .status-in-progress {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--color-gray-500);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .welcome-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="../index.html" class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </a>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link active">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="exams.html" class="nav-link">
+            <i class="fas fa-file-alt"></i>
+            My Exams
+          </a>
+          <a href="analytics.html" class="nav-link">
+            <i class="fas fa-chart-line"></i>
+            Analytics
+          </a>
+          <a href="leaderboard.html" class="nav-link">
+            <i class="fas fa-trophy"></i>
+            Leaderboard
+          </a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-button" id="profileButton">
+            <div class="profile-avatar" id="profileAvatar">S</div>
+            <div>
+              <div style="font-weight: 600; font-size: var(--text-sm);" id="userName">Student</div>
+              <div style="font-size: var(--text-xs); color: var(--color-gray-500);">Class XII</div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="profile-menu" id="profileMenu">
+            <a href="profile.html" class="profile-menu-item">
+              <i class="fas fa-user"></i>
+              My Profile
+            </a>
+            <a href="subscription.html" class="profile-menu-item">
+              <i class="fas fa-credit-card"></i>
+              Subscription
+            </a>
+            <a href="settings.html" class="profile-menu-item">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+            <div class="profile-menu-item danger" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Welcome Card -->
+    <div class="welcome-card animate-slideUp">
+      <div class="welcome-content">
+        <h1>Welcome back, <span id="welcomeName">Student</span>!</h1>
+        <p>Ready to practice and improve your mathematics skills today?</p>
+      </div>
+      <div class="welcome-icon">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card animate-slideUp">
+        <div class="stat-icon primary">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Exams Taken</div>
+          <div class="stat-value" id="examsTaken">0</div>
+        </div>
+      </div>
+
+      <div class="stat-card animate-slideUp">
+        <div class="stat-icon success">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Average Score</div>
+          <div class="stat-value" id="averageScore">0%</div>
+        </div>
+      </div>
+
+      <div class="stat-card animate-slideUp">
+        <div class="stat-icon warning">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Class Rank</div>
+          <div class="stat-value" id="classRank">-</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start New Exam -->
+    <div class="exam-section animate-slideUp">
+      <div class="section-header">
+        <h2 class="section-title">Start New Exam</h2>
+        <div class="badge badge-primary" id="examsRemaining">0 exams remaining</div>
+      </div>
+
+      <!-- Exam Tabs -->
+      <div class="exam-tabs">
+        <button class="exam-tab active" data-tab="unit-wise">
+          <i class="fas fa-book"></i> Unit-Wise Practice
+        </button>
+        <button class="exam-tab" data-tab="board-exam">
+          <i class="fas fa-clipboard-list"></i> Board Exam
+        </button>
+      </div>
+
+      <!-- Unit-Wise Tab Content -->
+      <div class="exam-tab-content active" id="unit-wise">
+        <p style="margin-bottom: 1rem; color: var(--color-gray-600);">
+          Select units to practice (multiple selection allowed):
+        </p>
+        <div class="unit-selection" id="unitSelection">
+          <!-- Units will be loaded dynamically -->
+        </div>
+        <button class="btn btn-primary" id="startUnitExam">
+          <i class="fas fa-play"></i>
+          Start Unit Practice
+        </button>
+      </div>
+
+      <!-- Board Exam Tab Content -->
+      <div class="exam-tab-content" id="board-exam">
+        <p style="margin-bottom: 1rem; color: var(--color-gray-600);">
+          Start a full board examination practice (CBSE pattern):
+        </p>
+        <div style="padding: 1.5rem; background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
+          <h4 style="margin-bottom: 1rem;">Exam Details:</h4>
+          <ul style="list-style: none; padding: 0;">
+            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Duration: 3 hours</li>
+            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Total Marks: 80</li>
+            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Questions: 38 (as per CBSE pattern)</li>
+            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Types: MCQ, VSA, SA</li>
+          </ul>
+        </div>
+        <button class="btn btn-success btn-lg" id="startBoardExam">
+          <i class="fas fa-clipboard-check"></i>
+          Start Board Exam
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent Exams -->
+    <div class="exam-section animate-slideUp">
+      <div class="section-header">
+        <h2 class="section-title">Recent Exams</h2>
+        <a href="exams.html" class="btn btn-ghost btn-sm">View All</a>
+      </div>
+
+      <div class="table-container">
+        <table class="table" id="recentExamsTable">
+          <thead>
+            <tr>
+              <th>Exam Type</th>
+              <th>Date</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recentExamsBody">
+            <!-- Will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <i class="fas fa-inbox"></i>
+        <h3>No exams yet</h3>
+        <p>Start your first exam to see your progress here</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated() || getUserRole() !== 'student') {
+      window.location.href = '../login.html';
+    }
+
+    const user = getUser();
+
+    // Update profile
+    document.getElementById('userName').textContent = user.name || user.email.split('@')[0];
+    document.getElementById('welcomeName').textContent = user.name || user.email.split('@')[0];
+    document.getElementById('profileAvatar').textContent = (user.name || user.email)[0].toUpperCase();
+
+    // Profile dropdown toggle
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', () => {
+      profileMenu.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('profileDropdown').contains(e.target)) {
+        profileMenu.classList.remove('active');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+        Toast.success('Logged out successfully');
+        setTimeout(() => window.location.href = '../login.html', 500);
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '../login.html';
+      }
+    });
+
+    // Exam tabs
+    const examTabs = document.querySelectorAll('.exam-tab');
+    const examTabContents = document.querySelectorAll('.exam-tab-content');
+
+    examTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        examTabs.forEach(t => t.classList.remove('active'));
+        examTabContents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Load dashboard data
+    async function loadDashboard() {
+      try {
+        // Load dashboard stats
+        const dashboard = await api.getStudentDashboard();
+
+        // Update stats
+        document.getElementById('examsTaken').textContent = dashboard.total_exams || 0;
+        document.getElementById('averageScore').textContent = dashboard.average_score
+          ? `${dashboard.average_score.toFixed(1)}%`
+          : '0%';
+        document.getElementById('classRank').textContent = dashboard.rank || '-';
+
+        // Load subscription/entitlement
+        const entitlement = await api.checkExamEntitlement();
+        document.getElementById('examsRemaining').textContent =
+          `${entitlement.remaining_exams} exams remaining this month`;
+
+        // Load recent exams
+        loadRecentExams(dashboard.recent_exams || []);
+
+        // Load units for unit-wise practice
+        loadUnits();
+
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+        Toast.error('Failed to load dashboard data');
+      }
+    }
+
+    // Load units
+    function loadUnits() {
+      const units = [
+        'Relations and Functions',
+        'Inverse Trigonometric Functions',
+        'Matrices',
+        'Determinants',
+        'Continuity and Differentiability',
+        'Applications of Derivatives',
+        'Integrals',
+        'Applications of Integrals',
+        'Differential Equations',
+        'Vectors',
+        'Three Dimensional Geometry',
+        'Linear Programming',
+        'Probability'
+      ];
+
+      const unitSelection = document.getElementById('unitSelection');
+      unitSelection.innerHTML = units.map((unit, index) => `
+        <label class="unit-checkbox">
+          <input type="checkbox" name="unit" value="${index + 1}" id="unit${index + 1}">
+          <span>${unit}</span>
+        </label>
+      `).join('');
+    }
+
+    // Load recent exams
+    function loadRecentExams(exams) {
+      const tbody = document.getElementById('recentExamsBody');
+      const emptyState = document.getElementById('emptyState');
+
+      if (!exams || exams.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      tbody.innerHTML = exams.slice(0, 5).map(exam => `
+        <tr>
+          <td>
+            <strong>${exam.exam_type}</strong><br>
+            <small style="color: var(--color-gray-500);">${exam.units || 'Full Board'}</small>
+          </td>
+          <td>${formatDate(exam.created_at)}</td>
+          <td>
+            ${exam.score !== null
+              ? `<strong>${exam.score}/${exam.total_marks}</strong> (${((exam.score/exam.total_marks)*100).toFixed(1)}%)`
+              : '-'
+            }
+          </td>
+          <td>
+            <span class="status-badge status-${exam.status.toLowerCase().replace(' ', '-')}">
+              ${exam.status}
+            </span>
+          </td>
+          <td>
+            <a href="exam-details.html?id=${exam.id}" class="btn btn-ghost btn-sm">
+              <i class="fas fa-eye"></i> View
+            </a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Start unit exam
+    document.getElementById('startUnitExam').addEventListener('click', async () => {
+      const selectedUnits = Array.from(document.querySelectorAll('input[name="unit"]:checked'))
+        .map(cb => parseInt(cb.value));
+
+      if (selectedUnits.length === 0) {
+        Toast.warning('Please select at least one unit');
+        return;
+      }
+
+      try {
+        const exam = await api.startExam(1, 'unit_wise', selectedUnits);
+        Toast.success('Exam started successfully!');
+        setTimeout(() => window.location.href = `take-exam.html?id=${exam.id}`, 1000);
+      } catch (error) {
+        console.error('Error starting exam:', error);
+        Toast.error(error.message || 'Failed to start exam');
+      }
+    });
+
+    // Start board exam
+    document.getElementById('startBoardExam').addEventListener('click', async () => {
+      try {
+        const exam = await api.startExam(1, 'board_exam', []);
+        Toast.success('Board exam started successfully!');
+        setTimeout(() => window.location.href = `take-exam.html?id=${exam.id}`, 1000);
+      } catch (error) {
+        console.error('Error starting exam:', error);
+        Toast.error(error.message || 'Failed to start board exam');
+      }
+    });
+
+    // Initialize
+    loadDashboard();
+    observeElements('.animate-slideUp');
+  </script>
+</body>
+</html>

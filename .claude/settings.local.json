@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(alembic upgrade:*)",
+      "Bash(python -m alembic:*)",
+      "Bash(python:*)",
+      "Bash(where:*)",
+      "Bash(pip --version:*)",
+      "WebSearch",
+      "Bash(for file in mapping.py subscription.py question.py exam_template.py exam_instance.py evaluation.py system.py)",
+      "Bash(do sed -i \"s/name=''\\\\\\([a-z_]*\\\\\\)''/name=''mv_\\\\1''/g\" \"$file\")",
+      "Bash(done)",
+      "Bash(grep:*)",
+      "Bash(do sed -i \"s/Column\\(Enum\\(\\\\\\([^\\)]*\\\\\\)\\)/Column\\(Enum\\(\\\\1, create_type=False\\)/g\" \"$file\")",
+      "Bash(source venv/Scripts/activate)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(timeout 5 python:*)",
+      "Bash(timeout 10 uvicorn:*)",
+      "Bash(timeout 8 python:*)",
+      "Bash(curl:*)",
+      "Bash(fi)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MmU3NGIzNS04Yzc0LTRjYWItYTE3Yi0xYTYyMmY5YzI1OTkiLCJyb2xlIjoidGVhY2hlciIsImV4cCI6MTc2NjYyMDU5N30.ky_QKSyygn8Fg56peYTmsXcqQI2O14WY7hjF74q11dU\")",
+      "Bash(__NEW_LINE__ curl -s -X POST http://localhost:8000/api/questions )",
+      "Bash(__NEW_LINE__ curl -s -X POST http://localhost:8000/api/v1/questions )",
+      "Bash(./mvenv/Scripts/python -m alembic revision:*)",
+      "Bash(./mvenv/Scripts/python:*)",
+      "Bash(STUDENT_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ODc1OGY5MS05NGM1LTQzZDItYmNlMi01YjhjZTVlMjNlYWUiLCJyb2xlIjoic3R1ZGVudCIsImV4cCI6MTc2NjYyNzAxN30.wm9jyP_dou3v0hXd9-Y9kVI1tg1zIwL-mAxWxFgyhfQ\")"
+    ]
+  }
+}

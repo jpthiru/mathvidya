@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathvidya - Master CBSE Mathematics | Expert-Evaluated Practice Platform</title>
+  <meta name="description" content="Online mathematics practice platform for CBSE Classes X & XII with same-day evaluation by expert teachers, personalized analytics, and predicted board scores.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/main.css">
+
+  <style>
+    /* Landing Page Specific Styles */
+
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-sticky);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-base);
+    }
+
+    .navbar.scrolled {
+      box-shadow: var(--shadow-md);
+    }
+
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .navbar-link {
+      font-weight: 500;
+      color: var(--color-gray-700);
+      transition: color var(--transition-fast);
+    }
+
+    .navbar-link:hover {
+      color: var(--color-primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      margin-top: 80px;
+      padding: 4rem 2rem;
+      background: var(--gradient-primary);
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+      background-size: cover;
+      opacity: 0.5;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: var(--text-5xl);
+      margin-bottom: 1.5rem;
+      color: white;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: var(--text-xl);
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero {
+      background: white;
+      color: var(--color-primary);
+      padding: 1rem 2rem;
+      font-size: var(--text-lg);
+    }
+
+    .btn-hero-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn-hero-secondary:hover {
+      background: white;
+      color: var(--color-primary);
+    }
+
+    /* Features Section */
+    .features {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: var(--text-4xl);
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      font-size: var(--text-lg);
+      color: var(--color-gray-600);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 1.5rem;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .feature-title {
+      font-size: var(--text-xl);
+      margin-bottom: 0.75rem;
+      color: var(--color-gray-800);
+    }
+
+    .feature-description {
+      color: var(--color-gray-600);
+      line-height: 1.6;
+    }
+
+    /* Pricing Section */
+    .pricing {
+      padding: 4rem 2rem;
+      background: var(--color-gray-50);
+    }
+
+    .pricing-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .pricing-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+      border: 2px solid transparent;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--color-primary);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--color-primary);
+      position: relative;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0.25rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .pricing-header {
+      text-align: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid var(--color-gray-100);
+    }
+
+    .pricing-name {
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-price {
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .pricing-period {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+    }
+
+    .pricing-features {
+      list-style: none;
+      padding: 1.5rem 0;
+    }
+
+    .pricing-features li {
+      padding: 0.75rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pricing-features i {
+      color: var(--color-accent);
+      font-size: 1rem;
+    }
+
+    .pricing-cta {
+      width: 100%;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .step-card {
+      position: relative;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 1.5rem;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--text-2xl);
+      font-weight: 700;
+    }
+
+    .step-title {
+      font-size: var(--text-xl);
+      margin-bottom: 0.75rem;
+    }
+
+    .step-description {
+      color: var(--color-gray-600);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-gray-800);
+      color: white;
+      padding: 3rem 2rem 1.5rem;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h4 {
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--color-gray-400);
+      transition: color var(--transition-fast);
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      padding-top: 2rem;
+      border-top: 1px solid var(--color-gray-700);
+      text-align: center;
+      color: var(--color-gray-400);
+      font-size: var(--text-sm);
+    }
+
+    /* Mobile Menu Toggle */
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--color-gray-700);
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .navbar-menu.active {
+        display: flex;
+      }
+
+      .navbar-toggle {
+        display: block;
+      }
+
+      .hero h1 {
+        font-size: var(--text-4xl);
+      }
+
+      .hero p {
+        font-size: var(--text-lg);
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="#" class="navbar-logo">
+        <i class="fas fa-calculator"></i>
+        Mathvidya
+      </a>
+      <button class="navbar-toggle" id="navbarToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="navbar-menu" id="navbarMenu">
+        <a href="#features" class="navbar-link">Features</a>
+        <a href="#pricing" class="navbar-link">Pricing</a>
+        <a href="#how-it-works" class="navbar-link">How it Works</a>
+        <a href="login.html" class="btn btn-primary btn-sm">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="animate-slideUp">Master CBSE Mathematics with Expert Guidance</h1>
+      <p class="animate-slideUp">Practice board exams with personalized evaluation by expert teachers. Get same-day feedback, detailed analytics, and predicted board scores.</p>
+      <div class="hero-cta animate-slideUp">
+        <a href="login.html" class="btn btn-hero btn-lg">
+          <i class="fas fa-rocket"></i>
+          Start Free Practice
+        </a>
+        <a href="#how-it-works" class="btn btn-hero-secondary btn-lg">
+          <i class="fas fa-play-circle"></i>
+          How it Works
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2 class="section-title">Why Choose Mathvidya?</h2>
+      <p class="section-subtitle">Everything you need to excel in CBSE Mathematics</p>
+    </div>
+    <div class="features-grid">
+      <div class="card feature-card animate-slideUp">
+        <div class="feature-icon">
+          <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+        <h3 class="feature-title">Expert Teacher Evaluation</h3>
+        <p class="feature-description">Every answer evaluated by experienced CBSE mathematics teachers, ensuring accurate and constructive feedback.</p>
+      </div>
+
+      <div class="card feature-card animate-slideUp">
+        <div class="feature-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <h3 class="feature-title">Same-Day Evaluation</h3>
+        <p class="feature-description">Get your answers evaluated on the same working day with our Centum plan. Never wait long for feedback.</p>
+      </div>
+
+      <div class="card feature-card animate-slideUp">
+        <div class="feature-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="feature-title">Performance Analytics</h3>
+        <p class="feature-description">Detailed unit-wise analysis, performance trends, and predicted board examination scores.</p>
+      </div>
+
+      <div class="card feature-card animate-slideUp">
+        <div class="feature-icon">
+          <i class="fas fa-book"></i>
+        </div>
+        <h3 class="feature-title">CBSE-Aligned Practice</h3>
+        <p class="feature-description">Practice exams perfectly aligned with latest CBSE patterns for Classes X and XII.</p>
+      </div>
+
+      <div class="card feature-card animate-slideUp">
+        <div class="feature-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h3 class="feature-title">Leaderboards</h3>
+        <p class="feature-description">Compete with peers and track your rank on class-wise leaderboards (Premium & Centum plans).</p>
+      </div>
+
+      <div class="card feature-card animate-slideUp">
+        <div class="feature-icon">
+          <i class="fas fa-lock"></i>
+        </div>
+        <h3 class="feature-title">Secure & Private</h3>
+        <p class="feature-description">Your data is secure with encryption, AWS India hosting, and mandatory parent access for minors.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="pricing-container">
+      <div class="section-header">
+        <h2 class="section-title">Choose Your Perfect Plan</h2>
+        <p class="section-subtitle">Flexible pricing for every student's needs</p>
+      </div>
+      <div class="pricing-grid">
+        <!-- Basic Plan -->
+        <div class="pricing-card animate-slideUp">
+          <div class="pricing-header">
+            <h3 class="pricing-name">Basic</h3>
+            <div class="pricing-price">₹299</div>
+            <div class="pricing-period">per month (annual)</div>
+          </div>
+          <ul class="pricing-features">
+            <li><i class="fas fa-check-circle"></i> 5 exams per month</li>
+            <li><i class="fas fa-check-circle"></i> Board exam practice only</li>
+            <li><i class="fas fa-check-circle"></i> 1hr teacher interaction</li>
+            <li><i class="fas fa-check-circle"></i> 48hr evaluation SLA</li>
+            <li><i class="fas fa-times-circle" style="color: var(--color-gray-400);"></i> Leaderboard access</li>
+          </ul>
+          <a href="login.html" class="btn btn-outline pricing-cta">Get Started</a>
+        </div>
+
+        <!-- Premium MCQ Plan -->
+        <div class="pricing-card animate-slideUp">
+          <div class="pricing-header">
+            <h3 class="pricing-name">Premium MCQ</h3>
+            <div class="pricing-price">₹499</div>
+            <div class="pricing-period">per month (annual)</div>
+          </div>
+          <ul class="pricing-features">
+            <li><i class="fas fa-check-circle"></i> 15 exams per month</li>
+            <li><i class="fas fa-check-circle"></i> MCQ practice only</li>
+            <li><i class="fas fa-check-circle"></i> Instant auto-evaluation</li>
+            <li><i class="fas fa-check-circle"></i> Unit-wise practice</li>
+            <li><i class="fas fa-times-circle" style="color: var(--color-gray-400);"></i> Leaderboard access</li>
+          </ul>
+          <a href="login.html" class="btn btn-outline pricing-cta">Get Started</a>
+        </div>
+
+        <!-- Premium Plan -->
+        <div class="pricing-card featured animate-slideUp">
+          <span class="featured-badge">Popular</span>
+          <div class="pricing-header">
+            <h3 class="pricing-name">Premium</h3>
+            <div class="pricing-price">₹1,999</div>
+            <div class="pricing-period">per month</div>
+          </div>
+          <ul class="pricing-features">
+            <li><i class="fas fa-check-circle"></i> 50 exams per month</li>
+            <li><i class="fas fa-check-circle"></i> Board + Unit-wise practice</li>
+            <li><i class="fas fa-check-circle"></i> 1hr coaching per month</li>
+            <li><i class="fas fa-check-circle"></i> 48hr evaluation SLA</li>
+            <li><i class="fas fa-check-circle"></i> Leaderboard access</li>
+          </ul>
+          <a href="login.html" class="btn btn-primary pricing-cta">Get Started</a>
+        </div>
+
+        <!-- Centum Plan -->
+        <div class="pricing-card animate-slideUp">
+          <div class="pricing-header">
+            <h3 class="pricing-name">Centum</h3>
+            <div class="pricing-price">₹2,999</div>
+            <div class="pricing-period">per month (annual)</div>
+          </div>
+          <ul class="pricing-features">
+            <li><i class="fas fa-check-circle"></i> 50 exams per month</li>
+            <li><i class="fas fa-check-circle"></i> Board + Unit-wise practice</li>
+            <li><i class="fas fa-check-circle"></i> Direct teacher access</li>
+            <li><i class="fas fa-check-circle"></i> <strong>Same-day</strong> evaluation</li>
+            <li><i class="fas fa-check-circle"></i> Leaderboard access</li>
+          </ul>
+          <a href="login.html" class="btn btn-primary pricing-cta">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-header">
+      <h2 class="section-title">How Mathvidya Works</h2>
+      <p class="section-subtitle">Simple steps to improve your mathematics performance</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card animate-slideUp">
+        <div class="step-number">1</div>
+        <h3 class="step-title">Sign Up & Subscribe</h3>
+        <p class="step-description">Choose a plan that fits your needs. Parent/guardian approval is included for student safety.</p>
+      </div>
+
+      <div class="step-card animate-slideUp">
+        <div class="step-number">2</div>
+        <h3 class="step-title">Take Practice Exams</h3>
+        <p class="step-description">Choose board exams, unit-wise, or section-wise practice. Answer MCQs online, write and upload VSA/SA answers.</p>
+      </div>
+
+      <div class="step-card animate-slideUp">
+        <div class="step-number">3</div>
+        <h3 class="step-title">Expert Evaluation</h3>
+        <p class="step-description">Our expert teachers evaluate your answers following CBSE marking schemes with detailed feedback.</p>
+      </div>
+
+      <div class="step-card animate-slideUp">
+        <div class="step-number">4</div>
+        <h3 class="step-title">Track Progress</h3>
+        <p class="step-description">Review your performance analytics, unit-wise scores, and predicted board examination results.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h4>About Mathvidya</h4>
+          <p style="color: var(--color-gray-400); line-height: 1.6;">
+            Expert-evaluated mathematics practice platform for CBSE Classes X & XII students.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#how-it-works">How it Works</a></li>
+            <li><a href="login.html">Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Resources</h4>
+          <ul class="footer-links">
+            <li><a href="#">CBSE Syllabus</a></li>
+            <li><a href="#">Practice Papers</a></li>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Contact Support</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Child Safety Policy</a></li>
+            <li><a href="#">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 Mathvidya. All rights reserved. Data hosted securely in AWS India.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Mobile menu toggle
+    const navbarToggle = document.getElementById('navbarToggle');
+    const navbarMenu = document.getElementById('navbarMenu');
+
+    navbarToggle.addEventListener('click', () => {
+      navbarMenu.classList.toggle('active');
+    });
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Close mobile menu if open
+          navbarMenu.classList.remove('active');
+        }
+      });
+    });
+
+    // Observe elements for scroll animations
+    observeElements('.animate-slideUp', 'animate-slideUp');
+  </script>
+</body>
+</html>

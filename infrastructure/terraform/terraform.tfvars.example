@@ -1,0 +1,30 @@
+# =============================================================================
+# Mathvidya Infrastructure - Example Variables
+# Copy this file to terraform.tfvars and fill in your values
+# =============================================================================
+
+# General Settings
+project_name = "mathvidya"
+environment  = "prod"
+aws_region   = "ap-south-1"  # Mumbai - India data residency
+domain_name  = "mathvidya.com"
+
+# EC2 Settings
+instance_type    = "t3.small"  # 2 vCPU, 2GB RAM - ~$15/month
+root_volume_size = 30          # GB
+
+# SSH Key (paste your public key here)
+# Generate with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/mathvidya-key
+ssh_public_key = "ssh-rsa AAAA..."
+
+# Restrict SSH access to your IP (recommended for production)
+# Find your IP: curl ifconfig.me
+ssh_allowed_cidrs = ["YOUR_IP_ADDRESS/32"]
+
+# Application Secrets (use strong random values)
+# Generate with: openssl rand -base64 32
+db_password = "CHANGE_THIS_STRONG_PASSWORD"
+secret_key  = "CHANGE_THIS_STRONG_SECRET_KEY"
+
+# Monitoring (optional - leave empty to skip)
+alarm_email = "admin@mathvidya.com"

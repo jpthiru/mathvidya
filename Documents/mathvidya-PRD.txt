@@ -1,0 +1,199 @@
+
+Product Requirements Document (PRD)
+Product Name: Mathvidya
+Version: V1 (Launch Scope)
+Target Audience: CBSE Class X and Class XII students (India)
+Primary Goal: Enable exam-oriented mathematics practice aligned with CBSE board standards, combining automated evaluation and human expert feedback.
+
+1. Product Vision & Value Proposition
+Mathvidya is an online mathematics practice platform for CBSE students that combines:
+Board-exam-aligned question practice
+Standardized CBSE marking
+Same-day or SLA-based personalized evaluation by expert teachers
+Data-driven performance analytics
+Differentiation Statement:
+Students choose Mathvidya for its combination of flexible online exam practice and personalized evaluation and teaching by expert mathematics teachers.
+
+2. Personas & Roles
+2.1 Student (Primary User)
+Classes: X and XII (V1)
+Practices exams online via web browser
+Answers MCQs on-screen
+Writes VSA/SA answers on paper, scans and uploads
+Reviews evaluated answers, explanations, and performance analytics
+2.2 Parent / Guardian (Primary Buyer)
+Pays subscription
+Has read-only access to student performance, reports, and predictions
+2.3 Mathematics Teacher (Evaluator)
+Human evaluator, onboarded offline
+Evaluates scanned handwritten answers
+Assigns marks based on CBSE marking scheme
+Adds questions to question bank
+No re-evaluation or moderation flow
+2.4 Administrator
+Manages teachers
+Manages configuration parameters
+Manages question bank
+Views system-wide dashboards
+2.5 System (Automated Actor)
+Generates exams dynamically
+Evaluates MCQs automatically
+Assigns exams unique IDs
+Calculates scores, ranks, predictions
+Enforces subscription limits and SLAs
+Maintains audit logs
+
+3. Launch Scope (Version 1 Constraints)
+Included
+Classes: X and XII only
+Exam types:
+Full Board Exam pattern
+Section-wise practice (MCQ, VSA, SA)
+Question types: MCQ, VSA, SA
+Platform: Web only
+Manual teacher evaluation for non-MCQ
+Subscription-based access
+Explicitly Excluded (but future-proofed)
+Mobile apps
+LA and Case Study evaluation
+AI-based handwritten evaluation
+Re-evaluation / moderation
+School or institute licensing
+
+4. Examination Model (CBSE-Aligned)
+4.1 Exam Structure (Configurable)
+The system must support a configuration-driven exam template, defaulting to CBSE standards but adjustable by admin.
+Example (Class XII – Reference Model):
+Total Questions: 38
+Total Marks: 80
+Sections A–E with defined marks and counts
+Unit-wise weightage enforced probabilistically
+All parameters must be stored as data configurations, not hardcoded.
+
+5. Practice Modes
+Students can initiate:
+Full Board Examination (standard CBSE pattern)
+Section-wise practice (only MCQ / only VSA / only SA)
+Unit-wise practice (based on unit weightage)
+Each practice exam:
+Is dynamically generated
+Has a unique exam ID
+Is linked to subscription limits
+
+6. Question Bank Requirements
+6.1 Common Properties (All Questions)
+Class (X / XII)
+Unit
+Question Type (MCQ / VSA / SA / future types)
+Question Content:
+Text with mathematical notation support
+OR Image-based question
+Optional diagram image
+Correct answer (text or image)
+Explanation / reasoning
+6.2 MCQ-Specific Properties
+Choices (A, B, C, D, …)
+Each choice may include text and/or image
+One or more correct choices
+Correct answer mapping
+Explanation
+
+7. Student Answer & Evaluation Flow
+7.1 MCQ Evaluation (Automated)
+Student selects answers on screen
+Score calculated immediately:
+Percentage = (Correct Answers / Total Questions) × 100
+Student can review:
+Question
+Selected answer
+Correct answer
+Explanation
+7.2 VSA / SA Evaluation (Human)
+Student writes answers on paper
+Student scans and uploads pages (image/PDF)
+Student confirms unanswered questions via checkbox UI
+Exam moves to “Pending Evaluation” state
+
+8. Teacher Evaluation Workflow
+Teacher views scanned pages page-by-page
+Teacher can:
+Stamp tick or cross on image
+Save annotations per page
+Evaluation form shows question-wise marks
+Teacher assigns marks per question
+UI layout (marks panel position) is configurable
+One exam → one teacher only
+Once submitted, evaluation is final
+
+9. SLA Rules
+Centum Plan: Same working day evaluation
+All Other Plans: Within 48 working hours
+Sundays and declared holidays excluded
+SLA timers must be system-enforced and auditable
+
+10. Dashboards & Analytics
+10.1 Student Dashboard
+Exams attempted vs available
+Exam-wise scores
+Unit-wise performance analysis
+Teacher session usage
+Overall rank
+System-predicted final board score
+10.2 Parent Dashboard
+Read-only access to all student metrics
+10.3 Admin Dashboard
+Student activity
+Teacher workload
+Exam volumes
+SLA compliance
+Subscription metrics
+
+11. Leaderboard
+Visible only to eligible subscription plans
+Displays:
+Student photo
+Rank
+Performance metrics
+Top 10 students only
+Ranking logic must be deterministic and auditable
+
+12. Subscription & Monetization Logic
+Subscription plans enforce:
+Monthly exam limits
+Exam types allowed
+Leaderboard eligibility
+Teacher interaction entitlements
+SLA priority
+Billing:
+INR
+Monthly or annual (as per plan)
+Payments initiated by parent or student
+
+13. Non-Functional Requirements
+13.1 Architecture
+Cloud-hosted (AWS India region)
+Modular, API-first backend
+Mobile-ready APIs (future apps)
+13.2 Security & Compliance
+Child data protection assumed mandatory
+Parent access mandatory
+Full audit logs for:
+Evaluations
+Score changes
+Access events
+Role-based access control
+13.3 Future-Proofing
+Question and exam models must support:
+AI-assisted evaluation
+Handwritten answer recognition
+Storage of raw answer images for ML training (with consent flags)
+
+14. Key Design Principles for Engineering
+Configuration over code
+Deterministic scoring
+Human-in-the-loop evaluation
+Clear ownership of actions
+Auditability by default
+
+
+

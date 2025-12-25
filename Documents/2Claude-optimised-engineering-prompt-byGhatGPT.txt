@@ -1,0 +1,204 @@
+Below is a Claude-optimized engineering prompt, explicitly structured and split into Backend, Frontend, and ML-Readiness sections.
+This is written so you can paste it directly into Claude and get high-quality, implementation-level output (APIs, schemas, flows, and architectural decisions).
+
+Claude Engineering Prompt — Mathvidya
+You are a senior full-stack architect and engineering lead.
+Design and specify the system for Mathvidya, an online CBSE mathematics practice platform.
+Global Constraints (Apply to All Sections)
+Target users: CBSE Class X and XII students (India)
+Platform: Web only (V1), mobile-ready APIs
+Hosting: AWS India region
+Architecture: API-first, modular, configuration-driven
+Roles: Student, Parent (read-only), Teacher, Administrator
+Exams aligned to CBSE board pattern, but fully configurable
+MCQs auto-evaluated; VSA/SA evaluated by one human teacher
+Audit logs mandatory for evaluations and score changes
+Assume students are minors (<18) → design conservatively
+
+SECTION 1: BACKEND ENGINEERING PROMPT
+1.1 Responsibilities
+Design the backend system that:
+Manages users, roles, subscriptions, exams, questions, evaluations
+Dynamically generates exams from a question bank
+Automatically evaluates MCQs
+Supports teacher-led evaluation for handwritten answers
+Enforces subscription limits and SLA rules
+Computes analytics, rankings, and predictions
+Maintains full auditability
+
+1.2 Core Backend Capabilities to Design
+A. User & Role Management
+Student profile (personal, academic, documents, parent info)
+Parent account linked to student(s), read-only permissions
+Teacher onboarding and access control
+Admin superuser role
+RBAC enforcement at API level
+B. Subscription & Entitlement Engine
+Plans with:
+Exam limits per month
+Exam types allowed
+Leaderboard eligibility
+Teacher SLA priority
+Monthly counters and reset logic
+Hard enforcement at exam start time
+C. Exam & Configuration Engine
+Configurable exam templates:
+Sections
+Question counts
+Marks per question
+Unit-wise weightage
+Exam instance generation:
+Unique exam ID
+Deterministic randomization
+Snapshot of configuration at time of exam
+Support:
+Full board exam
+Section-wise practice
+Unit-wise practice
+D. Question Bank
+Question types: MCQ, VSA, SA
+Question formats:
+Text with math notation
+Image-based
+MCQ support:
+Multiple correct choices
+Choice-level images
+Versioning and soft-deletes
+Admin and teacher CRUD
+E. Evaluation Engine
+MCQ:
+Auto-evaluate
+Immediate score + explanation
+VSA/SA:
+Upload scanned pages (images/PDF)
+Teacher annotation metadata (tick/cross)
+Question-wise marks entry
+SLA enforcement:
+Same day (Centum)
+48 working hours (others)
+One teacher per exam, no re-evaluation
+F. Analytics & Ranking
+Exam-wise scores
+Unit-wise performance
+Overall rank calculation
+Leaderboard (Top 10 only)
+System-predicted final board score (rule-based for V1)
+G. Audit & Compliance
+Immutable logs for:
+Evaluation submissions
+Score finalization
+Admin config changes
+Timestamped, user-attributed events
+
+1.3 Deliverables Claude Should Produce (Backend)
+High-level backend architecture
+Database schema (tables / collections)
+REST or GraphQL API contracts
+Key workflows (exam start → evaluation → results)
+SLA enforcement logic
+Security and RBAC strategy
+
+SECTION 2: FRONTEND ENGINEERING PROMPT
+2.1 Responsibilities
+Design a web-first frontend that:
+Works for students, parents, teachers, and admins
+Handles math notation, image-heavy content
+Supports exam-taking, uploads, evaluation, analytics
+Is extensible to mobile apps later
+
+2.2 Core Frontend Experiences
+A. Student Experience
+Registration & profile completion
+Subscription purchase flow
+Practice mode selection:
+Full exam
+Section-wise
+Unit-wise
+MCQ exam UI:
+Timed / untimed
+Multi-correct support
+Upload flow for VSA/SA:
+Page-by-page scanning/upload
+“Unanswered questions” checkbox UI
+Results & review:
+Correct vs wrong answers
+Explanations
+Teacher annotations (when available)
+Dashboard:
+Attempts vs available
+Scores
+Unit-wise analytics
+Rank & prediction
+B. Parent Experience
+Linked to student
+Read-only dashboard
+Performance trends
+Subscription visibility
+C. Teacher Experience
+Evaluation queue sorted by SLA
+Image viewer with annotation controls
+Flexible layout for marks entry panel
+Question-wise marks submission
+Question bank management UI
+D. Admin Experience
+Configuration management UI
+Teacher management
+Global dashboards
+Question bank access
+
+2.3 Technical Frontend Considerations
+Math rendering (LaTeX/MathML)
+Large image handling and lazy loading
+Upload reliability on low bandwidth
+Secure access to answer sheets
+Responsive design (tablet-friendly)
+
+2.4 Deliverables Claude Should Produce (Frontend)
+Screen-by-screen UI flow
+Component hierarchy
+State management strategy
+API interaction patterns
+Role-based UI rendering logic
+
+SECTION 3: ML-READINESS & FUTURE AI PROMPT
+3.1 Objective
+Future-proof the system for AI-assisted or automated evaluation of handwritten mathematics answers, without implementing ML in V1.
+
+3.2 Data Capture Requirements
+Design backend and frontend so that:
+Original scanned answer images are preserved
+Question-to-answer mappings are explicit
+Marks per question are stored separately from explanations
+Teacher annotations are stored as structured metadata
+Consent flags exist for ML usage
+
+3.3 ML Evolution Path
+Support future phases:
+AI suggests marks to teachers (assistive)
+AI flags inconsistencies or missing steps
+Partial auto-evaluation for VSA/SA
+Full auto-evaluation (long-term)
+
+3.4 ML-Friendly Design Decisions
+Immutable raw data storage
+Separation of:
+Student answer
+Teacher evaluation
+Final score
+Dataset labeling compatibility
+Model version tagging (future)
+
+3.5 Deliverables Claude Should Produce (ML-Readiness)
+ML-ready data schema extensions
+Storage strategy for training data
+Inference integration points (future)
+Ethical and compliance considerations
+
+FINAL INSTRUCTION TO CLAUDE
+Produce:
+Clear architectural decisions
+Concrete schemas and APIs
+Assumptions explicitly stated
+Trade-offs explained
+No generic advice — only implementation-relevant detail
+
