@@ -96,7 +96,7 @@ class ApiClient {
   // ==================== Authentication ====================
 
   async register(userData) {
-    const data = await this.post('/register', userData);
+    const data = await this.post('/auth/register', userData);
     if (data.access_token) {
       this.setToken(data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -110,7 +110,7 @@ class ApiClient {
     formData.append('username', email); // FastAPI OAuth2 uses 'username' field
     formData.append('password', password);
 
-    const response = await fetch(`${this.baseURL}/login`, {
+    const response = await fetch(`${this.baseURL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -132,12 +132,12 @@ class ApiClient {
   }
 
   async logout() {
-    await this.post('/logout');
+    await this.post('/auth/logout');
     this.clearToken();
   }
 
   async getMe() {
-    return this.get('/me');
+    return this.get('/auth/me');
   }
 
   // ==================== Exams ====================
