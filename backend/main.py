@@ -77,11 +77,15 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Handle Pydantic validation errors"""
     logger.warning(f"Validation error for {request.url}: {exc.errors()}")
+    # Convert body to string if it's bytes (e.g., from form-urlencoded requests)
+    body = exc.body
+    if isinstance(body, bytes):
+        body = body.decode('utf-8', errors='replace')
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
             "detail": exc.errors(),
-            "body": exc.body
+            "body": body
         }
     )
 
