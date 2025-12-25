@@ -83,41 +83,41 @@ output "cloudwatch_log_group" {
 }
 
 # -----------------------------------------------------------------------------
-# ALB Outputs
+# ALB Outputs - COMMENTED OUT (ALB disabled to save costs)
 # -----------------------------------------------------------------------------
-output "alb_dns_name" {
-  description = "DNS name of the Application Load Balancer"
-  value       = aws_lb.main.dns_name
-}
+# output "alb_dns_name" {
+#   description = "DNS name of the Application Load Balancer"
+#   value       = aws_lb.main.dns_name
+# }
 
-output "alb_zone_id" {
-  description = "Zone ID of the Application Load Balancer"
-  value       = aws_lb.main.zone_id
-}
+# output "alb_zone_id" {
+#   description = "Zone ID of the Application Load Balancer"
+#   value       = aws_lb.main.zone_id
+# }
 
-output "target_group_arn" {
-  description = "ARN of the target group"
-  value       = aws_lb_target_group.app.arn
-}
+# output "target_group_arn" {
+#   description = "ARN of the target group"
+#   value       = aws_lb_target_group.app.arn
+# }
 
 # -----------------------------------------------------------------------------
-# ACM Certificate Outputs
+# ACM Certificate Outputs - COMMENTED OUT (not needed without ALB)
 # -----------------------------------------------------------------------------
-output "acm_certificate_arn" {
-  description = "ARN of the ACM certificate"
-  value       = aws_acm_certificate.main.arn
-}
+# output "acm_certificate_arn" {
+#   description = "ARN of the ACM certificate"
+#   value       = aws_acm_certificate.main.arn
+# }
 
-output "acm_certificate_validation_records" {
-  description = "DNS records needed for ACM certificate validation - ADD THESE TO GODADDY"
-  value = {
-    for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
-      name  = dvo.resource_record_name
-      type  = dvo.resource_record_type
-      value = dvo.resource_record_value
-    }
-  }
-}
+# output "acm_certificate_validation_records" {
+#   description = "DNS records needed for ACM certificate validation - ADD THESE TO GODADDY"
+#   value = {
+#     for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
+#       name  = dvo.resource_record_name
+#       type  = dvo.resource_record_type
+#       value = dvo.resource_record_value
+#     }
+#   }
+# }
 
 # -----------------------------------------------------------------------------
 # Connection Information
@@ -128,40 +128,34 @@ output "ssh_command" {
 }
 
 output "application_url" {
-  description = "URL to access the application"
-  value       = "https://${var.domain_name}"
+  description = "URL to access the application (HTTP - no SSL without ALB)"
+  value       = "http://${aws_eip.app.public_ip}"
 }
 
 output "godaddy_dns_records" {
-  description = "DNS records to create in GoDaddy"
+  description = "DNS records to create in GoDaddy for direct EC2 access"
   value       = <<-EOT
 
     =====================================================
-    GODADDY DNS CONFIGURATION
+    GODADDY DNS CONFIGURATION (DIRECT EC2 - NO ALB)
     =====================================================
 
-    1. ADD CNAME RECORD FOR ALB (instead of A record):
+    ADD A RECORD POINTING TO EC2 ELASTIC IP:
 
-       Type: CNAME
+       Type: A
        Name: @
-       Value: ${aws_lb.main.dns_name}
+       Value: ${aws_eip.app.public_ip}
        TTL: 600
 
-       Type: CNAME
+       Type: A
        Name: www
-       Value: ${aws_lb.main.dns_name}
+       Value: ${aws_eip.app.public_ip}
        TTL: 600
 
-       NOTE: GoDaddy may not allow CNAME for root domain (@).
-       If so, use their "Forwarding" feature or consider
-       moving DNS to Route 53 or CloudFlare.
-
-       ALTERNATIVE - Use A record with ALB IP (not recommended
-       as ALB IPs can change):
-       - Get ALB IPs: nslookup ${aws_lb.main.dns_name}
-
-    2. ADD CNAME RECORDS FOR SSL CERTIFICATE VALIDATION:
-       (Check acm_certificate_validation_records output)
+    NOTE: Without ALB, there is no HTTPS/SSL.
+    For HTTPS, you can later:
+    - Enable ALB (uncomment in main.tf)
+    - Or install Let's Encrypt on EC2 directly
 
     =====================================================
   EOT
@@ -175,54 +169,46 @@ output "next_steps" {
   value       = <<-EOT
 
     ============================================
-    DEPLOYMENT SUCCESSFUL!
+    DEPLOYMENT SUCCESSFUL! (Direct EC2 Mode)
     ============================================
 
     ARCHITECTURE:
-    - ALB handles HTTPS (SSL via ACM - free)
-    - EC2 only accessible via SSH (from your IP) and ALB
-    - No direct HTTP/HTTPS access to EC2
+    - EC2 directly accessible on HTTP (port 80)
+    - No ALB (cost savings)
+    - No HTTPS (add Let's Encrypt later if needed)
 
-    STEP 1: VALIDATE SSL CERTIFICATE (REQUIRED FIRST!)
-    ---------------------------------------------------
-    Add these CNAME records in GoDaddy for ACM validation:
-    (Run: terraform output acm_certificate_validation_records)
-
-    STEP 2: CONFIGURE DNS IN GODADDY
+    STEP 1: CONFIGURE DNS IN GODADDY
     ---------------------------------
-    Option A (Recommended - use ANAME/ALIAS if supported):
-       Type: ANAME/ALIAS
+    Add A records pointing to EC2 Elastic IP:
+
+       Type: A
        Name: @
-       Value: ${aws_lb.main.dns_name}
+       Value: ${aws_eip.app.public_ip}
 
-    Option B (For www subdomain):
-       Type: CNAME
+       Type: A
        Name: www
-       Value: ${aws_lb.main.dns_name}
+       Value: ${aws_eip.app.public_ip}
 
-    Option C (If ANAME not supported - use forwarding):
-       Forward mathvidya.com to www.mathvidya.com
-       Then CNAME www -> ${aws_lb.main.dns_name}
-
-    STEP 3: SSH INTO INSTANCE
+    STEP 2: SSH INTO INSTANCE
     --------------------------
     ssh -i ~/.ssh/mathvidya-key ec2-user@${aws_eip.app.public_ip}
 
-    STEP 4: DEPLOY APPLICATION
+    STEP 3: DEPLOY APPLICATION
     ---------------------------
     cd /opt/mathvidya
     git clone <your-repo-url> .
-    docker-compose -f docker-compose.yml up -d
+    docker-compose -f docker-compose.prod.yml up -d
 
-    STEP 5: VERIFY
+    STEP 4: VERIFY
     ---------------
-    curl https://${var.domain_name}/health
+    curl http://${aws_eip.app.public_ip}/health
+    curl http://${var.domain_name}/health  (after DNS propagates)
 
     ============================================
     SECURITY NOTES:
     - EC2 SSH: Only from ${join(", ", var.ssh_allowed_cidrs)}
-    - Web traffic: Only through ALB
-    - SSL: Handled by ALB (ACM certificate)
+    - Web traffic: HTTP on port 80 (no SSL)
+    - For HTTPS: Enable ALB or install Let's Encrypt
     ============================================
   EOT
 }
