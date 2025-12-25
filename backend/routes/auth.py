@@ -5,6 +5,7 @@ User registration, login, and authentication endpoints.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import bcrypt
@@ -15,7 +16,6 @@ from models import User
 from models.enums import UserRole
 from schemas.auth import (
     RegisterRequest,
-    LoginRequest,
     TokenResponse,
     UserResponse,
     PasswordChangeRequest
@@ -101,26 +101,27 @@ async def register(
 
 @router.post("/auth/login", response_model=TokenResponse)
 async def login(
-    request: LoginRequest,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_session)
 ):
     """
     Authenticate user and return JWT access token
-    
-    - **email**: User's email address
+
+    Uses OAuth2 password flow (form data):
+    - **username**: User's email address
     - **password**: User's password
-    
+
     Returns JWT token valid for 24 hours
     """
-    
-    # Find user by email
+
+    # Find user by email (OAuth2 uses 'username' field for email)
     result = await session.execute(
-        select(User).where(User.email == request.email)
+        select(User).where(User.email == form_data.username)
     )
     user = result.scalar_one_or_none()
-    
+
     # Verify credentials
-    if not user or not verify_password(request.password, user.password_hash):
+    if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
