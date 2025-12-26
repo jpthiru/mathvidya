@@ -43,6 +43,9 @@ cd /opt/mathvidya/scripts/backup
 
 # Copy scripts (or clone from git)
 # The scripts are in: scripts/backup/
+
+# IMPORTANT: Make scripts executable
+chmod +x /opt/mathvidya/scripts/backup/*.sh
 ```
 
 ### 2. Create a Backup
