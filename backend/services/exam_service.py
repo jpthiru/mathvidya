@@ -184,6 +184,106 @@ class ExamService:
         return all_questions
 
     @staticmethod
+    async def start_unit_practice(
+        session: AsyncSession,
+        student_id: str,
+        class_level: str,
+        selected_units: List[str],
+        question_type: str
+    ) -> Tuple[ExamInstance, List[Question]]:
+        """
+        Start a unit practice exam with specific question type
+
+        Args:
+            session: Database session
+            student_id: Student's user ID
+            class_level: Student's class (X or XII)
+            selected_units: List of unit names to practice
+            question_type: Type of questions (MCQ, VSA, SA, LA)
+
+        Returns:
+            Tuple of (ExamInstance, List of Questions)
+
+        Raises:
+            ValueError: If no questions available or student has active exam
+        """
+        # Check for active exams
+        result = await session.execute(
+            select(ExamInstance).where(
+                and_(
+                    ExamInstance.student_user_id == student_id,
+                    ExamInstance.status.in_([
+                        ExamStatus.CREATED.value,
+                        ExamStatus.IN_PROGRESS.value
+                    ])
+                )
+            )
+        )
+        active_exam = result.scalar_one_or_none()
+        if active_exam:
+            raise ValueError("You already have an active exam in progress")
+
+        # Define max questions and marks per type
+        type_config = {
+            'MCQ': {'max_questions': 10, 'marks_per_question': 1, 'duration': 20},
+            'VSA': {'max_questions': 10, 'marks_per_question': 2, 'duration': 30},
+            'SA': {'max_questions': 6, 'marks_per_question': 3, 'duration': 45},
+            'LA': {'max_questions': 4, 'marks_per_question': 5, 'duration': 60},
+        }
+
+        config = type_config.get(question_type)
+        if not config:
+            raise ValueError(f"Invalid question type: {question_type}")
+
+        # Query questions for selected units and question type
+        result = await session.execute(
+            select(Question).where(
+                and_(
+                    Question.class_level == class_level,
+                    Question.question_type == question_type,
+                    Question.unit.in_(selected_units),
+                    Question.status == QuestionStatus.ACTIVE.value
+                )
+            )
+        )
+        available_questions = result.scalars().all()
+
+        if not available_questions:
+            unit_list = ', '.join(selected_units)
+            raise ValueError(f"No {question_type} questions available for the selected unit(s): {unit_list}")
+
+        # Select up to max questions
+        max_q = min(len(available_questions), config['max_questions'])
+        questions = random.sample(available_questions, max_q)
+
+        # Calculate total marks
+        total_marks = max_q * config['marks_per_question']
+
+        # Create exam instance
+        exam_instance = ExamInstance(
+            student_user_id=student_id,
+            template_id=None,  # No template for dynamic unit practice
+            exam_type='unit_practice',
+            class_level=class_level,
+            total_marks=total_marks,
+            duration_minutes=config['duration'],
+            started_at=datetime.now(timezone.utc),
+            status=ExamStatus.IN_PROGRESS.value,
+            exam_snapshot={
+                'question_type': question_type,
+                'selected_units': selected_units,
+                'question_ids': [str(q.question_id) for q in questions],
+                'marks_per_question': config['marks_per_question']
+            }
+        )
+
+        session.add(exam_instance)
+        await session.commit()
+        await session.refresh(exam_instance)
+
+        return exam_instance, questions
+
+    @staticmethod
     async def submit_mcq_answers(
         session: AsyncSession,
         exam_instance_id: str,

@@ -31,6 +31,12 @@ class StartExamRequest(BaseModel):
     exam_type: Optional[str] = None  # Override if needed
 
 
+class StartUnitPracticeRequest(BaseModel):
+    """Request to start unit practice exam with specific question type"""
+    selected_units: List[str]
+    question_type: str  # MCQ, VSA, SA, LA
+
+
 class QuestionResponse(BaseModel):
     """Question in an exam"""
     question_id: str

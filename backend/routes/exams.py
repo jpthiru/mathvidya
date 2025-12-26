@@ -15,6 +15,7 @@ from schemas.exam import (
     AvailableTemplatesResponse,
     ExamTemplateResponse,
     StartExamRequest,
+    StartUnitPracticeRequest,
     ExamInstanceResponse,
     QuestionResponse,
     SubmitMCQRequest,
@@ -71,6 +72,7 @@ async def get_available_templates(
 @router.post("/exams/start", response_model=ExamInstanceResponse, status_code=status.HTTP_201_CREATED)
 async def start_exam(
     request: StartExamRequest,
+    StartUnitPracticeRequest,
     current_user: User = Depends(require_student),
     session: AsyncSession = Depends(get_session)
 ):
@@ -87,6 +89,65 @@ async def start_exam(
             session,
             str(current_user.user_id),
             request.template_id
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+    # Convert questions to response format
+    question_responses = []
+    for idx, q in enumerate(questions, 1):
+        question_responses.append(QuestionResponse(
+            question_id=str(q.question_id),
+            question_number=idx,
+            question_type=q.question_type,
+            marks=q.marks,
+            unit=q.unit,
+            chapter=q.chapter,
+            topic=q.topic,
+            question_text=q.question_text,
+            question_image_url=q.question_image_url,
+            options=q.options if q.question_type == 'MCQ' else None,
+            difficulty=q.difficulty
+        ))
+
+    return ExamInstanceResponse(
+        exam_instance_id=str(exam_instance.exam_instance_id),
+        student_user_id=str(exam_instance.student_user_id),
+        exam_type=exam_instance.exam_type,
+        status=exam_instance.status,
+        total_marks=exam_instance.total_marks,
+        duration_minutes=exam_instance.duration_minutes,
+        start_time=exam_instance.started_at,
+        end_time=exam_instance.submitted_at,
+        questions=question_responses,
+        mcq_score=exam_instance.mcq_score,
+        total_score=exam_instance.total_score
+    )
+
+
+@router.post("/exams/start-unit-practice", response_model=ExamInstanceResponse, status_code=status.HTTP_201_CREATED)
+async def start_unit_practice(
+    request: StartUnitPracticeRequest,
+    current_user: User = Depends(require_student),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Start a unit practice exam with specific question type
+
+    - Student selects units and question type (MCQ, VSA, SA, LA)
+    - System loads available questions up to max limit
+    - Returns exam with all questions
+    """
+    try:
+        exam_instance, questions = await exam_service.start_unit_practice(
+            session,
+            str(current_user.user_id),
+            current_user.student_class,
+            request.selected_units,
+            request.question_type
         )
     except ValueError as e:
         raise HTTPException(

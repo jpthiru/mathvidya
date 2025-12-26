@@ -342,6 +342,25 @@
       font-weight: 600;
     }
 
+    /* Question Type Selection */
+    .question-type-option {
+      transition: all var(--transition-fast);
+    }
+
+    .question-type-option:hover {
+      border-color: var(--color-primary) !important;
+      background: var(--color-gray-100) !important;
+    }
+
+    .question-type-option:has(input:checked) {
+      border-color: var(--color-primary) !important;
+      background: rgba(99, 102, 241, 0.1) !important;
+    }
+
+    .question-type-option:has(input:checked) div:first-of-type {
+      color: var(--color-primary);
+    }
+
     /* Recent Exams Table */
     .table-container {
       overflow-x: auto;
@@ -565,16 +584,62 @@
 
       <!-- Unit-Wise Tab Content -->
       <div class="exam-tab-content active" id="unit-wise">
-        <p style="margin-bottom: 1rem; color: var(--color-gray-600);">
-          Select units to practice (multiple selection allowed):
-        </p>
-        <div class="unit-selection" id="unitSelection">
-          <!-- Units will be loaded dynamically -->
+        <!-- Step 1: Select Units -->
+        <div id="unitStep">
+          <p style="margin-bottom: 1rem; color: var(--color-gray-600);">
+            <strong>Step 1:</strong> Select units to practice (multiple selection allowed):
+          </p>
+          <div class="unit-selection" id="unitSelection">
+            <!-- Units will be loaded dynamically -->
+          </div>
+          <button class="btn btn-primary" id="nextToQuestionType">
+            <i class="fas fa-arrow-right"></i>
+            Next: Choose Question Type
+          </button>
         </div>
-        <button class="btn btn-primary" id="startUnitExam">
-          <i class="fas fa-play"></i>
-          Start Unit Practice
-        </button>
+
+        <!-- Step 2: Select Question Type -->
+        <div id="questionTypeStep" style="display: none;">
+          <p style="margin-bottom: 1rem; color: var(--color-gray-600);">
+            <strong>Step 2:</strong> Select question type for practice:
+          </p>
+          <div class="question-type-selection" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <label class="question-type-option" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); text-align: center;">
+              <input type="radio" name="questionType" value="MCQ" style="display: none;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-list-ul"></i></div>
+              <div style="font-weight: 600;">MCQ</div>
+              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">1 mark each, max 10</div>
+            </label>
+            <label class="question-type-option" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); text-align: center;">
+              <input type="radio" name="questionType" value="VSA" style="display: none;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-edit"></i></div>
+              <div style="font-weight: 600;">VSA</div>
+              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">2 marks each, max 10</div>
+            </label>
+            <label class="question-type-option" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); text-align: center;">
+              <input type="radio" name="questionType" value="SA" style="display: none;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-file-alt"></i></div>
+              <div style="font-weight: 600;">SA</div>
+              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">3 marks each, max 6</div>
+            </label>
+            <label class="question-type-option" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); text-align: center;">
+              <input type="radio" name="questionType" value="LA" style="display: none;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-file-signature"></i></div>
+              <div style="font-weight: 600;">LA</div>
+              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">5 marks each, max 4</div>
+            </label>
+          </div>
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn btn-ghost" id="backToUnits">
+              <i class="fas fa-arrow-left"></i>
+              Back
+            </button>
+            <button class="btn btn-primary" id="startUnitExam">
+              <i class="fas fa-play"></i>
+              Start Practice
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Board Exam Tab Content -->
@@ -800,25 +865,44 @@
       `).join('');
     }
 
-    // Start unit exam
-    document.getElementById('startUnitExam').addEventListener('click', async () => {
-      const selectedUnits = Array.from(document.querySelectorAll('input[name="unit"]:checked'))
-        .map(cb => cb.value);  // Get unit names as strings
+    // Store selected units for Step 2
+    let selectedUnitsForExam = [];
 
-      if (selectedUnits.length === 0) {
+    // Step 1: Next button - go to question type selection
+    document.getElementById('nextToQuestionType').addEventListener('click', () => {
+      selectedUnitsForExam = Array.from(document.querySelectorAll('input[name="unit"]:checked'))
+        .map(cb => cb.value);
+
+      if (selectedUnitsForExam.length === 0) {
         Toast.warning('Please select at least one unit');
         return;
       }
 
-      // Get the unit_practice template ID
-      const templateId = getTemplateId('unit_practice');
-      if (!templateId) {
-        Toast.error('No unit practice template available. Please contact support.');
+      // Hide Step 1, show Step 2
+      document.getElementById('unitStep').style.display = 'none';
+      document.getElementById('questionTypeStep').style.display = 'block';
+    });
+
+    // Back button - go back to unit selection
+    document.getElementById('backToUnits').addEventListener('click', () => {
+      document.getElementById('questionTypeStep').style.display = 'none';
+      document.getElementById('unitStep').style.display = 'block';
+    });
+
+    // Start unit exam with selected question type
+    document.getElementById('startUnitExam').addEventListener('click', async () => {
+      const selectedQuestionType = document.querySelector('input[name="questionType"]:checked');
+
+      if (!selectedQuestionType) {
+        Toast.warning('Please select a question type');
         return;
       }
 
+      const questionType = selectedQuestionType.value;
+
       try {
-        const exam = await api.startExam(templateId, 'unit_practice', selectedUnits);
+        // Call API to start exam with units and question type
+        const exam = await api.startUnitExam(selectedUnitsForExam, questionType);
         Toast.success('Exam started successfully!');
         setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_id}`, 1000);
       } catch (error) {

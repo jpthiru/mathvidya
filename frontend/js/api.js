@@ -177,6 +177,13 @@ class ApiClient {
     });
   }
 
+  async startUnitExam(units, questionType) {
+    return this.post('/exams/start-unit-practice', {
+      selected_units: units,
+      question_type: questionType,
+    });
+  }
+
   async getExamInstance(examId) {
     return this.get(`/exams/${examId}`);
   }
