@@ -1,0 +1,7 @@
+# Ignore backup files (they contain sensitive data)
+backups/
+*.sql
+*.sql.gz
+
+# Keep the backups directory structure
+!backups/.gitkeep
