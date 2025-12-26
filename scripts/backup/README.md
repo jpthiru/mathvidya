@@ -1,33 +1,72 @@
-# Mathvidya Database Backup & Restore
+# Mathvidya Database Backup & Restore (AWS)
 
-This directory contains scripts to backup and restore the PostgreSQL database running in Docker.
+Database backup and restore scripts for the Mathvidya PostgreSQL database running on AWS EC2.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  AWS EC2 Instance                                           │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Docker                                              │   │
+│  │  ┌─────────────────┐  ┌───────────────────────────┐ │   │
+│  │  │ mathvidya-      │  │ mathvidya-backend         │ │   │
+│  │  │ postgres        │  │ celery-worker             │ │   │
+│  │  │ (PostgreSQL 14) │  │ celery-beat               │ │   │
+│  │  └─────────────────┘  └───────────────────────────┘ │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                            │                                │
+│  /opt/mathvidya/backups/   │  (local backup storage)       │
+└────────────────────────────┼────────────────────────────────┘
+                             │
+                             ▼
+                    ┌────────────────────┐
+                    │  AWS S3            │
+                    │  mathvidya-backups │
+                    │  /db-backups/      │
+                    │    /2024/12/       │
+                    └────────────────────┘
+```
 
 ## Quick Start
 
-### Create a Local Backup
+### 1. Deploy Scripts to EC2
 
-**Linux/Mac (Git Bash on Windows):**
+From your local machine:
 ```bash
-cd scripts/backup
-./backup-local.sh
+# SSH into EC2
+ssh -i ~/.ssh/mathvidya-key ec2-user@<EC2_IP>
+
+# Create scripts directory
+mkdir -p /opt/mathvidya/scripts/backup
+cd /opt/mathvidya/scripts/backup
+
+# Copy scripts (or clone from git)
+# The scripts are in: scripts/backup/
 ```
 
-**Windows CMD:**
-```cmd
-cd scripts\backup
-backup-local.bat
-```
+### 2. Create a Backup
 
-### Restore from Backup
-
-**Linux/Mac:**
+On the EC2 instance:
 ```bash
-./restore.sh ./backups/mathvidya_backup_20241226_120000.sql.gz
+cd /opt/mathvidya/scripts/backup
+./backup-aws.sh
 ```
 
-**Windows:**
-```cmd
-restore.bat .\backups\mathvidya_backup_20241226_120000.sql
+### 3. List Available Backups
+
+```bash
+./list-backups.sh
+```
+
+### 4. Restore from Backup
+
+```bash
+# From local file
+./restore-aws.sh /opt/mathvidya/backups/mathvidya_backup_20241226_120000.sql.gz
+
+# From S3
+./restore-aws.sh s3://mathvidya-backups/db-backups/2024/12/mathvidya_backup_20241226_120000.sql.gz
 ```
 
 ---
@@ -36,158 +75,142 @@ restore.bat .\backups\mathvidya_backup_20241226_120000.sql
 
 | Script | Description |
 |--------|-------------|
-| `backup-local.sh` / `.bat` | Creates local backup with rotation |
-| `backup-s3.sh` | Uploads backup to AWS S3 |
-| `restore.sh` / `.bat` | Restores database from backup file |
+| `backup-aws.sh` | Creates backup and uploads to S3 |
+| `restore-aws.sh` | Restores from local file or S3 |
+| `list-backups.sh` | Lists all available backups |
+
+### Local-only Scripts (for development)
+
+| Script | Description |
+|--------|-------------|
+| `backup-local.sh` | Creates local backup only (Windows/Linux) |
+| `restore.sh` | Restores locally (Windows/Linux) |
 
 ---
 
 ## Detailed Usage
 
-### 1. Local Backup (`backup-local.sh`)
+### backup-aws.sh
 
-Creates a compressed SQL dump and stores it locally. Automatically rotates old backups.
-
-```bash
-# Default: saves to ./backups, keeps last 7 backups
-./backup-local.sh
-
-# Custom backup directory
-./backup-local.sh /path/to/backups
-
-# Custom directory and retention count (keep 14 backups)
-./backup-local.sh /path/to/backups 14
-```
-
-**Output:**
-```
-./backups/mathvidya_backup_20241226_120000.sql.gz
-```
-
-### 2. S3 Backup (`backup-s3.sh`)
-
-Creates a local backup and uploads it to AWS S3. Useful for offsite disaster recovery.
-
-**Prerequisites:**
-- AWS CLI installed (`pip install awscli`)
-- AWS credentials configured (`aws configure`)
-- S3 bucket exists with write permissions
+Creates a compressed SQL dump and uploads to S3.
 
 ```bash
-# Uses S3_BUCKET from .env file
-./backup-s3.sh
+# Uses environment variables from /opt/mathvidya/.env
+./backup-aws.sh
 
-# Specify bucket explicitly
-./backup-s3.sh mathvidya-production
-
-# Custom bucket and prefix
-./backup-s3.sh mathvidya-production db-backups
+# Or specify bucket explicitly
+./backup-aws.sh mathvidya-backups
 ```
 
-**S3 Path Structure:**
-```
-s3://mathvidya-production/db-backups/2024/12/mathvidya_backup_20241226_120000.sql.gz
+**What it does:**
+1. Dumps PostgreSQL database to compressed `.sql.gz` file
+2. Uploads to S3 with date-based folder structure: `s3://bucket/db-backups/2024/12/file.sql.gz`
+3. Uses STANDARD_IA storage class (cost-effective for backups)
+4. Keeps last 3 local backups on EC2 (saves disk space)
+
+**Environment variables:**
+```bash
+S3_BACKUP_BUCKET=mathvidya-backups
+POSTGRES_USER=mathvidya_user
+POSTGRES_DB=mathvidya
+AWS_REGION=ap-south-1
 ```
 
-### 3. Restore (`restore.sh`)
+### restore-aws.sh
 
-Restores the database from a backup file. **Warning: This replaces all existing data!**
+Restores database from a backup file or S3 path.
 
 ```bash
-# Restore from local backup
-./restore.sh ./backups/mathvidya_backup_20241226_120000.sql.gz
+# From local backup
+./restore-aws.sh /opt/mathvidya/backups/mathvidya_backup_20241226_120000.sql.gz
 
-# Restore from S3 (download first)
-aws s3 cp s3://mathvidya-production/db-backups/2024/12/mathvidya_backup_20241226_120000.sql.gz ./
-./restore.sh mathvidya_backup_20241226_120000.sql.gz
+# From S3 (downloads automatically)
+./restore-aws.sh s3://mathvidya-backups/db-backups/2024/12/mathvidya_backup_20241226_120000.sql.gz
 ```
 
-**Safety Features:**
-- Creates a pre-restore backup before making any changes
-- Requires explicit "yes" confirmation
-- Verifies table counts after restore
+**What it does:**
+1. Downloads from S3 if needed
+2. Creates a pre-restore backup (safety)
+3. Stops backend services
+4. Drops and recreates database
+5. Restores data
+6. Restarts backend services
+7. Verifies table counts
 
 ---
 
-## Automated Backups
+## Automated Backups (Cron)
 
-### Option 1: Windows Task Scheduler
+### Set up daily backups at 2 AM IST
 
-1. Open Task Scheduler
-2. Create Basic Task → "Mathvidya Daily Backup"
-3. Trigger: Daily at 2:00 AM
-4. Action: Start a program
-   - Program: `C:\path\to\mathvidya\scripts\backup\backup-local.bat`
-   - Start in: `C:\path\to\mathvidya\scripts\backup`
-
-### Option 2: Linux Cron Job
-
+SSH into EC2 and run:
 ```bash
 # Edit crontab
 crontab -e
 
-# Add daily backup at 2 AM
-0 2 * * * cd /path/to/mathvidya/scripts/backup && ./backup-local.sh >> /var/log/mathvidya-backup.log 2>&1
-
-# Add weekly S3 backup on Sundays at 3 AM
-0 3 * * 0 cd /path/to/mathvidya/scripts/backup && ./backup-s3.sh >> /var/log/mathvidya-s3-backup.log 2>&1
+# Add this line (2 AM IST = 8:30 PM UTC previous day)
+30 20 * * * /opt/mathvidya/scripts/backup/backup-aws.sh >> /var/log/mathvidya-backup.log 2>&1
 ```
 
-### Option 3: Docker Cron Container
+### Verify cron is working
 
-Add to `docker-compose.yml`:
+```bash
+# Check cron logs
+tail -f /var/log/mathvidya-backup.log
 
-```yaml
-backup-cron:
-  image: postgres:14-alpine
-  volumes:
-    - ./scripts/backup:/backup
-    - ./backups:/backups
-  environment:
-    - PGHOST=postgres
-    - PGUSER=mathvidya_user
-    - PGPASSWORD=mathvidya_password
-    - PGDATABASE=mathvidya
-  command: >
-    sh -c "echo '0 2 * * * pg_dump -U $$PGUSER $$PGDATABASE | gzip > /backups/mathvidya_backup_$$(date +%Y%m%d_%H%M%S).sql.gz' | crontab - && crond -f"
-  depends_on:
-    - postgres
+# List cron jobs
+crontab -l
 ```
 
 ---
 
-## S3 Lifecycle Policy (Recommended)
+## S3 Lifecycle Policy
 
-Set up automatic cleanup in S3 to manage storage costs:
+Configure S3 to automatically manage old backups and reduce storage costs.
 
-```json
-{
-  "Rules": [
-    {
-      "ID": "Delete old backups",
-      "Status": "Enabled",
-      "Filter": {
-        "Prefix": "db-backups/"
-      },
-      "Expiration": {
-        "Days": 90
-      },
-      "Transitions": [
-        {
-          "Days": 30,
-          "StorageClass": "GLACIER"
-        }
-      ]
-    }
-  ]
-}
-```
+### Via AWS Console:
 
-Apply via AWS Console or CLI:
+1. Go to S3 → mathvidya-backups → Management → Lifecycle rules
+2. Create rule:
+   - Name: `backup-lifecycle`
+   - Prefix: `db-backups/`
+   - Transitions:
+     - Move to Glacier after 30 days
+   - Expiration:
+     - Delete after 90 days
+
+### Via AWS CLI:
+
 ```bash
 aws s3api put-bucket-lifecycle-configuration \
-  --bucket mathvidya-production \
-  --lifecycle-configuration file://lifecycle.json
+  --bucket mathvidya-backups \
+  --lifecycle-configuration '{
+    "Rules": [
+      {
+        "ID": "backup-lifecycle",
+        "Status": "Enabled",
+        "Filter": { "Prefix": "db-backups/" },
+        "Transitions": [
+          { "Days": 30, "StorageClass": "GLACIER" }
+        ],
+        "Expiration": { "Days": 90 }
+      }
+    ]
+  }'
+```
+
+---
+
+## Remote Backup (from local machine)
+
+If you want to trigger backups from your local machine:
+
+```bash
+# Run backup on EC2 remotely
+ssh -i ~/.ssh/mathvidya-key ec2-user@<EC2_IP> "/opt/mathvidya/scripts/backup/backup-aws.sh"
+
+# Download latest backup to local machine
+ssh -i ~/.ssh/mathvidya-key ec2-user@<EC2_IP> "cat /opt/mathvidya/backups/\$(ls -t /opt/mathvidya/backups/mathvidya_backup_*.sql.gz | head -1)" > local_backup.sql.gz
 ```
 
 ---
@@ -197,55 +220,56 @@ aws s3api put-bucket-lifecycle-configuration \
 ### "Container not running" Error
 
 ```bash
-# Start the database container
-docker-compose up -d postgres
-
-# Verify it's running
-docker ps | grep mathvidya-postgres
+cd /opt/mathvidya
+docker-compose -f docker-compose.prod.yml ps
+docker-compose -f docker-compose.prod.yml up -d postgres
 ```
 
-### "Permission denied" on restore
-
-The restore script terminates existing connections. If issues persist:
+### "Permission denied" Error
 
 ```bash
-# Restart backend to release connections
-docker-compose restart backend
-
-# Then retry restore
-./restore.sh backup_file.sql.gz
+chmod +x /opt/mathvidya/scripts/backup/*.sh
 ```
 
 ### AWS Credentials Error
 
+EC2 should use IAM Instance Role for S3 access. If not configured:
 ```bash
-# Configure AWS CLI
+# Check IAM role
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+
+# Or configure AWS CLI
 aws configure
-
-# Test credentials
-aws sts get-caller-identity
-
-# Test S3 access
-aws s3 ls s3://mathvidya-production/
 ```
 
 ### Backup File is Empty
 
-Check if the database has data:
+Check database has data:
 ```bash
 docker exec mathvidya-postgres psql -U mathvidya_user -d mathvidya -c "SELECT COUNT(*) FROM questions;"
+```
+
+### Disk Space Issues on EC2
+
+The scripts keep only 3 local backups. To free more space:
+```bash
+# Remove old backups (keep only latest)
+ls -t /opt/mathvidya/backups/mathvidya_backup_*.sql.gz | tail -n +2 | xargs rm -f
+
+# Check disk usage
+df -h
 ```
 
 ---
 
 ## Best Practices
 
-1. **Test restores regularly** - A backup is only useful if you can restore it
-2. **Keep at least one offsite backup** - Use S3 or another cloud storage
-3. **Automate backups** - Set up cron or Task Scheduler
-4. **Monitor backup sizes** - Sudden changes may indicate issues
-5. **Document restore procedures** - Know what to do in an emergency
-6. **Backup before major changes** - Always backup before migrations or updates
+1. **Automated backups** - Set up cron for daily backups
+2. **Test restores regularly** - At least monthly
+3. **Monitor backup sizes** - Sudden changes may indicate issues
+4. **Keep S3 lifecycle rules** - Manage costs with Glacier transition
+5. **Backup before migrations** - Always backup before schema changes
+6. **Document EC2 credentials** - Keep SSH key secure
 
 ---
 
@@ -253,6 +277,42 @@ docker exec mathvidya-postgres psql -U mathvidya_user -d mathvidya -c "SELECT CO
 
 | Location | Purpose |
 |----------|---------|
-| `./backups/` | Local backup storage |
-| `s3://bucket/db-backups/` | S3 backup storage |
-| `./backups/pre_restore_*.sql` | Safety backups before restore |
+| `/opt/mathvidya/scripts/backup/` | Backup scripts on EC2 |
+| `/opt/mathvidya/backups/` | Local backups on EC2 |
+| `s3://mathvidya-backups/db-backups/` | S3 backup storage |
+| `/var/log/mathvidya-backup.log` | Backup cron logs |
+
+---
+
+## Recovery Scenarios
+
+### Scenario 1: Application Error (recent data loss)
+
+```bash
+# List recent backups
+./list-backups.sh
+
+# Restore from today's backup
+./restore-aws.sh /opt/mathvidya/backups/mathvidya_backup_20241226_020000.sql.gz
+```
+
+### Scenario 2: EC2 Instance Lost
+
+1. Launch new EC2 instance
+2. Set up Docker and deploy application
+3. Download latest backup from S3:
+   ```bash
+   aws s3 cp s3://mathvidya-backups/db-backups/2024/12/mathvidya_backup_20241226_020000.sql.gz .
+   ```
+4. Restore database
+
+### Scenario 3: Need to Rollback Migration
+
+```bash
+# Pre-migration backup is created automatically
+# Find it in S3
+aws s3 ls s3://mathvidya-backups/db-backups/pre-restore/
+
+# Restore pre-migration state
+./restore-aws.sh s3://mathvidya-backups/db-backups/pre-restore/pre_restore_20241226_120000.sql.gz
+```
