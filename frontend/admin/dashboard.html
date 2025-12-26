@@ -252,7 +252,7 @@
           <a href="dashboard.html" class="nav-link active">
             <i class="fas fa-home"></i> Dashboard
           </a>
-          <a href="#" class="nav-link">
+          <a href="users.html" class="nav-link">
             <i class="fas fa-users"></i> Users
           </a>
           <a href="#" class="nav-link">
@@ -324,7 +324,7 @@
 
     <!-- Action Cards -->
     <div class="action-cards">
-      <a href="#" class="action-card">
+      <a href="users.html" class="action-card">
         <i class="fas fa-user-plus"></i>
         <h3>Manage Users</h3>
         <p>Add, edit, or remove users from the system</p>
@@ -376,6 +376,22 @@
       api.clearToken();
       window.location.href = '../login.html';
     });
+
+    // Load admin stats
+    async function loadStats() {
+      try {
+        const stats = await api.get('/admin/stats');
+        document.getElementById('totalUsers').textContent = stats.total_users || 0;
+        document.getElementById('totalTeachers').textContent = stats.teachers || 0;
+        document.getElementById('totalStudents').textContent = stats.students || 0;
+        document.getElementById('totalQuestions').textContent = '-'; // Questions endpoint not yet implemented
+      } catch (error) {
+        console.log('Error loading stats:', error);
+      }
+    }
+
+    // Load stats on page load
+    loadStats();
   </script>
 </body>
 </html>
