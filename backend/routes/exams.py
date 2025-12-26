@@ -224,6 +224,44 @@ async def save_mcq_answer(
     )
 
 
+@router.post("/exams/{exam_instance_id}/submit", response_model=MCQResultResponse)
+async def submit_exam(
+    exam_instance_id: str,
+    current_user: User = Depends(require_student),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Submit the exam and evaluate MCQ answers
+
+    - Retrieves saved answers from exam_snapshot
+    - Auto-evaluates MCQ answers
+    - Updates exam status to 'evaluated'
+    - Returns score and percentage
+    """
+    try:
+        total, correct, score = await exam_service.submit_exam(
+            session,
+            exam_instance_id,
+            str(current_user.user_id)
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+    percentage = (correct / total * 100) if total > 0 else 0
+
+    return MCQResultResponse(
+        exam_instance_id=exam_instance_id,
+        total_mcq_questions=total,
+        correct_answers=correct,
+        mcq_score=score,
+        mcq_percentage=round(percentage, 2),
+        status="evaluated"
+    )
+
+
 @router.post("/exams/submit-mcq", response_model=MCQResultResponse)
 async def submit_mcq_answers(
     request: SubmitMCQRequest,

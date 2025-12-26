@@ -326,6 +326,74 @@ class ExamService:
         await session.commit()
 
     @staticmethod
+    async def submit_exam(
+        session: AsyncSession,
+        exam_instance_id: str,
+        student_id: str
+    ) -> Tuple[int, int, float]:
+        """
+        Submit exam and evaluate MCQ answers from saved snapshot
+
+        Args:
+            session: Database session
+            exam_instance_id: Exam instance ID
+            student_id: Student ID
+
+        Returns:
+            Tuple of (total_questions, correct_count, score)
+
+        Raises:
+            ValueError: If exam not found or not in correct status
+        """
+        from datetime import datetime, timezone
+
+        # Get exam instance
+        exam = await session.get(ExamInstance, exam_instance_id)
+        if not exam or str(exam.student_user_id) != student_id:
+            raise ValueError("Exam not found")
+
+        if exam.status not in [ExamStatus.IN_PROGRESS.value, ExamStatus.CREATED.value]:
+            raise ValueError("Exam is not in progress")
+
+        # Get saved answers from snapshot
+        snapshot = exam.exam_snapshot or {}
+        student_answers = snapshot.get('student_answers', {})
+        question_ids = snapshot.get('question_ids', [])
+
+        # Calculate score
+        correct_count = 0
+        total_questions = len(question_ids)
+
+        for idx, question_id in enumerate(question_ids, 1):
+            question_num_str = str(idx)
+            selected_option = student_answers.get(question_num_str)
+
+            if not selected_option:
+                continue
+
+            # Get question to check correct answer
+            question = await session.get(Question, question_id)
+            if not question:
+                continue
+
+            if question.correct_option == selected_option:
+                correct_count += 1
+
+        # Calculate score based on marks per question
+        marks_per_question = snapshot.get('marks_per_question', 1)
+        score = correct_count * marks_per_question
+
+        # Update exam status and scores
+        exam.status = ExamStatus.EVALUATED.value
+        exam.mcq_score = score
+        exam.total_score = score
+        exam.submitted_at = datetime.now(timezone.utc)
+
+        await session.commit()
+
+        return total_questions, correct_count, score
+
+    @staticmethod
     async def submit_mcq_answers(
         session: AsyncSession,
         exam_instance_id: str,
