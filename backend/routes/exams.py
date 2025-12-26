@@ -18,6 +18,8 @@ from schemas.exam import (
     StartUnitPracticeRequest,
     ExamInstanceResponse,
     QuestionResponse,
+    SaveMCQAnswerRequest,
+    SaveMCQAnswerResponse,
     SubmitMCQRequest,
     MCQResultResponse,
     UploadAnswerSheetRequest,
@@ -184,6 +186,41 @@ async def start_unit_practice(
         questions=question_responses,
         mcq_score=exam_instance.mcq_score,
         total_score=exam_instance.total_score
+    )
+
+
+@router.post("/exams/{exam_instance_id}/mcq", response_model=SaveMCQAnswerResponse)
+async def save_mcq_answer(
+    exam_instance_id: str,
+    request: SaveMCQAnswerRequest,
+    current_user: User = Depends(require_student),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Save a single MCQ answer during exam
+
+    - Saves answer to exam_snapshot for persistence
+    - Does not evaluate, just stores the selection
+    - Can be called multiple times to update answers
+    """
+    try:
+        await exam_service.save_mcq_answer(
+            session,
+            exam_instance_id,
+            str(current_user.user_id),
+            request.question_number,
+            request.selected_option
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+    return SaveMCQAnswerResponse(
+        success=True,
+        question_number=request.question_number,
+        selected_option=request.selected_option
     )
 
 

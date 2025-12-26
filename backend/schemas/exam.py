@@ -70,6 +70,25 @@ class ExamInstanceResponse(BaseModel):
         from_attributes = True
 
 
+class SaveMCQAnswerRequest(BaseModel):
+    """Save a single MCQ answer during exam"""
+    question_number: int
+    selected_option: str  # A, B, C, or D
+
+    @validator('selected_option')
+    def validate_option(cls, v):
+        if v not in ['A', 'B', 'C', 'D']:
+            raise ValueError("selected_option must be A, B, C, or D")
+        return v
+
+
+class SaveMCQAnswerResponse(BaseModel):
+    """Response for saving MCQ answer"""
+    success: bool
+    question_number: int
+    selected_option: str
+
+
 class SubmitMCQRequest(BaseModel):
     """Submit MCQ answers"""
     exam_instance_id: str

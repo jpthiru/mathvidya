@@ -284,6 +284,48 @@ class ExamService:
         return exam_instance, questions
 
     @staticmethod
+    async def save_mcq_answer(
+        session: AsyncSession,
+        exam_instance_id: str,
+        student_id: str,
+        question_number: int,
+        selected_option: str
+    ) -> None:
+        """
+        Save a single MCQ answer during exam
+
+        Args:
+            session: Database session
+            exam_instance_id: Exam instance ID
+            student_id: Student ID
+            question_number: Question number (1-indexed)
+            selected_option: Selected option (A, B, C, D)
+
+        Raises:
+            ValueError: If exam not found or not in correct status
+        """
+        # Get exam instance
+        exam = await session.get(ExamInstance, exam_instance_id)
+        if not exam or str(exam.student_user_id) != student_id:
+            raise ValueError("Exam not found")
+
+        if exam.status not in [ExamStatus.IN_PROGRESS.value, ExamStatus.CREATED.value]:
+            raise ValueError("Exam is not in progress")
+
+        # Initialize answers dict in snapshot if not present
+        snapshot = exam.exam_snapshot or {}
+        if 'student_answers' not in snapshot:
+            snapshot['student_answers'] = {}
+
+        # Save the answer (key by question number)
+        snapshot['student_answers'][str(question_number)] = selected_option
+
+        # Update the snapshot
+        exam.exam_snapshot = snapshot
+
+        await session.commit()
+
+    @staticmethod
     async def submit_mcq_answers(
         session: AsyncSession,
         exam_instance_id: str,
