@@ -903,8 +903,27 @@
       try {
         // Call API to start exam with units and question type
         const exam = await api.startUnitExam(selectedUnitsForExam, questionType);
+
+        // Transform exam data for take-exam.html format
+        const examData = {
+          exam_id: exam.exam_instance_id,
+          duration_minutes: exam.duration_minutes,
+          total_marks: exam.total_marks,
+          questions: exam.questions.map(q => ({
+            ...q,
+            option_a: q.options ? q.options[0] : null,
+            option_b: q.options ? q.options[1] : null,
+            option_c: q.options ? q.options[2] : null,
+            option_d: q.options ? q.options[3] : null,
+            image_url: q.question_image_url
+          }))
+        };
+
+        // Store exam data for take-exam.html
+        localStorage.setItem('current_exam', JSON.stringify(examData));
+
         Toast.success('Exam started successfully!');
-        setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_id}`, 1000);
+        setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_instance_id}`, 1000);
       } catch (error) {
         console.error('Error starting exam:', error);
         Toast.error(error.message || 'Failed to start exam');
@@ -922,8 +941,27 @@
 
       try {
         const exam = await api.startExam(templateId, 'board_exam', []);
+
+        // Transform exam data for take-exam.html format
+        const examData = {
+          exam_id: exam.exam_instance_id,
+          duration_minutes: exam.duration_minutes,
+          total_marks: exam.total_marks,
+          questions: exam.questions.map(q => ({
+            ...q,
+            option_a: q.options ? q.options[0] : null,
+            option_b: q.options ? q.options[1] : null,
+            option_c: q.options ? q.options[2] : null,
+            option_d: q.options ? q.options[3] : null,
+            image_url: q.question_image_url
+          }))
+        };
+
+        // Store exam data for take-exam.html
+        localStorage.setItem('current_exam', JSON.stringify(examData));
+
         Toast.success('Board exam started successfully!');
-        setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_id}`, 1000);
+        setTimeout(() => window.location.href = `take-exam.html?id=${exam.exam_instance_id}`, 1000);
       } catch (error) {
         console.error('Error starting exam:', error);
         Toast.error(error.message || 'Failed to start board exam');
