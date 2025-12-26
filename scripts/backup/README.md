@@ -145,21 +145,41 @@ Restores database from a backup file or S3 path.
 
 SSH into EC2 and run:
 ```bash
+# Create log directory
+sudo mkdir -p /var/log/mathvidya
+sudo chown ec2-user:ec2-user /var/log/mathvidya
+
 # Edit crontab
 crontab -e
 
 # Add this line (2 AM IST = 8:30 PM UTC previous day)
-30 20 * * * /opt/mathvidya/scripts/backup/backup-aws.sh >> /var/log/mathvidya-backup.log 2>&1
+# Log file includes date stamp for easy identification
+30 20 * * * /opt/mathvidya/scripts/backup/backup-aws.sh >> /var/log/mathvidya/backup_$(date +\%Y\%m\%d_\%H\%M\%S).log 2>&1
+```
+
+**Note:** The `%` signs need to be escaped as `\%` in crontab.
+
+### Alternative: Single rotating log file
+
+If you prefer a single log file (easier to monitor):
+```bash
+30 20 * * * /opt/mathvidya/scripts/backup/backup-aws.sh >> /var/log/mathvidya/backup.log 2>&1
 ```
 
 ### Verify cron is working
 
 ```bash
-# Check cron logs
-tail -f /var/log/mathvidya-backup.log
-
 # List cron jobs
 crontab -l
+
+# Check logs (timestamped files)
+ls -la /var/log/mathvidya/
+
+# View latest log
+cat /var/log/mathvidya/backup_*.log | tail -50
+
+# Or for single log file
+tail -f /var/log/mathvidya/backup.log
 ```
 
 ---
