@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Results - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-md);
+      color: var(--color-gray-700);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .back-btn:hover {
+      background: var(--color-gray-200);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Results Card */
+    .results-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .results-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .results-header h1 {
+      color: white;
+      margin: 0 0 0.5rem 0;
+      font-size: var(--text-2xl);
+    }
+
+    .results-header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .score-display {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 1.5rem;
+    }
+
+    .score-item {
+      text-align: center;
+    }
+
+    .score-value {
+      font-size: var(--text-4xl);
+      font-weight: 700;
+    }
+
+    .score-label {
+      font-size: var(--text-sm);
+      opacity: 0.9;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 2rem;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.5rem;
+      font-size: 1.25rem;
+      color: white;
+    }
+
+    .stat-icon.primary { background: var(--gradient-primary); }
+    .stat-icon.success { background: var(--gradient-success); }
+    .stat-icon.warning { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .stat-icon.info { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); }
+
+    .stat-value {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-gray-800);
+    }
+
+    .stat-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+    }
+
+    /* Questions Review */
+    .questions-section {
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: var(--text-xl);
+      margin: 0 0 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .question-card {
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: var(--color-gray-50);
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .question-number {
+      font-weight: 600;
+      color: var(--color-gray-700);
+    }
+
+    .question-result {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+
+    .question-result.correct {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .question-result.incorrect {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .question-result.unanswered {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .question-body {
+      padding: 1.5rem;
+    }
+
+    .question-text {
+      font-size: var(--text-base);
+      color: var(--color-gray-800);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-gray-200);
+    }
+
+    .option-item.selected {
+      border-color: var(--color-primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .option-item.correct {
+      border-color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .option-item.incorrect {
+      border-color: #EF4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .option-indicator {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--text-sm);
+      flex-shrink: 0;
+      background: var(--color-gray-100);
+      color: var(--color-gray-600);
+    }
+
+    .option-item.correct .option-indicator {
+      background: #10B981;
+      color: white;
+    }
+
+    .option-item.incorrect .option-indicator {
+      background: #EF4444;
+      color: white;
+    }
+
+    .option-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .answer-info {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+    }
+
+    .answer-info strong {
+      color: var(--color-gray-700);
+    }
+
+    /* Loading State */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+      color: var(--color-gray-500);
+    }
+
+    .loading i {
+      font-size: 3rem;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .score-display {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">
+          <i class="fas fa-arrow-left"></i>
+          Back to Dashboard
+        </button>
+      </div>
+      <a href="../index.html" class="logo">
+        <i class="fas fa-calculator"></i>
+        Mathvidya
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Loading State -->
+    <div class="loading" id="loadingState">
+      <i class="fas fa-spinner"></i>
+      <p>Loading exam results...</p>
+    </div>
+
+    <!-- Results Content (hidden initially) -->
+    <div id="resultsContent" style="display: none;">
+      <!-- Results Card -->
+      <div class="results-card">
+        <div class="results-header">
+          <h1 id="examTitle">Exam Results</h1>
+          <p id="examDate">-</p>
+          <div class="score-display">
+            <div class="score-item">
+              <div class="score-value" id="scoreValue">0/0</div>
+              <div class="score-label">Score</div>
+            </div>
+            <div class="score-item">
+              <div class="score-value" id="percentageValue">0%</div>
+              <div class="score-label">Percentage</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-icon success">
+              <i class="fas fa-check"></i>
+            </div>
+            <div class="stat-value" id="correctCount">0</div>
+            <div class="stat-label">Correct</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon warning">
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="stat-value" id="incorrectCount">0</div>
+            <div class="stat-label">Incorrect</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon info">
+              <i class="fas fa-minus"></i>
+            </div>
+            <div class="stat-value" id="unansweredCount">0</div>
+            <div class="stat-label">Unanswered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon primary">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value" id="timeTaken">-</div>
+            <div class="stat-label">Time Taken</div>
+          </div>
+        </div>
+
+        <div class="questions-section">
+          <h2 class="section-title">
+            <i class="fas fa-list-check"></i>
+            Question Review
+          </h2>
+          <div id="questionsContainer">
+            <!-- Questions will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated() || getUserRole() !== 'student') {
+      window.location.href = '../login.html';
+    }
+
+    // Get exam ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const examId = urlParams.get('id');
+
+    if (!examId) {
+      Toast.error('No exam ID provided');
+      setTimeout(() => window.location.href = 'dashboard.html', 1500);
+    }
+
+    // Load exam results
+    async function loadExamResults() {
+      try {
+        // Try to get from API
+        const exam = await api.get(`/exams/${examId}/results`);
+        displayResults(exam);
+      } catch (error) {
+        console.error('Error loading exam results:', error);
+
+        // Try to get basic exam info
+        try {
+          const exam = await api.get(`/exams/history`);
+          const examData = exam.find(e => e.exam_instance_id === examId);
+          if (examData) {
+            displayBasicResults(examData);
+          } else {
+            throw new Error('Exam not found');
+          }
+        } catch (err) {
+          Toast.error('Failed to load exam results');
+          setTimeout(() => window.location.href = 'dashboard.html', 2000);
+        }
+      }
+    }
+
+    // Display full results with questions
+    function displayResults(exam) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('resultsContent').style.display = 'block';
+
+      // Set header info
+      const examTypeDisplay = exam.exam_type === 'unit_practice' ? 'Unit Practice' :
+                              exam.exam_type === 'board_exam' ? 'Board Exam' : exam.exam_type;
+      document.getElementById('examTitle').textContent = `${examTypeDisplay} - ${exam.class_level || 'Class XII'}`;
+      document.getElementById('examDate').textContent = formatDate(exam.started_at || exam.start_time);
+
+      // Set scores
+      const totalScore = exam.total_score || exam.mcq_score || 0;
+      const totalMarks = exam.total_marks || 0;
+      const percentage = exam.percentage || (totalMarks > 0 ? (totalScore / totalMarks) * 100 : 0);
+
+      document.getElementById('scoreValue').textContent = `${totalScore}/${totalMarks}`;
+      document.getElementById('percentageValue').textContent = `${percentage.toFixed(1)}%`;
+
+      // Set stats
+      const correct = exam.correct_count || exam.correct_answers || 0;
+      const total = exam.total_questions || totalMarks;
+      const incorrect = exam.incorrect_count || (total - correct - (exam.unanswered_count || 0));
+      const unanswered = exam.unanswered_count || 0;
+
+      document.getElementById('correctCount').textContent = correct;
+      document.getElementById('incorrectCount').textContent = incorrect > 0 ? incorrect : 0;
+      document.getElementById('unansweredCount').textContent = unanswered;
+
+      // Time taken
+      if (exam.time_taken_minutes) {
+        document.getElementById('timeTaken').textContent = `${exam.time_taken_minutes} min`;
+      } else if (exam.started_at && exam.submitted_at) {
+        const start = new Date(exam.started_at);
+        const end = new Date(exam.submitted_at);
+        const minutes = Math.round((end - start) / 60000);
+        document.getElementById('timeTaken').textContent = `${minutes} min`;
+      }
+
+      // Display questions if available
+      if (exam.questions && exam.questions.length > 0) {
+        displayQuestions(exam.questions, exam.answers || exam.student_answers || {});
+      } else {
+        document.getElementById('questionsContainer').innerHTML = `
+          <p style="color: var(--color-gray-500); text-align: center; padding: 2rem;">
+            Detailed question review is not available for this exam.
+          </p>
+        `;
+      }
+
+      // Trigger MathJax
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
+    }
+
+    // Display basic results without detailed questions
+    function displayBasicResults(exam) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('resultsContent').style.display = 'block';
+
+      // Set header info
+      const examTypeDisplay = exam.exam_type === 'unit_practice' ? 'Unit Practice' :
+                              exam.exam_type === 'board_exam' ? 'Board Exam' : exam.exam_type;
+      document.getElementById('examTitle').textContent = `${examTypeDisplay} - ${exam.class_level || 'Class XII'}`;
+      document.getElementById('examDate').textContent = formatDate(exam.started_at);
+
+      // Set scores
+      const totalScore = exam.total_score || exam.mcq_score || 0;
+      const totalMarks = exam.total_marks || 0;
+      const percentage = exam.percentage || (totalMarks > 0 ? (totalScore / totalMarks) * 100 : 0);
+
+      document.getElementById('scoreValue').textContent = `${totalScore}/${totalMarks}`;
+      document.getElementById('percentageValue').textContent = `${percentage.toFixed(1)}%`;
+
+      // Estimate stats
+      document.getElementById('correctCount').textContent = totalScore;
+      document.getElementById('incorrectCount').textContent = totalMarks - totalScore;
+      document.getElementById('unansweredCount').textContent = '0';
+
+      // Time taken
+      if (exam.time_taken_minutes) {
+        document.getElementById('timeTaken').textContent = `${exam.time_taken_minutes} min`;
+      } else {
+        document.getElementById('timeTaken').textContent = '-';
+      }
+
+      // No detailed questions
+      document.getElementById('questionsContainer').innerHTML = `
+        <p style="color: var(--color-gray-500); text-align: center; padding: 2rem;">
+          <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+          Detailed question review is not available for this exam.<br>
+          Future exams will show complete question-by-question analysis.
+        </p>
+      `;
+    }
+
+    // Display questions with answers
+    function displayQuestions(questions, studentAnswers) {
+      const container = document.getElementById('questionsContainer');
+
+      container.innerHTML = questions.map((q, idx) => {
+        const questionNum = idx + 1;
+        const studentAnswer = studentAnswers[questionNum] || studentAnswers[q.question_id] || null;
+        const correctAnswer = q.correct_option;
+        const isCorrect = studentAnswer === correctAnswer;
+        const isAnswered = studentAnswer !== null;
+
+        let resultClass = 'unanswered';
+        let resultText = 'Unanswered';
+        let resultIcon = 'fa-minus';
+
+        if (isAnswered) {
+          if (isCorrect) {
+            resultClass = 'correct';
+            resultText = 'Correct';
+            resultIcon = 'fa-check';
+          } else {
+            resultClass = 'incorrect';
+            resultText = 'Incorrect';
+            resultIcon = 'fa-times';
+          }
+        }
+
+        const options = ['A', 'B', 'C', 'D'];
+        const optionTexts = q.options || [q.option_a, q.option_b, q.option_c, q.option_d];
+
+        return `
+          <div class="question-card">
+            <div class="question-header">
+              <span class="question-number">Question ${questionNum}</span>
+              <span class="question-result ${resultClass}">
+                <i class="fas ${resultIcon}"></i>
+                ${resultText}
+              </span>
+            </div>
+            <div class="question-body">
+              <div class="question-text">${q.question_text}</div>
+              <div class="options-list">
+                ${options.map((opt, i) => {
+                  let optionClass = '';
+                  if (opt === correctAnswer) optionClass = 'correct';
+                  else if (opt === studentAnswer && !isCorrect) optionClass = 'incorrect';
+                  else if (opt === studentAnswer) optionClass = 'selected';
+
+                  return `
+                    <div class="option-item ${optionClass}">
+                      <div class="option-indicator">${opt}</div>
+                      <div class="option-text">${optionTexts[i] || '-'}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              ${!isCorrect && isAnswered ? `
+                <div class="answer-info">
+                  <strong>Correct Answer:</strong> Option ${correctAnswer}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Trigger MathJax for rendered questions
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([container]);
+      }
+    }
+
+    // Initialize
+    loadExamResults();
+  </script>
+</body>
+</html>

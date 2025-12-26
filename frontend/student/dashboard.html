@@ -414,6 +414,21 @@
       color: #1E40AF;
     }
 
+    .status-evaluated {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .status-submitted-mcq {
+      background: #E0E7FF;
+      color: #3730A3;
+    }
+
+    .status-created {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
     /* Empty State */
     .empty-state {
       text-align: center;
@@ -838,31 +853,48 @@
       }
 
       emptyState.style.display = 'none';
-      tbody.innerHTML = exams.slice(0, 5).map(exam => `
-        <tr>
-          <td>
-            <strong>${exam.exam_type}</strong><br>
-            <small style="color: var(--color-gray-500);">${exam.units || 'Full Board'}</small>
-          </td>
-          <td>${formatDate(exam.created_at)}</td>
-          <td>
-            ${exam.score !== null
-              ? `<strong>${exam.score}/${exam.total_marks}</strong> (${((exam.score/exam.total_marks)*100).toFixed(1)}%)`
-              : '-'
-            }
-          </td>
-          <td>
-            <span class="status-badge status-${exam.status.toLowerCase().replace(' ', '-')}">
-              ${exam.status}
-            </span>
-          </td>
-          <td>
-            <a href="exam-details.html?id=${exam.id}" class="btn btn-ghost btn-sm">
-              <i class="fas fa-eye"></i> View
-            </a>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = exams.slice(0, 5).map(exam => {
+        // Map API fields to display fields
+        const examId = exam.exam_instance_id || exam.id;
+        const examDate = exam.started_at || exam.created_at;
+        const score = exam.total_score !== undefined ? exam.total_score : exam.score;
+        const totalMarks = exam.total_marks;
+        const percentage = exam.percentage !== undefined ? exam.percentage : (score && totalMarks ? (score/totalMarks)*100 : null);
+
+        // Format exam type display
+        const examTypeDisplay = exam.exam_type === 'unit_practice' ? 'Unit Practice' :
+                                exam.exam_type === 'board_exam' ? 'Board Exam' : exam.exam_type;
+
+        // Get status class
+        const statusClass = exam.status ? exam.status.toLowerCase().replace(/_/g, '-') : 'pending';
+        const statusDisplay = exam.status ? exam.status.replace(/_/g, ' ') : 'Pending';
+
+        return `
+          <tr>
+            <td>
+              <strong>${examTypeDisplay}</strong><br>
+              <small style="color: var(--color-gray-500);">${exam.class_level || ''}</small>
+            </td>
+            <td>${examDate ? formatDate(examDate) : '-'}</td>
+            <td>
+              ${score !== null && score !== undefined
+                ? `<strong>${score}/${totalMarks}</strong> (${percentage ? percentage.toFixed(1) : 0}%)`
+                : '-'
+              }
+            </td>
+            <td>
+              <span class="status-badge status-${statusClass}">
+                ${statusDisplay}
+              </span>
+            </td>
+            <td>
+              <a href="exam-results.html?id=${examId}" class="btn btn-ghost btn-sm">
+                <i class="fas fa-eye"></i> View
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // Store selected units for Step 2

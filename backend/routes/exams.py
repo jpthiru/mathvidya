@@ -262,6 +262,92 @@ async def submit_exam(
     )
 
 
+@router.get("/exams/{exam_instance_id}/results")
+async def get_exam_results(
+    exam_instance_id: str,
+    current_user: User = Depends(require_student),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Get detailed exam results with questions and answers
+
+    - Returns exam details, score, and question-by-question breakdown
+    - Only available for evaluated exams
+    """
+    from sqlalchemy import select
+
+    # Get exam instance
+    exam = await session.get(ExamInstance, exam_instance_id)
+    if not exam or str(exam.student_user_id) != str(current_user.user_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Exam not found"
+        )
+
+    # Get exam snapshot with question IDs and answers
+    snapshot = exam.exam_snapshot or {}
+    question_ids = snapshot.get('question_ids', [])
+    student_answers = snapshot.get('student_answers', {})
+
+    # Load questions
+    questions = []
+    correct_count = 0
+    incorrect_count = 0
+    unanswered_count = 0
+
+    for idx, q_id in enumerate(question_ids, 1):
+        question = await session.get(Question, q_id)
+        if question:
+            student_answer = student_answers.get(str(idx))
+            is_correct = student_answer == question.correct_option if student_answer else False
+
+            if student_answer is None:
+                unanswered_count += 1
+            elif is_correct:
+                correct_count += 1
+            else:
+                incorrect_count += 1
+
+            questions.append({
+                "question_id": str(question.question_id),
+                "question_number": idx,
+                "question_text": question.question_text,
+                "question_type": question.question_type,
+                "options": question.options,
+                "correct_option": question.correct_option,
+                "marks": question.marks,
+                "unit": question.unit,
+                "student_answer": student_answer,
+                "is_correct": is_correct
+            })
+
+    # Calculate time taken
+    time_taken_minutes = None
+    if exam.started_at and exam.submitted_at:
+        delta = exam.submitted_at - exam.started_at
+        time_taken_minutes = int(delta.total_seconds() / 60)
+
+    return {
+        "exam_instance_id": str(exam.exam_instance_id),
+        "exam_type": exam.exam_type,
+        "class_level": exam.class_level,
+        "status": exam.status,
+        "started_at": exam.started_at.isoformat() if exam.started_at else None,
+        "submitted_at": exam.submitted_at.isoformat() if exam.submitted_at else None,
+        "total_marks": exam.total_marks,
+        "mcq_score": exam.mcq_score,
+        "total_score": exam.total_score,
+        "percentage": exam.total_score / exam.total_marks * 100 if exam.total_marks and exam.total_score else 0,
+        "total_questions": len(questions),
+        "correct_count": correct_count,
+        "incorrect_count": incorrect_count,
+        "unanswered_count": unanswered_count,
+        "time_taken_minutes": time_taken_minutes,
+        "questions": questions,
+        "answers": student_answers
+    }
+
+
 @router.post("/exams/submit-mcq", response_model=MCQResultResponse)
 async def submit_mcq_answers(
     request: SubmitMCQRequest,
