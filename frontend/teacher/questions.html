@@ -1041,8 +1041,8 @@
             document.getElementById('optionC').value = '';
             document.getElementById('optionD').value = '';
             clearOptionPreviews();
-            // Keep first option selected as default
-            document.getElementById('correctA').checked = true;
+            // Clear all correct answer radio buttons (don't pre-select any)
+            document.querySelectorAll('input[name="correctOption"]').forEach(radio => radio.checked = false);
           }
 
           // Update modal title for new question

@@ -50,7 +50,7 @@ class ExamInstance(Base):
 
     # Foreign Keys
     student_user_id = Column(UUID(as_uuid=True), ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False, index=True)
-    template_id = Column(UUID(as_uuid=True), ForeignKey('exam_templates.template_id'), nullable=False)
+    template_id = Column(UUID(as_uuid=True), ForeignKey('exam_templates.template_id'), nullable=True)  # Nullable for unit practice exams
 
     # Immutable snapshot of exam (questions + template config)
     exam_snapshot = Column(JSONB, nullable=False)

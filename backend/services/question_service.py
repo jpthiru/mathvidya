@@ -50,7 +50,7 @@ class QuestionService:
             difficulty=question_data.get('difficulty', QuestionDifficulty.MEDIUM.value),
             tags=question_data.get('tags', []),
             created_by_user_id=created_by_user_id,
-            status=QuestionStatus.DRAFT.value,  # Start as draft
+            status=QuestionStatus.ACTIVE.value,  # Start as active for immediate availability
             version=1
         )
 
@@ -406,7 +406,7 @@ class QuestionService:
                     difficulty=q_data.get('difficulty', QuestionDifficulty.MEDIUM.value),
                     tags=q_data.get('tags', []),
                     created_by_user_id=created_by_user_id,
-                    status=QuestionStatus.DRAFT.value,
+                    status=QuestionStatus.ACTIVE.value,  # Start as active
                     version=1
                 )
 
