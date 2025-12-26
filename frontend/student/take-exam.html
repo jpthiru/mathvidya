@@ -932,10 +932,14 @@
 
         if (index === this.examData.questions.length - 1) {
           document.getElementById('nextBtn').innerHTML =
-            'Review <i class="fas fa-eye"></i>';
+            'Review & Submit <i class="fas fa-check-circle"></i>';
+          document.getElementById('nextBtn').classList.add('btn-success');
+          document.getElementById('nextBtn').classList.remove('btn-primary');
         } else {
           document.getElementById('nextBtn').innerHTML =
             'Next <i class="fas fa-chevron-right"></i>';
+          document.getElementById('nextBtn').classList.add('btn-primary');
+          document.getElementById('nextBtn').classList.remove('btn-success');
         }
 
         // Update mark review button
@@ -1065,10 +1069,13 @@
         }
       }
 
-      // Navigate to next question
+      // Navigate to next question (or show review/submit on last question)
       nextQuestion() {
         if (this.currentQuestionIndex < this.examData.questions.length - 1) {
           this.showQuestion(this.currentQuestionIndex + 1);
+        } else {
+          // On last question, show submit confirmation with review
+          this.confirmSubmit();
         }
       }
 
