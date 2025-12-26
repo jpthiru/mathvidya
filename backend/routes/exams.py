@@ -318,7 +318,9 @@ async def get_exam_results(
                 "marks": question.marks,
                 "unit": question.unit,
                 "student_answer": student_answer,
-                "is_correct": is_correct
+                "is_correct": is_correct,
+                "model_answer": question.model_answer,  # Explanation/solution
+                "marking_scheme": question.marking_scheme
             })
 
     # Calculate time taken

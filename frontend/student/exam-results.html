@@ -607,11 +607,13 @@
       const container = document.getElementById('questionsContainer');
 
       container.innerHTML = questions.map((q, idx) => {
-        const questionNum = idx + 1;
-        const studentAnswer = studentAnswers[questionNum] || studentAnswers[q.question_id] || null;
+        const questionNum = q.question_number || (idx + 1);
+        // Use student_answer from question object first, then fallback to studentAnswers dict
+        const studentAnswer = q.student_answer || studentAnswers[questionNum] || studentAnswers[String(questionNum)] || studentAnswers[q.question_id] || null;
         const correctAnswer = q.correct_option;
-        const isCorrect = studentAnswer === correctAnswer;
-        const isAnswered = studentAnswer !== null;
+        // Use is_correct from API if available, otherwise calculate
+        const isCorrect = q.is_correct !== undefined ? q.is_correct : (studentAnswer === correctAnswer);
+        const isAnswered = studentAnswer !== null && studentAnswer !== undefined;
 
         let resultClass = 'unanswered';
         let resultText = 'Unanswered';
@@ -632,6 +634,19 @@
         const options = ['A', 'B', 'C', 'D'];
         const optionTexts = q.options || [q.option_a, q.option_b, q.option_c, q.option_d];
 
+        // Build explanation section if model_answer exists
+        let explanationHtml = '';
+        if (q.model_answer) {
+          explanationHtml = `
+            <div class="explanation-box" style="margin-top: 1rem; padding: 1rem; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: var(--radius-md);">
+              <div style="font-weight: 600; color: #1E40AF; margin-bottom: 0.5rem;">
+                <i class="fas fa-lightbulb" style="margin-right: 0.5rem;"></i>Explanation / Solution
+              </div>
+              <div style="color: #1E3A8A; line-height: 1.6;">${q.model_answer}</div>
+            </div>
+          `;
+        }
+
         return `
           <div class="question-card">
             <div class="question-header">
@@ -646,23 +661,35 @@
               <div class="options-list">
                 ${options.map((opt, i) => {
                   let optionClass = '';
+                  // Highlight correct answer in green
                   if (opt === correctAnswer) optionClass = 'correct';
+                  // Highlight wrong student answer in red
                   else if (opt === studentAnswer && !isCorrect) optionClass = 'incorrect';
-                  else if (opt === studentAnswer) optionClass = 'selected';
+
+                  // Show indicator for student's selection
+                  const isSelected = opt === studentAnswer;
+                  const selectionMarker = isSelected ? '<i class="fas fa-arrow-left" style="margin-left: 0.5rem; font-size: 0.75rem;"></i> Your answer' : '';
 
                   return `
-                    <div class="option-item ${optionClass}">
+                    <div class="option-item ${optionClass}" ${isSelected ? 'style="font-weight: 500;"' : ''}>
                       <div class="option-indicator">${opt}</div>
-                      <div class="option-text">${optionTexts[i] || '-'}</div>
+                      <div class="option-text">${optionTexts[i] || '-'}${selectionMarker}</div>
                     </div>
                   `;
                 }).join('')}
               </div>
               ${!isCorrect && isAnswered ? `
                 <div class="answer-info">
-                  <strong>Correct Answer:</strong> Option ${correctAnswer}
+                  <strong><i class="fas fa-check-circle" style="color: #10B981; margin-right: 0.25rem;"></i>Correct Answer:</strong> Option ${correctAnswer}
                 </div>
               ` : ''}
+              ${!isAnswered ? `
+                <div class="answer-info" style="background: #FEF3C7;">
+                  <strong><i class="fas fa-info-circle" style="color: #D97706; margin-right: 0.25rem;"></i>You did not answer this question.</strong>
+                  Correct Answer: Option ${correctAnswer}
+                </div>
+              ` : ''}
+              ${explanationHtml}
             </div>
           </div>
         `;
