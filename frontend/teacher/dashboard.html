@@ -140,6 +140,12 @@
       display: flex;
       align-items: center;
       gap: 1rem;
+      transition: all var(--transition-fast);
+    }
+
+    a.stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
 
     .stat-icon {
@@ -300,15 +306,15 @@
         </div>
       </div>
 
-      <div class="stat-card">
+      <a href="question-stats.html" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="Click to view detailed statistics">
         <div class="stat-icon questions">
           <i class="fas fa-question-circle"></i>
         </div>
         <div class="stat-info">
           <h3 id="questionsCount">0</h3>
-          <p>Questions Created</p>
+          <p>Questions Created <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
         </div>
-      </div>
+      </a>
     </div>
 
     <!-- Action Cards -->
