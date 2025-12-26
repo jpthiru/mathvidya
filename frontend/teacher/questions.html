@@ -747,9 +747,13 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+        <button class="btn btn-success" id="saveAndAddBtn">
+          <i class="fas fa-plus"></i>
+          Save & Add Another
+        </button>
         <button class="btn btn-primary" id="saveQuestionBtn">
           <i class="fas fa-save"></i>
-          Save Question
+          Save & Close
         </button>
       </div>
     </div>
@@ -786,6 +790,7 @@
     const closeModalBtn = document.getElementById('closeModalBtn');
     const cancelBtn = document.getElementById('cancelBtn');
     const saveQuestionBtn = document.getElementById('saveQuestionBtn');
+    const saveAndAddBtn = document.getElementById('saveAndAddBtn');
     const questionTypeSelect = document.getElementById('questionType');
     const mcqOptions = document.getElementById('mcqOptions');
     const questionClassSelect = document.getElementById('questionClass');
@@ -943,11 +948,11 @@
       }
     });
 
-    // Save question
-    saveQuestionBtn.addEventListener('click', async () => {
+    // Save question function (reusable for both buttons)
+    async function saveQuestion(closeAfterSave = true, triggerButton = saveQuestionBtn) {
       if (!questionForm.checkValidity()) {
         questionForm.reportValidity();
-        return;
+        return false;
       }
 
       const questionType = document.getElementById('questionType').value;
@@ -962,16 +967,16 @@
 
         if (!optionA || !optionB || !optionC || !optionD) {
           Toast.error('Please fill all four options for MCQ');
-          return;
+          return false;
         }
 
         if (!correctOption) {
           Toast.error('Please select the correct answer option');
-          return;
+          return false;
         }
       }
 
-      showLoading(saveQuestionBtn);
+      showLoading(triggerButton);
 
       try {
         // Upload image if present
@@ -1015,15 +1020,57 @@
           Toast.success('Question created successfully!');
         }
 
-        questionModal.classList.remove('active');
         loadQuestions();
+
+        if (closeAfterSave) {
+          questionModal.classList.remove('active');
+        } else {
+          // Clear only the content fields, keep dropdown selections
+          document.getElementById('questionId').value = '';
+          document.getElementById('questionText').value = '';
+          document.getElementById('questionTopic').value = '';
+          document.getElementById('questionExplanation').value = '';
+          questionImage.value = '';
+          imagePreview.style.display = 'none';
+          questionPreview.innerHTML = '';
+
+          // Clear MCQ options if applicable
+          if (questionType === 'MCQ') {
+            document.getElementById('optionA').value = '';
+            document.getElementById('optionB').value = '';
+            document.getElementById('optionC').value = '';
+            document.getElementById('optionD').value = '';
+            clearOptionPreviews();
+            // Keep first option selected as default
+            document.getElementById('correctA').checked = true;
+          }
+
+          // Update modal title for new question
+          document.getElementById('modalTitle').textContent = 'Add Question';
+
+          // Focus on question text for quick entry
+          document.getElementById('questionText').focus();
+        }
+
+        return true;
 
       } catch (error) {
         console.error('Error saving question:', error);
         Toast.error(error.message || 'Failed to save question');
+        return false;
       } finally {
-        hideLoading(saveQuestionBtn);
+        hideLoading(triggerButton);
       }
+    }
+
+    // Save & Close button
+    saveQuestionBtn.addEventListener('click', async () => {
+      await saveQuestion(true, saveQuestionBtn);
+    });
+
+    // Save & Add Another button
+    saveAndAddBtn.addEventListener('click', async () => {
+      await saveQuestion(false, saveAndAddBtn);
     });
 
     // Load questions
