@@ -329,7 +329,8 @@ async def get_question_stats(
         by_class=stats['by_class'],
         by_unit=stats['by_unit'],
         by_status=stats['by_status'],
-        by_difficulty=stats['by_difficulty']
+        by_difficulty=stats['by_difficulty'],
+        by_unit_type=stats.get('by_unit_type')
     )
 
 

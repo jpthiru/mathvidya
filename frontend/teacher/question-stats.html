@@ -356,6 +356,11 @@
       color: #db2777;
     }
 
+    .type-badge.case-study {
+      background: #e0e7ff;
+      color: #4f46e5;
+    }
+
     /* Quick stats row */
     .quick-stats {
       display: flex;
@@ -553,18 +558,28 @@
       }
     }
 
+    // Store stats globally for type breakdown lookup
+    let globalStats = null;
+
     // Display statistics
     function displayStats(stats) {
+      // Store globally for type breakdown lookup
+      globalStats = stats;
+
       // Update total
       document.getElementById('totalQuestions').textContent = stats.total_questions || 0;
 
-      // Quick stats by type
-      const quickStatsHtml = Object.entries(stats.by_type || {}).map(([type, count]) => `
-        <div class="quick-stat">
-          <span class="quick-stat-label">${type}:</span>
-          <span class="quick-stat-value">${count}</span>
-        </div>
-      `).join('');
+      // Quick stats by type - include all question types
+      const questionTypes = ['MCQ', 'VSA', 'SA', 'LA'];
+      const quickStatsHtml = questionTypes.map(type => {
+        const count = (stats.by_type || {})[type] || 0;
+        return `
+          <div class="quick-stat">
+            <span class="quick-stat-label">${type}:</span>
+            <span class="quick-stat-value">${count}</span>
+          </div>
+        `;
+      }).join('');
       document.getElementById('quickStats').innerHTML = quickStatsHtml || '<p style="color: var(--color-gray-500);">No questions yet</p>';
 
       // Build class accordions
@@ -605,7 +620,7 @@
               </div>
             </div>
             <div class="accordion-content">
-              ${generateUnitAccordions(cls, classUnits, stats.by_type)}
+              ${generateUnitAccordions(cls, classUnits)}
             </div>
           </div>
         `;
@@ -623,7 +638,7 @@
     }
 
     // Generate unit accordions for a class
-    function generateUnitAccordions(classLevel, classUnits, byType) {
+    function generateUnitAccordions(classLevel, classUnits) {
       const classUnitsList = units[classLevel] || [];
 
       if (Object.keys(classUnits).length === 0) {
@@ -651,9 +666,10 @@
                 <span class="type-badge mcq"><i class="fas fa-check-circle"></i> MCQ: ${getTypeCountForUnit(unitName, 'MCQ')}</span>
                 <span class="type-badge vsa"><i class="fas fa-pen"></i> VSA: ${getTypeCountForUnit(unitName, 'VSA')}</span>
                 <span class="type-badge sa"><i class="fas fa-pencil-alt"></i> SA: ${getTypeCountForUnit(unitName, 'SA')}</span>
+                <span class="type-badge la"><i class="fas fa-file-alt"></i> LA: ${getTypeCountForUnit(unitName, 'LA')}</span>
               </div>
               <div style="margin-top: 0.75rem;">
-                <a href="questions.html?unit=${encodeURIComponent(unitName)}&class=${classLevel}"
+                <a href="questions.html?class_level=${classLevel}&unit=${encodeURIComponent(unitName)}"
                    style="color: var(--color-primary); font-size: var(--text-sm); text-decoration: none;">
                   <i class="fas fa-external-link-alt"></i> View Questions
                 </a>
@@ -664,15 +680,16 @@
       }).join('');
     }
 
-    // Store stats globally for type breakdown lookup
-    let globalStats = null;
-
-    // Get type count for a specific unit (we need to fetch this from API or estimate)
-    // Since the API doesn't provide unit+type breakdown, we show a placeholder
+    // Get type count for a specific unit from global stats
     function getTypeCountForUnit(unitName, type) {
-      // The current API doesn't provide unit-wise type breakdown
-      // Return '-' to indicate data not available at this granularity
-      return '-';
+      if (!globalStats || !globalStats.by_unit_type) {
+        return 0;
+      }
+      const unitData = globalStats.by_unit_type[unitName];
+      if (!unitData) {
+        return 0;
+      }
+      return unitData[type] || 0;
     }
 
     // Toggle main accordion

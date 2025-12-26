@@ -668,6 +668,7 @@
           <option value="MCQ">MCQ (Multiple Choice)</option>
           <option value="VSA">VSA (Very Short Answer)</option>
           <option value="SA">SA (Short Answer)</option>
+          <option value="LA">LA (Long Answer)</option>
         </select>
       </div>
 
@@ -757,6 +758,7 @@
                 <option value="MCQ">MCQ (Multiple Choice)</option>
                 <option value="VSA">VSA (Very Short Answer)</option>
                 <option value="SA">SA (Short Answer)</option>
+                <option value="LA">LA (Long Answer)</option>
               </select>
             </div>
 
@@ -965,11 +967,12 @@
     questionTypeSelect.addEventListener('change', (e) => {
       mcqOptions.style.display = e.target.value === 'MCQ' ? 'block' : 'none';
 
-      // Update marks based on type
+      // Update marks based on type (matching backend validation)
       const marksInput = document.getElementById('questionMarks');
       if (e.target.value === 'MCQ') marksInput.value = 1;
       else if (e.target.value === 'VSA') marksInput.value = 2;
       else if (e.target.value === 'SA') marksInput.value = 3;
+      else if (e.target.value === 'LA') marksInput.value = 5;  // LA is 5 or 6 marks
     });
 
     // Update units based on class selection
@@ -1533,7 +1536,39 @@
     // Refresh button
     document.getElementById('refreshBtn').addEventListener('click', loadQuestions);
 
-    // Initial load
+    // Apply filters from URL parameters (when navigating from question-stats.html)
+    function applyUrlFilters() {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Check for class_level parameter
+      const classLevel = urlParams.get('class_level');
+      if (classLevel) {
+        filterClass.value = classLevel;
+        // Update units dropdown for the selected class
+        updateUnits(classLevel, filterUnit);
+      }
+
+      // Check for unit parameter
+      const unit = urlParams.get('unit');
+      if (unit) {
+        filterUnit.value = decodeURIComponent(unit);
+      }
+
+      // Check for question_type parameter
+      const questionType = urlParams.get('question_type');
+      if (questionType) {
+        filterType.value = questionType;
+      }
+
+      // Check for difficulty parameter
+      const difficulty = urlParams.get('difficulty');
+      if (difficulty) {
+        filterDifficulty.value = difficulty;
+      }
+    }
+
+    // Initial load - apply URL filters first, then load questions
+    applyUrlFilters();
     loadQuestions();
     observeElements('.animate-slideUp');
   </script>

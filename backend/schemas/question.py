@@ -188,6 +188,7 @@ class QuestionStatsResponse(BaseModel):
     by_unit: dict  # {"Relations and Functions": 20, ...}
     by_status: dict  # {"active": 150, "draft": 30, ...}
     by_difficulty: dict  # {"easy": 50, "medium": 80, "hard": 20}
+    by_unit_type: Optional[dict] = None  # {"Relations and Functions": {"MCQ": 10, "VSA": 5}, ...}
 
 
 class UploadQuestionImageRequest(BaseModel):

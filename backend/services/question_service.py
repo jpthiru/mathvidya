@@ -303,13 +303,29 @@ class QuestionService:
         )
         by_unit = {row[0]: row[1] for row in unit_result}
 
+        # By unit and type (for detailed breakdown)
+        unit_type_result = await session.execute(
+            select(
+                Question.unit,
+                Question.question_type,
+                func.count(Question.question_id)
+            ).group_by(Question.unit, Question.question_type)
+        )
+        by_unit_type = {}
+        for row in unit_type_result:
+            unit, qtype, count = row
+            if unit not in by_unit_type:
+                by_unit_type[unit] = {}
+            by_unit_type[unit][qtype] = count
+
         return {
             'total_questions': total_questions,
             'by_type': by_type,
             'by_class': by_class,
             'by_unit': by_unit,
             'by_status': by_status,
-            'by_difficulty': by_difficulty
+            'by_difficulty': by_difficulty,
+            'by_unit_type': by_unit_type
         }
 
     @staticmethod
