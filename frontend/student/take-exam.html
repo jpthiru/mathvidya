@@ -1159,7 +1159,11 @@
         // Stop timer
         if (this.timerInterval) {
           clearInterval(this.timerInterval);
+          this.timerInterval = null;
         }
+
+        // Mark exam as submitted to prevent beforeunload warning
+        this.isSubmitted = true;
 
         // Show loading overlay
         document.getElementById('loadingOverlay').classList.add('show');
@@ -1176,17 +1180,18 @@
           // Show success message
           Toast.success('Exam submitted successfully!');
 
-          // Wait a bit and redirect
+          // Redirect to results page
           setTimeout(() => {
-            window.location.href = './dashboard.html';
-          }, 2000);
+            window.location.href = `./exam-results.html?id=${this.examId}`;
+          }, 1500);
 
         } catch (error) {
           console.error('Error submitting exam:', error);
           Toast.error('Failed to submit exam. Please try again.');
           document.getElementById('loadingOverlay').classList.remove('show');
 
-          // Restart timer
+          // Reset submitted flag and restart timer
+          this.isSubmitted = false;
           this.startTimer();
         }
       }
@@ -1199,9 +1204,9 @@
       examManager = new ExamManager();
     });
 
-    // Warn before leaving page
+    // Warn before leaving page (but not after successful submission)
     window.addEventListener('beforeunload', (e) => {
-      if (examManager && examManager.timerInterval) {
+      if (examManager && examManager.timerInterval && !examManager.isSubmitted) {
         e.preventDefault();
         e.returnValue = 'Your exam is in progress. Are you sure you want to leave?';
         return e.returnValue;

@@ -875,7 +875,7 @@
               <strong>${examTypeDisplay}</strong><br>
               <small style="color: var(--color-gray-500);">${exam.class_level || ''}</small>
             </td>
-            <td>${examDate ? formatDate(examDate) : '-'}</td>
+            <td>${examDate ? formatDateTime(examDate) : '-'}</td>
             <td>
               ${score !== null && score !== undefined
                 ? `<strong>${score}/${totalMarks}</strong> (${percentage ? percentage.toFixed(1) : 0}%)`
