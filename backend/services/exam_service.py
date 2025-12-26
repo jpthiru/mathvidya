@@ -6,10 +6,12 @@ Business logic for exam operations.
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, func
+from sqlalchemy.orm.attributes import flag_modified
 from typing import List, Optional, Tuple
 from datetime import datetime, timedelta, timezone
 import uuid
 import random
+import copy
 
 from models import (
     ExamTemplate,
@@ -313,15 +315,19 @@ class ExamService:
             raise ValueError("Exam is not in progress")
 
         # Initialize answers dict in snapshot if not present
-        snapshot = exam.exam_snapshot or {}
+        # Use copy.deepcopy to create a new object so SQLAlchemy detects the change
+        snapshot = copy.deepcopy(exam.exam_snapshot) if exam.exam_snapshot else {}
         if 'student_answers' not in snapshot:
             snapshot['student_answers'] = {}
 
         # Save the answer (key by question number)
         snapshot['student_answers'][str(question_number)] = selected_option
 
-        # Update the snapshot
+        # Update the snapshot - assign the new object
         exam.exam_snapshot = snapshot
+
+        # Explicitly mark the JSONB column as modified
+        flag_modified(exam, 'exam_snapshot')
 
         await session.commit()
 
