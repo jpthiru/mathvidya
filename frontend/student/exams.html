@@ -615,7 +615,7 @@
 
       tbody.innerHTML = exams.map(exam => {
         const examId = exam.exam_instance_id || exam.id;
-        const examDate = exam.started_at || exam.created_at;
+        const examDate = exam.start_time || exam.started_at || exam.created_at;
         const score = exam.total_score !== undefined ? exam.total_score : (exam.mcq_score || 0);
         const totalMarks = exam.total_marks || 0;
         const percentage = exam.percentage !== undefined ? exam.percentage : (totalMarks > 0 ? (score/totalMarks)*100 : 0);

@@ -85,6 +85,15 @@ class AnalyticsService:
         completed_exams = [e for e in exams if e.status not in [ExamStatus.CREATED.value, ExamStatus.IN_PROGRESS.value]]
         recent_exams = []
         for exam in completed_exams[:5]:
+            # Extract question_type and selected_units from exam_snapshot for unit practice exams
+            question_type = None
+            selected_units = None
+            if exam.exam_type == 'unit_practice' and exam.exam_snapshot:
+                snapshot = exam.exam_snapshot
+                template_config = snapshot.get('template_config', {})
+                question_type = template_config.get('question_type')
+                selected_units = template_config.get('selected_units', [])
+
             recent_exams.append({
                 'exam_instance_id': str(exam.exam_instance_id),
                 'exam_type': exam.exam_type,
@@ -98,7 +107,9 @@ class AnalyticsService:
                 'total_score': float(exam.total_score) if exam.total_score else 0,
                 'percentage': float(exam.percentage) if exam.percentage else 0,
                 'status': exam.status,
-                'time_taken_minutes': exam.time_taken_minutes
+                'time_taken_minutes': exam.time_taken_minutes,
+                'question_type': question_type,
+                'selected_units': selected_units
             })
 
         # Unit-wise performance
