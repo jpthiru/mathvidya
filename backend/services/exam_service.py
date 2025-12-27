@@ -525,7 +525,7 @@ class ExamService:
         result = await session.execute(
             select(ExamInstance).where(
                 ExamInstance.student_user_id == student_id
-            ).order_by(ExamInstance.start_time.desc())
+            ).order_by(ExamInstance.started_at.desc())
             .limit(limit).offset(offset)
         )
         exams = result.scalars().all()
