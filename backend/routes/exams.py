@@ -547,9 +547,9 @@ async def get_exam_history(
         selected_units = None
         if exam.exam_type == 'unit_practice' and exam.exam_snapshot:
             snapshot = exam.exam_snapshot
-            template_config = snapshot.get('template_config', {})
-            question_type = template_config.get('question_type')
-            selected_units = template_config.get('selected_units', [])
+            # Fields are stored directly in snapshot, not in template_config
+            question_type = snapshot.get('question_type')
+            selected_units = snapshot.get('selected_units', [])
 
         history_responses.append(ExamHistoryResponse(
             exam_instance_id=str(exam.exam_instance_id),
