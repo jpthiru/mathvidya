@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .profile-button:hover {
+      background: var(--color-gray-200);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      min-width: 200px;
+      display: none;
+      z-index: var(--z-dropdown);
+    }
+
+    .profile-menu.active {
+      display: block;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--color-gray-700);
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .profile-menu-item:first-child {
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .profile-menu-item:last-child {
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .profile-menu-item:hover {
+      background: var(--color-gray-100);
+    }
+
+    .profile-menu-item.danger {
+      color: var(--color-error);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .page-title i {
+      color: #F59E0B;
+    }
+
+    .page-subtitle {
+      color: var(--color-gray-600);
+      margin: 0;
+    }
+
+    /* Class Tabs */
+    .class-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .class-tab {
+      padding: 0.75rem 2rem;
+      background: white;
+      border: 2px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--color-gray-600);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .class-tab:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .class-tab.active {
+      background: var(--gradient-primary);
+      border-color: transparent;
+      color: white;
+    }
+
+    /* Top 3 Podium */
+    .podium {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+    }
+
+    .podium-item {
+      text-align: center;
+      width: 150px;
+    }
+
+    .podium-item.first {
+      order: 2;
+    }
+
+    .podium-item.second {
+      order: 1;
+    }
+
+    .podium-item.third {
+      order: 3;
+    }
+
+    .podium-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      position: relative;
+    }
+
+    .podium-item.first .podium-avatar {
+      width: 100px;
+      height: 100px;
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      box-shadow: 0 8px 32px rgba(245, 158, 11, 0.4);
+    }
+
+    .podium-item.second .podium-avatar {
+      background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+      box-shadow: 0 8px 24px rgba(107, 114, 128, 0.3);
+    }
+
+    .podium-item.third .podium-avatar {
+      background: linear-gradient(135deg, #CD7F32 0%, #A0522D 100%);
+      box-shadow: 0 8px 24px rgba(205, 127, 50, 0.3);
+    }
+
+    .podium-crown {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+    }
+
+    .podium-name {
+      font-weight: 600;
+      color: var(--color-gray-800);
+      margin-bottom: 0.25rem;
+    }
+
+    .podium-score {
+      color: var(--color-gray-600);
+      font-size: var(--text-sm);
+    }
+
+    .podium-base {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      font-weight: 700;
+      font-size: var(--text-xl);
+      color: white;
+    }
+
+    .podium-item.first .podium-base {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      height: 80px;
+    }
+
+    .podium-item.second .podium-base {
+      background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+      height: 60px;
+    }
+
+    .podium-item.third .podium-base {
+      background: linear-gradient(135deg, #CD7F32 0%, #A0522D 100%);
+      height: 40px;
+    }
+
+    /* Leaderboard Card */
+    .leaderboard-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .leaderboard-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .leaderboard-title {
+      font-size: var(--text-lg);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Leaderboard List */
+    .leaderboard-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--color-gray-100);
+      transition: background var(--transition-fast);
+    }
+
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+
+    .leaderboard-item:hover {
+      background: var(--color-gray-50);
+    }
+
+    .leaderboard-item.current-user {
+      background: rgba(99, 102, 241, 0.05);
+      border-left: 4px solid var(--color-primary);
+    }
+
+    .rank-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: var(--text-sm);
+      background: var(--color-gray-100);
+      color: var(--color-gray-600);
+    }
+
+    .rank-badge.gold {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: white;
+    }
+
+    .rank-badge.silver {
+      background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+      color: white;
+    }
+
+    .rank-badge.bronze {
+      background: linear-gradient(135deg, #CD7F32 0%, #A0522D 100%);
+      color: white;
+    }
+
+    .student-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: var(--text-lg);
+    }
+
+    .student-info {
+      flex: 1;
+    }
+
+    .student-name {
+      font-weight: 600;
+      color: var(--color-gray-800);
+      margin-bottom: 0.125rem;
+    }
+
+    .student-school {
+      font-size: var(--text-xs);
+      color: var(--color-gray-500);
+    }
+
+    .student-score {
+      text-align: right;
+    }
+
+    .score-value {
+      font-weight: 700;
+      font-size: var(--text-lg);
+      color: var(--color-gray-800);
+    }
+
+    .score-label {
+      font-size: var(--text-xs);
+      color: var(--color-gray-500);
+    }
+
+    /* Your Position */
+    .your-position {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border: 2px solid var(--color-primary);
+    }
+
+    .your-position-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .your-position-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .your-position-content {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .your-rank {
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .your-stats {
+      flex: 1;
+    }
+
+    .your-stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--color-gray-100);
+    }
+
+    .your-stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .your-stat-label {
+      color: var(--color-gray-600);
+    }
+
+    .your-stat-value {
+      font-weight: 600;
+    }
+
+    /* Eligibility Notice */
+    .eligibility-notice {
+      background: #FEF3C7;
+      border: 1px solid #FCD34D;
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .eligibility-notice i {
+      color: #D97706;
+      font-size: 1.5rem;
+    }
+
+    .eligibility-notice p {
+      margin: 0;
+      color: #92400E;
+    }
+
+    /* Loading State */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+      color: var(--color-gray-500);
+    }
+
+    .loading-state i {
+      font-size: 3rem;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--color-gray-500);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .podium {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .podium-item {
+        order: unset !important;
+      }
+
+      .class-tabs {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="../index.html" class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </a>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="exams.html" class="nav-link">
+            <i class="fas fa-file-alt"></i>
+            My Exams
+          </a>
+          <a href="analytics.html" class="nav-link">
+            <i class="fas fa-chart-line"></i>
+            Analytics
+          </a>
+          <a href="leaderboard.html" class="nav-link active">
+            <i class="fas fa-trophy"></i>
+            Leaderboard
+          </a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-button" id="profileButton">
+            <div class="profile-avatar" id="profileAvatar">S</div>
+            <div>
+              <div style="font-weight: 600; font-size: var(--text-sm);" id="userName">Student</div>
+              <div style="font-size: var(--text-xs); color: var(--color-gray-500);">Class XII</div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="profile-menu" id="profileMenu">
+            <a href="profile.html" class="profile-menu-item">
+              <i class="fas fa-user"></i>
+              My Profile
+            </a>
+            <a href="subscription.html" class="profile-menu-item">
+              <i class="fas fa-credit-card"></i>
+              Subscription
+            </a>
+            <a href="settings.html" class="profile-menu-item">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+            <div class="profile-menu-item danger" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">
+        <i class="fas fa-trophy"></i>
+        Leaderboard
+      </h1>
+      <p class="page-subtitle">Top performers in mathematics practice</p>
+    </div>
+
+    <!-- Class Tabs -->
+    <div class="class-tabs">
+      <button class="class-tab" data-class="X">Class X</button>
+      <button class="class-tab active" data-class="XII">Class XII</button>
+    </div>
+
+    <!-- Eligibility Notice (shown for Basic/Premium MCQ plans) -->
+    <div class="eligibility-notice" id="eligibilityNotice" style="display: none;">
+      <i class="fas fa-info-circle"></i>
+      <p>Upgrade to Premium or Centum plan to appear on the leaderboard!</p>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" id="loadingState">
+      <i class="fas fa-spinner"></i>
+      <p>Loading leaderboard...</p>
+    </div>
+
+    <!-- Leaderboard Content -->
+    <div id="leaderboardContent" style="display: none;">
+      <!-- Top 3 Podium -->
+      <div class="podium" id="podium">
+        <!-- Podium items will be loaded here -->
+      </div>
+
+      <!-- Leaderboard Card -->
+      <div class="leaderboard-card">
+        <div class="leaderboard-header">
+          <h2 class="leaderboard-title">
+            <i class="fas fa-list-ol"></i>
+            Top 10 Students
+          </h2>
+        </div>
+        <ul class="leaderboard-list" id="leaderboardList">
+          <!-- Leaderboard items will be loaded here -->
+        </ul>
+      </div>
+
+      <!-- Your Position -->
+      <div class="your-position" id="yourPosition" style="display: none;">
+        <div class="your-position-header">
+          <h3 class="your-position-title">
+            <i class="fas fa-user"></i>
+            Your Position
+          </h3>
+        </div>
+        <div class="your-position-content">
+          <div class="your-rank" id="yourRank">#-</div>
+          <div class="your-stats">
+            <div class="your-stat-row">
+              <span class="your-stat-label">Average Score</span>
+              <span class="your-stat-value" id="yourAvgScore">0%</span>
+            </div>
+            <div class="your-stat-row">
+              <span class="your-stat-label">Exams Completed</span>
+              <span class="your-stat-value" id="yourExams">0</span>
+            </div>
+            <div class="your-stat-row">
+              <span class="your-stat-label">Total Points</span>
+              <span class="your-stat-value" id="yourPoints">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <i class="fas fa-trophy"></i>
+      <h3>No leaderboard data yet</h3>
+      <p>Be the first to appear on the leaderboard by taking exams!</p>
+      <a href="dashboard.html" class="btn btn-primary" style="margin-top: 1rem;">
+        <i class="fas fa-play"></i>
+        Start Exam
+      </a>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated() || getUserRole() !== 'student') {
+      window.location.href = '../login.html';
+    }
+
+    const user = getUser();
+    let currentClass = user.student_class || 'XII';
+
+    // Update profile
+    document.getElementById('userName').textContent = user.first_name || user.name || user.email.split('@')[0];
+    document.getElementById('profileAvatar').textContent = (user.first_name || user.name || user.email)[0].toUpperCase();
+
+    // Profile dropdown toggle
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', () => {
+      profileMenu.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('profileDropdown').contains(e.target)) {
+        profileMenu.classList.remove('active');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+        Toast.success('Logged out successfully');
+        setTimeout(() => window.location.href = '../login.html', 500);
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '../login.html';
+      }
+    });
+
+    // Class tabs
+    const classTabs = document.querySelectorAll('.class-tab');
+    classTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        classTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentClass = tab.dataset.class;
+        loadLeaderboard();
+      });
+    });
+
+    // Set initial active tab based on user's class
+    classTabs.forEach(tab => {
+      if (tab.dataset.class === currentClass) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
+    });
+
+    // Load leaderboard
+    async function loadLeaderboard() {
+      document.getElementById('loadingState').style.display = 'flex';
+      document.getElementById('leaderboardContent').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'none';
+
+      try {
+        const leaderboard = await api.getLeaderboard(currentClass);
+
+        if (!leaderboard || !leaderboard.top_students || leaderboard.top_students.length === 0) {
+          showEmptyState();
+          return;
+        }
+
+        // Show content
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('leaderboardContent').style.display = 'block';
+
+        // Check eligibility
+        if (leaderboard.is_eligible === false) {
+          document.getElementById('eligibilityNotice').style.display = 'flex';
+        } else {
+          document.getElementById('eligibilityNotice').style.display = 'none';
+        }
+
+        // Render podium (top 3)
+        renderPodium(leaderboard.top_students.slice(0, 3));
+
+        // Render full list
+        renderLeaderboardList(leaderboard.top_students);
+
+        // Show user's position if available
+        if (leaderboard.user_rank) {
+          document.getElementById('yourPosition').style.display = 'block';
+          document.getElementById('yourRank').textContent = `#${leaderboard.user_rank}`;
+          document.getElementById('yourAvgScore').textContent = `${(leaderboard.user_average_score || 0).toFixed(1)}%`;
+          document.getElementById('yourExams').textContent = leaderboard.user_exams_count || 0;
+          document.getElementById('yourPoints').textContent = leaderboard.user_total_points || 0;
+        } else {
+          document.getElementById('yourPosition').style.display = 'none';
+        }
+
+      } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        showEmptyState();
+      }
+    }
+
+    // Show empty state
+    function showEmptyState() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('leaderboardContent').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+    }
+
+    // Render podium
+    function renderPodium(topThree) {
+      const podium = document.getElementById('podium');
+
+      if (topThree.length < 3) {
+        podium.style.display = 'none';
+        return;
+      }
+
+      podium.style.display = 'flex';
+
+      const positions = ['second', 'first', 'third'];
+      const orderedStudents = [topThree[1], topThree[0], topThree[2]]; // Reorder for visual display
+
+      podium.innerHTML = topThree.map((student, idx) => {
+        const position = idx === 0 ? 'first' : idx === 1 ? 'second' : 'third';
+        const initial = (student.first_name || student.name || 'S')[0].toUpperCase();
+        const name = student.first_name
+          ? `${student.first_name} ${(student.last_name || '')[0] || ''}.`
+          : (student.name || 'Student');
+
+        return `
+          <div class="podium-item ${position}">
+            <div class="podium-avatar">
+              ${idx === 0 ? '<span class="podium-crown">👑</span>' : ''}
+              ${initial}
+            </div>
+            <div class="podium-name">${name}</div>
+            <div class="podium-score">${(student.average_score || 0).toFixed(1)}% avg</div>
+            <div class="podium-base">${idx + 1}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render leaderboard list
+    function renderLeaderboardList(students) {
+      const list = document.getElementById('leaderboardList');
+      const currentUserId = user.user_id;
+
+      list.innerHTML = students.map((student, idx) => {
+        const rank = idx + 1;
+        const initial = (student.first_name || student.name || 'S')[0].toUpperCase();
+        const name = student.first_name
+          ? `${student.first_name} ${student.last_name || ''}`
+          : (student.name || 'Student');
+        const isCurrentUser = student.student_id === currentUserId || student.user_id === currentUserId;
+
+        let rankClass = '';
+        if (rank === 1) rankClass = 'gold';
+        else if (rank === 2) rankClass = 'silver';
+        else if (rank === 3) rankClass = 'bronze';
+
+        return `
+          <li class="leaderboard-item ${isCurrentUser ? 'current-user' : ''}">
+            <div class="rank-badge ${rankClass}">${rank}</div>
+            <div class="student-avatar">${initial}</div>
+            <div class="student-info">
+              <div class="student-name">${name} ${isCurrentUser ? '(You)' : ''}</div>
+              <div class="student-school">${student.school_name || 'Mathvidya Student'}</div>
+            </div>
+            <div class="student-score">
+              <div class="score-value">${(student.average_score || 0).toFixed(1)}%</div>
+              <div class="score-label">${student.exams_count || 0} exams</div>
+            </div>
+          </li>
+        `;
+      }).join('');
+    }
+
+    // Initialize
+    loadLeaderboard();
+  </script>
+</body>
+</html>

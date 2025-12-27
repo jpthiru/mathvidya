@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .profile-button:hover {
+      background: var(--color-gray-200);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      min-width: 200px;
+      display: none;
+      z-index: var(--z-dropdown);
+    }
+
+    .profile-menu.active {
+      display: block;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--color-gray-700);
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .profile-menu-item:first-child {
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .profile-menu-item:last-child {
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .profile-menu-item:hover {
+      background: var(--color-gray-100);
+    }
+
+    .profile-menu-item.danger {
+      color: var(--color-error);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .page-subtitle {
+      color: var(--color-gray-600);
+      margin: 0;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .stat-icon.primary { background: var(--gradient-primary); }
+    .stat-icon.success { background: var(--gradient-success); }
+    .stat-icon.warning { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .stat-icon.info { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-gray-800);
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .chart-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    /* Unit Performance */
+    .unit-performance {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: var(--text-xl);
+      margin: 0;
+    }
+
+    .unit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .unit-card {
+      padding: 1rem;
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-fast);
+    }
+
+    .unit-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .unit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .unit-name {
+      font-weight: 600;
+      color: var(--color-gray-800);
+    }
+
+    .unit-score {
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+    }
+
+    .unit-score.good {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .unit-score.average {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .unit-score.poor {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--color-gray-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+
+    .progress-fill.good { background: var(--gradient-success); }
+    .progress-fill.average { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .progress-fill.poor { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+
+    .unit-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: var(--text-xs);
+      color: var(--color-gray-500);
+    }
+
+    /* Strengths & Weaknesses */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .insight-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+    }
+
+    .insight-card.strengths {
+      border-left: 4px solid #10B981;
+    }
+
+    .insight-card.weaknesses {
+      border-left: 4px solid #EF4444;
+    }
+
+    .insight-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .insight-title.strengths { color: #059669; }
+    .insight-title.weaknesses { color: #DC2626; }
+
+    .insight-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .insight-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 0.5rem;
+    }
+
+    .insight-item.strength {
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .insight-item.weakness {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Loading State */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+      color: var(--color-gray-500);
+    }
+
+    .loading-state i {
+      font-size: 3rem;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--color-gray-500);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="../index.html" class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </a>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="exams.html" class="nav-link">
+            <i class="fas fa-file-alt"></i>
+            My Exams
+          </a>
+          <a href="analytics.html" class="nav-link active">
+            <i class="fas fa-chart-line"></i>
+            Analytics
+          </a>
+          <a href="leaderboard.html" class="nav-link">
+            <i class="fas fa-trophy"></i>
+            Leaderboard
+          </a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-button" id="profileButton">
+            <div class="profile-avatar" id="profileAvatar">S</div>
+            <div>
+              <div style="font-weight: 600; font-size: var(--text-sm);" id="userName">Student</div>
+              <div style="font-size: var(--text-xs); color: var(--color-gray-500);">Class XII</div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="profile-menu" id="profileMenu">
+            <a href="profile.html" class="profile-menu-item">
+              <i class="fas fa-user"></i>
+              My Profile
+            </a>
+            <a href="subscription.html" class="profile-menu-item">
+              <i class="fas fa-credit-card"></i>
+              Subscription
+            </a>
+            <a href="settings.html" class="profile-menu-item">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+            <div class="profile-menu-item danger" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <!-- Loading State -->
+    <div class="loading-state" id="loadingState">
+      <i class="fas fa-spinner"></i>
+      <p>Loading your analytics...</p>
+    </div>
+
+    <!-- Analytics Content (hidden initially) -->
+    <div id="analyticsContent" style="display: none;">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Performance Analytics</h1>
+        <p class="page-subtitle">Track your progress and identify areas for improvement</p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Total Exams</div>
+            <div class="stat-value" id="totalExams">0</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon success">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Average Score</div>
+            <div class="stat-value" id="averageScore">0%</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon warning">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Predicted Board Score</div>
+            <div class="stat-value" id="predictedScore">-</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon info">
+            <i class="fas fa-medal"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Class Rank</div>
+            <div class="stat-value" id="classRank">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Performance Trend</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Question Type Analysis</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="questionTypeChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit Performance -->
+      <div class="unit-performance">
+        <div class="section-header">
+          <h2 class="section-title">Unit-wise Performance</h2>
+        </div>
+        <div class="unit-grid" id="unitGrid">
+          <!-- Units will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Strengths & Weaknesses -->
+      <div class="insights-grid">
+        <div class="insight-card strengths">
+          <h3 class="insight-title strengths">
+            <i class="fas fa-arrow-up"></i>
+            Your Strengths
+          </h3>
+          <ul class="insight-list" id="strengthsList">
+            <!-- Strengths will be loaded here -->
+          </ul>
+        </div>
+
+        <div class="insight-card weaknesses">
+          <h3 class="insight-title weaknesses">
+            <i class="fas fa-arrow-down"></i>
+            Areas to Improve
+          </h3>
+          <ul class="insight-list" id="weaknessesList">
+            <!-- Weaknesses will be loaded here -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <i class="fas fa-chart-pie"></i>
+      <h3>No analytics data yet</h3>
+      <p>Take some exams to see your performance analytics!</p>
+      <a href="dashboard.html" class="btn btn-primary" style="margin-top: 1rem;">
+        <i class="fas fa-play"></i>
+        Start Exam
+      </a>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated() || getUserRole() !== 'student') {
+      window.location.href = '../login.html';
+    }
+
+    const user = getUser();
+
+    // Update profile
+    document.getElementById('userName').textContent = user.first_name || user.name || user.email.split('@')[0];
+    document.getElementById('profileAvatar').textContent = (user.first_name || user.name || user.email)[0].toUpperCase();
+
+    // Profile dropdown toggle
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', () => {
+      profileMenu.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('profileDropdown').contains(e.target)) {
+        profileMenu.classList.remove('active');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+        Toast.success('Logged out successfully');
+        setTimeout(() => window.location.href = '../login.html', 500);
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '../login.html';
+      }
+    });
+
+    // Chart instances
+    let performanceChart = null;
+    let questionTypeChart = null;
+
+    // Load analytics data
+    async function loadAnalytics() {
+      try {
+        const dashboard = await api.getStudentDashboard();
+
+        // Check if there's any data
+        if (!dashboard || dashboard.total_exams === 0) {
+          showEmptyState();
+          return;
+        }
+
+        // Show content
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('analyticsContent').style.display = 'block';
+
+        // Update stats
+        document.getElementById('totalExams').textContent = dashboard.total_exams || 0;
+        document.getElementById('averageScore').textContent = dashboard.average_score
+          ? `${dashboard.average_score.toFixed(1)}%`
+          : '0%';
+        document.getElementById('predictedScore').textContent = dashboard.predicted_score
+          ? `${dashboard.predicted_score}/100`
+          : '-';
+        document.getElementById('classRank').textContent = dashboard.rank || '-';
+
+        // Render charts
+        renderPerformanceChart(dashboard.recent_exams || []);
+        renderQuestionTypeChart(dashboard.question_type_breakdown || {});
+
+        // Render unit performance
+        renderUnitPerformance(dashboard.unit_performance || []);
+
+        // Render strengths and weaknesses
+        renderStrengthsWeaknesses(dashboard.strengths || [], dashboard.weaknesses || []);
+
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+        showEmptyState();
+      }
+    }
+
+    // Show empty state
+    function showEmptyState() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('analyticsContent').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+    }
+
+    // Render performance chart
+    function renderPerformanceChart(exams) {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+
+      // Sort exams by date and take last 10
+      const sortedExams = [...exams]
+        .sort((a, b) => new Date(a.started_at) - new Date(b.started_at))
+        .slice(-10);
+
+      const labels = sortedExams.map((exam, idx) => `Exam ${idx + 1}`);
+      const data = sortedExams.map(exam => exam.percentage || 0);
+
+      if (performanceChart) {
+        performanceChart.destroy();
+      }
+
+      performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Score %',
+            data: data,
+            borderColor: '#6366F1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#6366F1',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: value => value + '%'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Render question type chart
+    function renderQuestionTypeChart(breakdown) {
+      const ctx = document.getElementById('questionTypeChart').getContext('2d');
+
+      const labels = Object.keys(breakdown).length > 0
+        ? Object.keys(breakdown)
+        : ['MCQ', 'VSA', 'SA'];
+      const data = Object.keys(breakdown).length > 0
+        ? Object.values(breakdown).map(v => v.percentage || 0)
+        : [0, 0, 0];
+
+      if (questionTypeChart) {
+        questionTypeChart.destroy();
+      }
+
+      questionTypeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Accuracy %',
+            data: data,
+            backgroundColor: [
+              'rgba(99, 102, 241, 0.8)',
+              'rgba(16, 185, 129, 0.8)',
+              'rgba(245, 158, 11, 0.8)',
+              'rgba(239, 68, 68, 0.8)'
+            ],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: value => value + '%'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Render unit performance
+    function renderUnitPerformance(units) {
+      const unitGrid = document.getElementById('unitGrid');
+
+      if (!units || units.length === 0) {
+        unitGrid.innerHTML = `
+          <p style="color: var(--color-gray-500); text-align: center; grid-column: 1/-1; padding: 2rem;">
+            No unit-wise data available yet. Take more exams to see your performance by unit.
+          </p>
+        `;
+        return;
+      }
+
+      unitGrid.innerHTML = units.map(unit => {
+        const percentage = unit.percentage || 0;
+        let scoreClass = 'poor';
+        if (percentage >= 75) scoreClass = 'good';
+        else if (percentage >= 50) scoreClass = 'average';
+
+        return `
+          <div class="unit-card">
+            <div class="unit-header">
+              <span class="unit-name">${unit.unit_name || unit.unit}</span>
+              <span class="unit-score ${scoreClass}">${percentage.toFixed(1)}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill ${scoreClass}" style="width: ${percentage}%"></div>
+            </div>
+            <div class="unit-stats">
+              <span>${unit.questions_attempted || 0} questions</span>
+              <span>${unit.correct_answers || 0} correct</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render strengths and weaknesses
+    function renderStrengthsWeaknesses(strengths, weaknesses) {
+      const strengthsList = document.getElementById('strengthsList');
+      const weaknessesList = document.getElementById('weaknessesList');
+
+      if (strengths.length === 0) {
+        strengthsList.innerHTML = `
+          <li class="insight-item strength">
+            <i class="fas fa-info-circle"></i>
+            <span>Take more exams to identify your strengths</span>
+          </li>
+        `;
+      } else {
+        strengthsList.innerHTML = strengths.map(s => `
+          <li class="insight-item strength">
+            <i class="fas fa-check-circle" style="color: #10B981;"></i>
+            <span>${s}</span>
+          </li>
+        `).join('');
+      }
+
+      if (weaknesses.length === 0) {
+        weaknessesList.innerHTML = `
+          <li class="insight-item weakness">
+            <i class="fas fa-info-circle"></i>
+            <span>Take more exams to identify areas for improvement</span>
+          </li>
+        `;
+      } else {
+        weaknessesList.innerHTML = weaknesses.map(w => `
+          <li class="insight-item weakness">
+            <i class="fas fa-exclamation-circle" style="color: #EF4444;"></i>
+            <span>${w}</span>
+          </li>
+        `).join('');
+      }
+    }
+
+    // Initialize
+    loadAnalytics();
+  </script>
+</body>
+</html>
