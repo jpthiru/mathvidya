@@ -26,7 +26,9 @@ from schemas.question import (
     UploadQuestionImageRequest,
     UploadQuestionImageResponse,
     ArchiveQuestionRequest,
-    CloneQuestionRequest
+    CloneQuestionRequest,
+    CheckDuplicateRequest,
+    CheckDuplicateResponse
 )
 from services import question_service, s3_service
 
@@ -471,4 +473,50 @@ async def get_question_image_upload_url(
         presigned_url=presigned_url,
         s3_key=s3_key,
         expires_in=900  # 15 minutes
+    )
+
+
+@router.post("/questions/check-duplicate", response_model=CheckDuplicateResponse)
+async def check_duplicate_question(
+    request: CheckDuplicateRequest,
+    current_user: User = Depends(require_teacher_or_admin),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Check if a similar question already exists
+
+    - Compares normalized question text (case-insensitive, whitespace normalized)
+    - Can filter by class level
+    - Can exclude a specific question ID (for updates)
+
+    **Permissions**: Teachers and Admins only
+    """
+    matching_question = await question_service.check_duplicate(
+        session,
+        request.question_text,
+        request.class_level,
+        request.exclude_question_id
+    )
+
+    if matching_question:
+        return CheckDuplicateResponse(
+            is_duplicate=True,
+            matching_question=QuestionSummaryResponse(
+                question_id=str(matching_question.question_id),
+                question_type=matching_question.question_type,
+                class_level=matching_question.class_level,
+                unit=matching_question.unit,
+                question_text=matching_question.question_text[:200] + "..." if len(matching_question.question_text) > 200 else matching_question.question_text,
+                marks=matching_question.marks,
+                difficulty=matching_question.difficulty,
+                status=matching_question.status,
+                created_at=matching_question.created_at
+            ),
+            message="A similar question already exists in the question bank."
+        )
+
+    return CheckDuplicateResponse(
+        is_duplicate=False,
+        matching_question=None,
+        message="No duplicate found. You can proceed."
     )

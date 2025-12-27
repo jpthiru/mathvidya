@@ -3,12 +3,21 @@
  * CRUD operations for MCQ questions with LaTeX support
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { questionsAPI } from '../../services/api';
 import { MathText, MathToolbar } from '../../components/common/MathRenderer';
-import { FiPlus, FiEdit2, FiTrash2, FiFilter, FiX, FiUpload, FiChevronLeft, FiChevronRight, FiRefreshCw } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiFilter, FiX, FiUpload, FiChevronLeft, FiChevronRight, FiRefreshCw, FiAlertTriangle } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import styles from './Questions.module.css';
+
+// Debounce helper
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
 
 // CBSE Units for Class X and XII
 const UNITS = {
@@ -85,6 +94,14 @@ const Questions = () => {
   const [submitting, setSubmitting] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
 
+  // Duplicate check state
+  const [duplicateCheck, setDuplicateCheck] = useState({
+    checking: false,
+    isDuplicate: false,
+    matchingQuestion: null,
+    message: '',
+  });
+
   const fileInputRef = useRef(null);
   const questionTextRef = useRef(null);
 
@@ -124,6 +141,60 @@ const Questions = () => {
   };
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  // Debounced duplicate check function
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const checkForDuplicate = useCallback(
+    debounce(async (questionText, classLevel, excludeId) => {
+      // Only check if question text is at least 10 characters
+      if (!questionText || questionText.trim().length < 10) {
+        setDuplicateCheck({
+          checking: false,
+          isDuplicate: false,
+          matchingQuestion: null,
+          message: '',
+        });
+        return;
+      }
+
+      setDuplicateCheck(prev => ({ ...prev, checking: true }));
+
+      try {
+        const result = await questionsAPI.checkDuplicate(
+          questionText,
+          classLevel,
+          excludeId
+        );
+
+        setDuplicateCheck({
+          checking: false,
+          isDuplicate: result.is_duplicate,
+          matchingQuestion: result.matching_question,
+          message: result.message,
+        });
+      } catch (error) {
+        console.error('Duplicate check failed:', error);
+        setDuplicateCheck({
+          checking: false,
+          isDuplicate: false,
+          matchingQuestion: null,
+          message: '',
+        });
+      }
+    }, 500), // 500ms debounce
+    []
+  );
+
+  // Check for duplicates when question text changes
+  useEffect(() => {
+    if (modalOpen && formData.question_text) {
+      checkForDuplicate(
+        formData.question_text,
+        formData.student_class,
+        editingQuestion?.question_id
+      );
+    }
+  }, [formData.question_text, formData.student_class, modalOpen, editingQuestion, checkForDuplicate]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -166,6 +237,12 @@ const Questions = () => {
       explanation: '',
     });
     setFormErrors({});
+    setDuplicateCheck({
+      checking: false,
+      isDuplicate: false,
+      matchingQuestion: null,
+      message: '',
+    });
     setModalOpen(true);
   };
 
@@ -193,6 +270,12 @@ const Questions = () => {
       explanation: question.model_answer || question.explanation || '',
     });
     setFormErrors({});
+    setDuplicateCheck({
+      checking: false,
+      isDuplicate: false,
+      matchingQuestion: null,
+      message: '',
+    });
     setModalOpen(true);
   };
 
@@ -613,7 +696,7 @@ const Questions = () => {
                 <MathToolbar onInsert={insertMathSymbol} />
                 <textarea
                   ref={questionTextRef}
-                  className={`form-textarea ${formErrors.question_text ? 'error' : ''}`}
+                  className={`form-textarea ${formErrors.question_text ? 'error' : ''} ${duplicateCheck.isDuplicate ? 'warning' : ''}`}
                   rows={4}
                   placeholder="Enter your question. Use $x^2$ for inline math or $$\frac{a}{b}$$ for block math."
                   value={formData.question_text}
@@ -621,6 +704,38 @@ const Questions = () => {
                 />
                 {formErrors.question_text && (
                   <span className="form-error">{formErrors.question_text}</span>
+                )}
+
+                {/* Duplicate Check Status */}
+                {duplicateCheck.checking && (
+                  <div className={styles.duplicateChecking}>
+                    <span className="spinner-small"></span>
+                    <span className="text-gray">Checking for duplicates...</span>
+                  </div>
+                )}
+
+                {duplicateCheck.isDuplicate && duplicateCheck.matchingQuestion && (
+                  <div className={styles.duplicateWarning}>
+                    <FiAlertTriangle className={styles.warningIcon} />
+                    <div className={styles.duplicateContent}>
+                      <strong>Potential duplicate found!</strong>
+                      <p className="text-sm">
+                        A similar question exists in {duplicateCheck.matchingQuestion.unit} ({duplicateCheck.matchingQuestion.class_level}):
+                      </p>
+                      <div className={styles.matchingQuestion}>
+                        <MathText text={duplicateCheck.matchingQuestion.question_text} />
+                      </div>
+                      <p className="text-sm text-gray">
+                        You can still save this question if it&apos;s intentionally different.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {!duplicateCheck.checking && !duplicateCheck.isDuplicate && formData.question_text.length >= 10 && (
+                  <div className={styles.duplicateOk}>
+                    <span className="text-success">✓ No duplicate found</span>
+                  </div>
                 )}
 
                 {/* Live Preview */}

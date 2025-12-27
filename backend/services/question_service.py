@@ -443,6 +443,62 @@ class QuestionService:
 
         return created_questions, errors
 
+    @staticmethod
+    async def check_duplicate(
+        session: AsyncSession,
+        question_text: str,
+        class_level: Optional[str] = None,
+        exclude_question_id: Optional[str] = None
+    ) -> Optional[Question]:
+        """
+        Check if a similar question already exists
+
+        Uses case-insensitive comparison after normalizing whitespace.
+        Returns the matching question if found, None otherwise.
+
+        Args:
+            session: Database session
+            question_text: The question text to check
+            class_level: Optional class filter (X or XII)
+            exclude_question_id: Question ID to exclude (for updates)
+
+        Returns:
+            Matching Question or None
+        """
+        # Normalize the question text for comparison
+        # Remove extra whitespace, convert to lowercase
+        normalized_text = ' '.join(question_text.lower().split())
+
+        # Build query for active questions
+        conditions = [
+            Question.status != QuestionStatus.ARCHIVED.value
+        ]
+
+        if class_level:
+            conditions.append(Question.class_level == class_level)
+
+        if exclude_question_id:
+            conditions.append(Question.question_id != exclude_question_id)
+
+        # Get all potential matches and compare normalized text
+        query = select(Question).where(and_(*conditions))
+        result = await session.execute(query)
+        questions = result.scalars().all()
+
+        for q in questions:
+            if q.question_text:
+                q_normalized = ' '.join(q.question_text.lower().split())
+                # Check for exact match
+                if q_normalized == normalized_text:
+                    return q
+                # Also check if one contains the other (potential duplicate)
+                # Only if the shorter one is at least 50 chars
+                if len(normalized_text) >= 50 and len(q_normalized) >= 50:
+                    if normalized_text in q_normalized or q_normalized in normalized_text:
+                        return q
+
+        return None
+
 
 # Global question service instance
 question_service = QuestionService()

@@ -213,3 +213,17 @@ class ArchiveQuestionRequest(BaseModel):
 class CloneQuestionRequest(BaseModel):
     """Clone a question with modifications"""
     modifications: Optional[UpdateQuestionRequest] = None
+
+
+class CheckDuplicateRequest(BaseModel):
+    """Request to check for duplicate questions"""
+    question_text: str = Field(..., min_length=10, description="Question text to check")
+    class_level: Optional[str] = Field(None, pattern="^(X|XII)$", description="Optional class filter")
+    exclude_question_id: Optional[str] = Field(None, description="Question ID to exclude (for updates)")
+
+
+class CheckDuplicateResponse(BaseModel):
+    """Response for duplicate check"""
+    is_duplicate: bool
+    matching_question: Optional[QuestionSummaryResponse] = None
+    message: str

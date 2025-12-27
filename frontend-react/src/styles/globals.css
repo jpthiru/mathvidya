@@ -221,6 +221,12 @@ a:hover {
   border-color: var(--color-error);
 }
 
+.form-input.warning,
+.form-select.warning,
+.form-textarea.warning {
+  border-color: #f59e0b;
+}
+
 .form-error {
   margin-top: 0.25rem;
   font-size: 0.85rem;
@@ -386,6 +392,15 @@ a:hover {
   width: 1.5rem;
   height: 1.5rem;
   border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-small {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

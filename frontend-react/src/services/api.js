@@ -182,6 +182,17 @@ export const questionsAPI = {
     const response = await api.get('/questions/stats/overview');
     return response.data;
   },
+
+  checkDuplicate: async (questionText, classLevel = null, excludeQuestionId = null) => {
+    const payload = {
+      question_text: questionText,
+    };
+    if (classLevel) payload.class_level = classLevel;
+    if (excludeQuestionId) payload.exclude_question_id = excludeQuestionId;
+
+    const response = await api.post('/questions/check-duplicate', payload);
+    return response.data;
+  },
 };
 
 // ==================== Exams ====================
