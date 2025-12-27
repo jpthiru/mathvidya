@@ -1,4 +1,4 @@
-/* Login Page Styles */
+/* Register Page Styles */
 
 .container {
   display: flex;
@@ -7,7 +7,7 @@
 
 /* ========== Branding Side ========== */
 .brandingSide {
-  flex: 1;
+  flex: 0 0 40%;
   background: var(--gradient-primary);
   display: flex;
   align-items: center;
@@ -64,13 +64,13 @@
 }
 
 .brandingContent h2 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: white;
   margin-bottom: 1rem;
 }
 
 .brandingContent p {
-  font-size: 1.1rem;
+  font-size: 1rem;
   opacity: 0.9;
   margin-bottom: 2rem;
 }
@@ -97,15 +97,17 @@
 .formSide {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 2rem;
   background-color: var(--color-gray-50);
+  overflow-y: auto;
 }
 
 .formContainer {
   width: 100%;
-  max-width: 420px;
+  max-width: 600px;
+  padding: 2rem 0;
 }
 
 .formContainer h2 {
@@ -113,51 +115,42 @@
 }
 
 .formContainer > p {
-  margin-bottom: 2rem;
-}
-
-/* ========== Role Selector ========== */
-.roleSelector {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.roleBtn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  background-color: white;
-  border: 2px solid var(--color-gray-300);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.roleBtn:hover {
-  border-color: var(--role-color);
-  transform: translateY(-2px);
-}
-
-.roleBtn.active {
-  border-color: var(--role-color);
-  background-color: var(--role-color);
-  color: white;
-}
-
-.roleBtn span {
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* ========== Form ========== */
-.form {
   margin-bottom: 1.5rem;
 }
 
+/* ========== Form Sections ========== */
+.section {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sectionNote {
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
+  margin-bottom: 1rem;
+}
+
+/* ========== Form Row ========== */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ========== Input Wrapper ========== */
 .inputWrapper {
   position: relative;
 }
@@ -192,31 +185,84 @@
   color: var(--color-gray-700);
 }
 
-.formOptions {
+/* ========== Class Selector ========== */
+.classSelector {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 1rem;
+}
+
+.classBtn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.classBtn:hover {
+  border-color: var(--color-primary);
+}
+
+.classBtn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+/* ========== Terms Section ========== */
+.termsSection {
   margin-bottom: 1.5rem;
 }
 
-.checkbox {
+.termsCheckbox {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 0.75rem;
   cursor: pointer;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.termsCheckbox:hover {
+  background: var(--color-gray-100);
+}
+
+.termsCheckbox.termsError {
+  border-color: var(--color-error);
+  background: #FEF2F2;
+}
+
+.checkIcon {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-top: 0.1rem;
+}
+
+.termsCheckbox span {
   font-size: 0.9rem;
+  color: var(--color-gray-700);
+  line-height: 1.5;
 }
 
-.checkbox input {
-  width: 1rem;
-  height: 1rem;
-  cursor: pointer;
+.termsCheckbox a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
 }
 
-.forgotLink {
-  font-size: 0.9rem;
+.termsCheckbox a:hover {
+  text-decoration: underline;
 }
 
+/* ========== Error Alert ========== */
 .errorAlert {
   padding: 0.75rem 1rem;
   background-color: #FEE2E2;
@@ -226,14 +272,16 @@
   font-size: 0.9rem;
 }
 
-/* ========== Register Link ========== */
-.registerLink {
+/* ========== Login Link ========== */
+.loginLink {
   text-align: center;
   color: var(--color-gray-600);
+  margin-top: 1.5rem;
 }
 
-.registerLink a {
+.loginLink a {
   font-weight: 600;
+  color: var(--color-primary);
 }
 
 /* ========== Legal Links ========== */
@@ -266,35 +314,45 @@
 }
 
 /* ========== Responsive ========== */
-@media (max-width: 768px) {
+@media (max-width: 968px) {
   .container {
     flex-direction: column;
   }
 
   .brandingSide {
+    flex: none;
     padding: 2rem;
     min-height: auto;
   }
 
   .brandingContent h2 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
   .brandingContent p,
   .features {
     display: none;
   }
+}
 
+@media (max-width: 768px) {
   .formSide {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
   }
 
-  .roleSelector {
-    flex-wrap: wrap;
+  .formContainer {
+    padding: 1rem 0;
   }
 
-  .roleBtn {
-    flex: 1 1 calc(50% - 0.5rem);
-    min-width: 100px;
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .classSelector {
+    flex-direction: column;
   }
 }

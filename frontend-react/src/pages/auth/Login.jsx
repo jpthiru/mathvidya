@@ -202,6 +202,19 @@ const Login = () => {
             Don't have an account?{' '}
             <Link to="/register">Create one now</Link>
           </p>
+
+          {/* Legal Links */}
+          <div className={styles.legalLinks}>
+            <Link to="/terms-and-conditions">Terms</Link>
+            <span className={styles.separator}>•</span>
+            <Link to="/privacy-policy">Privacy</Link>
+            <span className={styles.separator}>•</span>
+            <Link to="/refund-policy">Refunds</Link>
+            <span className={styles.separator}>•</span>
+            <Link to="/pricing">Pricing</Link>
+            <span className={styles.separator}>•</span>
+            <Link to="/contact-us">Contact</Link>
+          </div>
         </div>
       </div>
     </div>

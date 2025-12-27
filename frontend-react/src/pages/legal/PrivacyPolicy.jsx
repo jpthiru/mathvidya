@@ -1,0 +1,224 @@
+/**
+ * Privacy Policy Page
+ * Required for payment gateway compliance in India
+ */
+
+import styles from './Legal.module.css';
+
+const PrivacyPolicy = () => {
+  return (
+    <div className={styles.legalPage}>
+      <div className={styles.container}>
+        <h1>Privacy Policy</h1>
+        <p className={styles.lastUpdated}>Last Updated: December 2024</p>
+
+        <section className={styles.section}>
+          <h2>1. Introduction</h2>
+          <p>
+            MathVidya ("we," "our," or "us") is committed to protecting the privacy of our users,
+            especially students who are minors. This Privacy Policy explains how we collect, use,
+            disclose, and safeguard your information when you use our platform.
+          </p>
+          <p>
+            By using MathVidya, you consent to the practices described in this policy. If you do
+            not agree with this policy, please do not use our services.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>2. Information We Collect</h2>
+
+          <h3>2.1 Personal Information</h3>
+          <p>We collect the following personal information:</p>
+          <ul>
+            <li><strong>Student Information:</strong> Name, email address, phone number, class (X or XII), school name.</li>
+            <li><strong>Parent/Guardian Information:</strong> Name, email address, phone number, relationship to student.</li>
+            <li><strong>Account Information:</strong> Username, password (encrypted), profile preferences.</li>
+            <li><strong>Payment Information:</strong> Processed securely by our payment gateway (Razorpay). We do not store credit/debit card details.</li>
+          </ul>
+
+          <h3>2.2 Academic Information</h3>
+          <ul>
+            <li>Exam responses and answers (including uploaded scanned answer sheets)</li>
+            <li>Performance scores and analytics</li>
+            <li>Learning progress and history</li>
+          </ul>
+
+          <h3>2.3 Technical Information</h3>
+          <ul>
+            <li>IP address and device information</li>
+            <li>Browser type and version</li>
+            <li>Usage patterns and access times</li>
+            <li>Cookies and similar technologies</li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>3. How We Use Your Information</h2>
+          <p>We use collected information to:</p>
+          <ul>
+            <li>Provide and maintain our educational services</li>
+            <li>Process exam submissions and deliver evaluations</li>
+            <li>Generate performance analytics and score predictions</li>
+            <li>Process payments and manage subscriptions</li>
+            <li>Communicate with users about their accounts and our services</li>
+            <li>Provide parent/guardian visibility into student progress</li>
+            <li>Improve our platform and develop new features</li>
+            <li>Ensure security and prevent fraud</li>
+            <li>Comply with legal obligations</li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>4. Protection of Minor Students</h2>
+          <p>
+            We take special care to protect the privacy of students under 18 years of age:
+          </p>
+          <ul>
+            <li>Parent/Guardian registration is mandatory for all student accounts.</li>
+            <li>Parents have full visibility into their child's academic performance and activity.</li>
+            <li>We do not collect unnecessary personal information from minors.</li>
+            <li>We do not share student data with third parties for marketing purposes.</li>
+            <li>Student data is used solely for educational purposes.</li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>5. Data Sharing and Disclosure</h2>
+          <p>We may share your information with:</p>
+
+          <h3>5.1 Service Providers</h3>
+          <ul>
+            <li><strong>Payment Gateway (Razorpay):</strong> To process payments securely.</li>
+            <li><strong>Cloud Services (AWS):</strong> To host and store data securely in India.</li>
+            <li><strong>Email Services:</strong> To send notifications and communications.</li>
+          </ul>
+
+          <h3>5.2 Teachers</h3>
+          <ul>
+            <li>Teachers have access to student answer sheets for evaluation purposes only.</li>
+            <li>Teachers cannot access student personal contact information.</li>
+          </ul>
+
+          <h3>5.3 Legal Requirements</h3>
+          <p>We may disclose information if required by law or to:</p>
+          <ul>
+            <li>Comply with legal process or government requests</li>
+            <li>Protect our rights, privacy, safety, or property</li>
+            <li>Enforce our terms and conditions</li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>6. Data Storage and Security</h2>
+          <p>We implement robust security measures:</p>
+          <ul>
+            <li><strong>Data Residency:</strong> All data is stored on servers located in India (AWS Mumbai region).</li>
+            <li><strong>Encryption:</strong> Data is encrypted in transit (TLS/SSL) and at rest.</li>
+            <li><strong>Access Controls:</strong> Strict role-based access controls for all personnel.</li>
+            <li><strong>Regular Backups:</strong> Automated backups to prevent data loss.</li>
+            <li><strong>Security Audits:</strong> Regular security assessments and monitoring.</li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>7. Cookies and Tracking</h2>
+          <p>We use cookies and similar technologies to:</p>
+          <ul>
+            <li>Keep you logged in during your session</li>
+            <li>Remember your preferences</li>
+            <li>Analyze platform usage and improve our services</li>
+          </ul>
+          <p>
+            You can control cookies through your browser settings. However, disabling cookies may
+            affect the functionality of our platform.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>8. Your Rights</h2>
+          <p>You have the right to:</p>
+          <ul>
+            <li><strong>Access:</strong> Request a copy of your personal data.</li>
+            <li><strong>Correction:</strong> Update or correct inaccurate information.</li>
+            <li><strong>Deletion:</strong> Request deletion of your account and data (subject to legal retention requirements).</li>
+            <li><strong>Portability:</strong> Request your data in a portable format.</li>
+            <li><strong>Opt-out:</strong> Unsubscribe from marketing communications.</li>
+          </ul>
+          <p>
+            To exercise these rights, please contact us at privacy@mathvidya.com.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>9. Data Retention</h2>
+          <p>We retain your data:</p>
+          <ul>
+            <li><strong>Active Accounts:</strong> As long as your account is active.</li>
+            <li><strong>After Account Deletion:</strong> For up to 3 years for legal and audit purposes.</li>
+            <li><strong>Payment Records:</strong> As required by Indian tax laws (typically 8 years).</li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>10. Third-Party Links</h2>
+          <p>
+            Our platform may contain links to third-party websites. We are not responsible for
+            the privacy practices of these websites. Please review their privacy policies before
+            providing any personal information.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>11. Changes to This Policy</h2>
+          <p>
+            We may update this Privacy Policy from time to time. Changes will be posted on this
+            page with an updated "Last Updated" date. We encourage you to review this policy
+            periodically.
+          </p>
+          <p>
+            For significant changes, we will notify you via email or through a prominent notice
+            on our platform.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>12. Grievance Officer</h2>
+          <p>
+            In accordance with the Information Technology Act, 2000 and rules made thereunder,
+            the name and contact details of the Grievance Officer are:
+          </p>
+          <div className={styles.contactInfo}>
+            <p><strong>Grievance Officer</strong></p>
+            <p>Name: MathVidya Support Team</p>
+            <p>Email: grievance@mathvidya.com</p>
+            <p>Phone: +91 98400 12345</p>
+            <p>Address: Chennai, Tamil Nadu, India</p>
+          </div>
+          <p>
+            Complaints will be addressed within 30 days of receipt.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>13. Contact Us</h2>
+          <p>
+            If you have any questions about this Privacy Policy, please contact us:
+          </p>
+          <div className={styles.contactInfo}>
+            <p><strong>MathVidya</strong></p>
+            <p>Email: privacy@mathvidya.com</p>
+            <p>Phone: +91 98400 12345</p>
+            <p>Address: Chennai, Tamil Nadu, India</p>
+          </div>
+        </section>
+
+        <div className={styles.footer}>
+          <a href="/login" className={styles.backLink}>&larr; Back to Login</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PrivacyPolicy;

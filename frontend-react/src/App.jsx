@@ -12,6 +12,16 @@ import Layout from './components/common/Layout';
 
 // Auth Pages
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+
+// Legal Pages
+import {
+  TermsAndConditions,
+  PrivacyPolicy,
+  RefundPolicy,
+  ContactUs,
+  Pricing,
+} from './pages/legal';
 
 // Student Pages
 import StudentDashboard from './pages/student/Dashboard';
@@ -100,7 +110,15 @@ function AppRoutes() {
       {/* Public Routes */}
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Route>
+
+      {/* Legal Pages (accessible without login) */}
+      <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/refund-policy" element={<RefundPolicy />} />
+      <Route path="/contact-us" element={<ContactUs />} />
+      <Route path="/pricing" element={<Pricing />} />
 
       {/* Student Routes */}
       <Route element={<ProtectedRoute allowedRoles={['student']} />}>
