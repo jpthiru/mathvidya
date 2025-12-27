@@ -542,6 +542,15 @@ async def get_exam_history(
         if exam.total_score and exam.total_marks:
             percentage = round((exam.total_score / exam.total_marks) * 100, 2)
 
+        # Extract question_type and selected_units from exam_snapshot for unit practice exams
+        question_type = None
+        selected_units = None
+        if exam.exam_type == 'unit_practice' and exam.exam_snapshot:
+            snapshot = exam.exam_snapshot
+            template_config = snapshot.get('template_config', {})
+            question_type = template_config.get('question_type')
+            selected_units = template_config.get('selected_units', [])
+
         history_responses.append(ExamHistoryResponse(
             exam_instance_id=str(exam.exam_instance_id),
             exam_type=exam.exam_type,
@@ -552,7 +561,9 @@ async def get_exam_history(
             mcq_score=exam.mcq_score,
             total_score=exam.total_score,
             percentage=percentage,
-            evaluated_at=exam.submitted_at  # Simplified
+            evaluated_at=exam.submitted_at,  # Simplified
+            question_type=question_type,
+            selected_units=selected_units
         ))
 
     return history_responses

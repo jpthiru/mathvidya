@@ -160,6 +160,8 @@ class ExamHistoryResponse(BaseModel):
     total_score: Optional[float] = None
     percentage: Optional[float] = None
     evaluated_at: Optional[datetime] = None
+    question_type: Optional[str] = None  # For unit practice exams
+    selected_units: Optional[List[str]] = None  # Unit names for unit practice exams
 
     class Config:
         from_attributes = True

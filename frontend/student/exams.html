@@ -624,11 +624,26 @@
         const examTypeDisplay = exam.exam_type === 'unit_practice' ? 'Unit Practice' :
                                 exam.exam_type === 'board_exam' ? 'Board Exam' : exam.exam_type;
 
+        // Build subtitle with units or question type for unit practice
+        let examSubtitle = '';
+        if (exam.exam_type === 'unit_practice') {
+          const parts = [];
+          if (exam.question_type) parts.push(exam.question_type);
+          if (exam.selected_units && exam.selected_units.length > 0) {
+            // Show first 2 units, then "..." if more
+            const unitsToShow = exam.selected_units.slice(0, 2).join(', ');
+            const more = exam.selected_units.length > 2 ? ` +${exam.selected_units.length - 2} more` : '';
+            parts.push(unitsToShow + more);
+          }
+          if (parts.length > 0) examSubtitle = parts.join(' - ');
+        }
+
         // Get status class
         const statusMap = {
           'evaluated': 'evaluated',
           'pending_evaluation': 'pending-evaluation',
           'submitted': 'submitted',
+          'submitted_mcq': 'submitted',
           'in_progress': 'in-progress',
           'created': 'created'
         };
@@ -645,7 +660,7 @@
           <tr>
             <td>
               <strong>${examTypeDisplay}</strong>
-              ${exam.question_type ? `<br><small style="color: var(--color-gray-500);">${exam.question_type}</small>` : ''}
+              ${examSubtitle ? `<br><small style="color: var(--color-gray-500);">${examSubtitle}</small>` : ''}
             </td>
             <td>${examDate ? formatDateTime(examDate) : '-'}</td>
             <td>

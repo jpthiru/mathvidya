@@ -734,13 +734,15 @@
 
         // Update stats
         document.getElementById('totalExams').textContent = dashboard.total_exams || 0;
-        document.getElementById('averageScore').textContent = dashboard.average_score
-          ? `${dashboard.average_score.toFixed(1)}%`
+        // Use overall_percentage from API (average_score is mapped from this)
+        const avgScore = dashboard.overall_percentage || dashboard.average_score || 0;
+        document.getElementById('averageScore').textContent = avgScore
+          ? `${parseFloat(avgScore).toFixed(1)}%`
           : '0%';
-        document.getElementById('predictedScore').textContent = dashboard.predicted_score
-          ? `${dashboard.predicted_score}/100`
+        document.getElementById('predictedScore').textContent = dashboard.board_prediction
+          ? `${dashboard.board_prediction}/100`
           : '-';
-        document.getElementById('classRank').textContent = dashboard.rank || '-';
+        document.getElementById('classRank').textContent = dashboard.overall_rank || dashboard.rank || '-';
 
         // Render charts
         renderPerformanceChart(dashboard.recent_exams || []);
@@ -749,8 +751,9 @@
         // Render unit performance
         renderUnitPerformance(dashboard.unit_performance || []);
 
-        // Render strengths and weaknesses
-        renderStrengthsWeaknesses(dashboard.strengths || [], dashboard.weaknesses || []);
+        // Render strengths and weaknesses (API returns strength_weakness object)
+        const sw = dashboard.strength_weakness || {};
+        renderStrengthsWeaknesses(sw.strengths || dashboard.strengths || [], sw.weaknesses || dashboard.weaknesses || []);
 
       } catch (error) {
         console.error('Error loading analytics:', error);

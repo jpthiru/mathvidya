@@ -778,10 +778,12 @@
 
         // Update stats
         document.getElementById('examsTaken').textContent = dashboard.total_exams || 0;
-        document.getElementById('averageScore').textContent = dashboard.average_score
-          ? `${dashboard.average_score.toFixed(1)}%`
+        // Use overall_percentage from API (average_score is mapped from this)
+        const avgScore = dashboard.overall_percentage || dashboard.average_score || 0;
+        document.getElementById('averageScore').textContent = avgScore
+          ? `${parseFloat(avgScore).toFixed(1)}%`
           : '0%';
-        document.getElementById('classRank').textContent = dashboard.rank || '-';
+        document.getElementById('classRank').textContent = dashboard.overall_rank || dashboard.rank || '-';
 
         // Load subscription/entitlement
         const entitlement = await api.checkExamEntitlement();
@@ -861,9 +863,23 @@
         const totalMarks = exam.total_marks;
         const percentage = exam.percentage !== undefined ? exam.percentage : (score && totalMarks ? (score/totalMarks)*100 : null);
 
-        // Format exam type display
-        const examTypeDisplay = exam.exam_type === 'unit_practice' ? 'Unit Practice' :
-                                exam.exam_type === 'board_exam' ? 'Board Exam' : exam.exam_type;
+        // Format exam type display with unit names for unit practice
+        let examTypeDisplay = exam.exam_type === 'unit_practice' ? 'Unit Practice' :
+                              exam.exam_type === 'board_exam' ? 'Board Exam' : exam.exam_type;
+
+        // Build subtitle with units or question type
+        let examSubtitle = exam.class_level || '';
+        if (exam.exam_type === 'unit_practice') {
+          const parts = [];
+          if (exam.question_type) parts.push(exam.question_type);
+          if (exam.selected_units && exam.selected_units.length > 0) {
+            // Show first 2 units, then "..." if more
+            const unitsToShow = exam.selected_units.slice(0, 2).join(', ');
+            const more = exam.selected_units.length > 2 ? ` +${exam.selected_units.length - 2} more` : '';
+            parts.push(unitsToShow + more);
+          }
+          if (parts.length > 0) examSubtitle = parts.join(' - ');
+        }
 
         // Get status class
         const statusClass = exam.status ? exam.status.toLowerCase().replace(/_/g, '-') : 'pending';
@@ -873,7 +889,7 @@
           <tr>
             <td>
               <strong>${examTypeDisplay}</strong><br>
-              <small style="color: var(--color-gray-500);">${exam.class_level || ''}</small>
+              <small style="color: var(--color-gray-500);">${examSubtitle}</small>
             </td>
             <td>${examDate ? formatDateTime(examDate) : '-'}</td>
             <td>
