@@ -394,10 +394,18 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label>Full Name *</label>
-              <input type="text" class="form-input" id="studentName" placeholder="Enter student's name" required>
-              <span class="form-error" id="nameError"></span>
+              <label>First Name *</label>
+              <input type="text" class="form-input" id="firstName" placeholder="First name" required>
+              <span class="form-error" id="firstNameError"></span>
             </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" class="form-input" id="lastName" placeholder="Last name" required>
+              <span class="form-error" id="lastNameError"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
             <div class="form-group">
               <label>Class *</label>
               <div class="class-selector">
@@ -405,18 +413,18 @@
                 <button type="button" class="class-btn active" data-class="XII">Class XII</button>
               </div>
             </div>
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" class="form-input" id="studentPhone" placeholder="9876543210" required>
+              <span class="form-error" id="studentPhoneError"></span>
+            </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label>Email *</label>
               <input type="email" class="form-input" id="studentEmail" placeholder="student@email.com" required>
-              <span class="form-error" id="emailError"></span>
-            </div>
-            <div class="form-group">
-              <label>Phone *</label>
-              <input type="tel" class="form-input" id="studentPhone" placeholder="9876543210" required>
-              <span class="form-error" id="phoneError"></span>
+              <span class="form-error" id="studentEmailError"></span>
             </div>
           </div>
 
@@ -543,24 +551,37 @@
     function showError(inputId, errorId, message) {
       const input = document.getElementById(inputId);
       const error = document.getElementById(errorId);
-      input.classList.add('error');
-      error.textContent = message;
+      if (input) input.classList.add('error');
+      if (error) error.textContent = message;
     }
 
     function clearError(inputId, errorId) {
       const input = document.getElementById(inputId);
       const error = document.getElementById(errorId);
-      input.classList.remove('error');
-      error.textContent = '';
+      if (input) input.classList.remove('error');
+      if (error) error.textContent = '';
     }
 
-    // Clear errors on input
-    const fields = ['studentName', 'studentEmail', 'studentPhone', 'password', 'confirmPassword', 'parentName', 'parentEmail', 'parentPhone'];
-    fields.forEach(field => {
-      const input = document.getElementById(field);
-      input.addEventListener('input', () => {
-        clearError(field, field.replace('student', '').replace('parent', 'parent') + 'Error');
-      });
+    // Clear errors on input - map field IDs to their error IDs
+    const fieldErrorMap = {
+      'firstName': 'firstNameError',
+      'lastName': 'lastNameError',
+      'studentEmail': 'studentEmailError',
+      'studentPhone': 'studentPhoneError',
+      'password': 'passwordError',
+      'confirmPassword': 'confirmPasswordError',
+      'parentName': 'parentNameError',
+      'parentEmail': 'parentEmailError',
+      'parentPhone': 'parentPhoneError'
+    };
+
+    Object.entries(fieldErrorMap).forEach(([fieldId, errorId]) => {
+      const input = document.getElementById(fieldId);
+      if (input) {
+        input.addEventListener('input', () => {
+          clearError(fieldId, errorId);
+        });
+      }
     });
 
     // Form submission
@@ -568,7 +589,8 @@
       e.preventDefault();
 
       // Get values
-      const studentName = document.getElementById('studentName').value.trim();
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
       const studentEmail = document.getElementById('studentEmail').value.trim();
       const studentPhone = document.getElementById('studentPhone').value.trim();
       const password = document.getElementById('password').value;
@@ -580,21 +602,27 @@
 
       let isValid = true;
 
-      // Validate student name
-      if (!studentName) {
-        showError('studentName', 'nameError', 'Student name is required');
+      // Validate first name
+      if (!firstName) {
+        showError('firstName', 'firstNameError', 'First name is required');
+        isValid = false;
+      }
+
+      // Validate last name
+      if (!lastName) {
+        showError('lastName', 'lastNameError', 'Last name is required');
         isValid = false;
       }
 
       // Validate student email
       if (!validateEmail(studentEmail)) {
-        showError('studentEmail', 'emailError', 'Please enter a valid email');
+        showError('studentEmail', 'studentEmailError', 'Please enter a valid email');
         isValid = false;
       }
 
       // Validate student phone
       if (!validatePhone(studentPhone)) {
-        showError('studentPhone', 'phoneError', 'Enter valid 10-digit mobile number');
+        showError('studentPhone', 'studentPhoneError', 'Enter valid 10-digit mobile number');
         isValid = false;
       }
 
@@ -644,16 +672,13 @@
       try {
         // Call register API
         const response = await api.register({
-          name: studentName,
           email: studentEmail,
-          phone: studentPhone,
           password: password,
-          student_class: selectedClass,
-          parent_name: parentName,
-          parent_email: parentEmail,
-          parent_phone: parentPhone,
-          terms_accepted: true,
-          terms_accepted_at: new Date().toISOString()
+          role: 'student',
+          first_name: firstName,
+          last_name: lastName,
+          phone: studentPhone,
+          student_class: selectedClass
         });
 
         // Show success message
