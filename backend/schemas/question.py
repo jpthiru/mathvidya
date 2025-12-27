@@ -70,6 +70,13 @@ class CreateQuestionRequest(BaseModel):
 
 class UpdateQuestionRequest(BaseModel):
     """Update an existing question"""
+    # Core fields that can be updated
+    question_type: Optional[QuestionType] = None
+    class_level: Optional[str] = Field(None, pattern="^(X|XII)$", description="Class X or XII")
+    unit: Optional[str] = Field(None, min_length=1, max_length=100, description="CBSE Unit name")
+    chapter: Optional[str] = Field(None, max_length=100)
+    topic: Optional[str] = Field(None, max_length=100)
+
     question_text: Optional[str] = Field(None, min_length=10)
     question_image_url: Optional[str] = None
 
@@ -82,6 +89,7 @@ class UpdateQuestionRequest(BaseModel):
     marking_scheme: Optional[str] = None
 
     # Metadata
+    marks: Optional[int] = Field(None, ge=1, le=10, description="Marks for this question")
     difficulty: Optional[QuestionDifficulty] = None
     tags: Optional[List[str]] = None
     status: Optional[QuestionStatus] = None
