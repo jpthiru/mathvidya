@@ -16,6 +16,7 @@ import sys
 import os
 import asyncio
 import uuid
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -253,12 +254,12 @@ async def import_questions(excel_path: str, dry_run: bool = False):
                     'question_text': q['question_text'],
                     'question_image_url': q['question_image_url'],
                     'diagram_image_url': q['diagram_image_url'],
-                    'options': q['options'],  # JSONB will handle the list
+                    'options': json.dumps(q['options']),  # JSON serialize for JSONB
                     'correct_option': q['correct_option'],
                     'model_answer': q['model_answer'],
                     'marking_scheme': q['marking_scheme'],
                     'cbse_year': q['cbse_year'],
-                    'tags': q['tags'],
+                    'tags': q['tags'],  # ARRAY type handles list directly
                     'status': q['status'],
                     'is_verified': q['is_verified'],
                     'verified_by_user_id': q['verified_by_user_id'],
