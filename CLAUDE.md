@@ -194,25 +194,71 @@ Student uploads scanned pages → Exam enters "Pending Evaluation" → SLA Manag
 
 ## Development Commands
 
-*Note: This section will be populated once the codebase is implemented. Typical commands will include:*
+### Local Development (Windows)
 
 ```bash
-# Backend setup (example - adjust based on actual tech stack)
-# npm install / pip install -r requirements.txt
-# npm run dev / python manage.py runserver
+# Backend setup
+cd backend
+python -m venv venv
+source venv/Scripts/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
-# Database migrations (example)
-# npm run migrate / alembic upgrade head
+# Run backend locally
+uvicorn main:app --reload --port 8000
 
-# Run tests (example)
-# npm test / pytest
+# Database migrations
+python -m alembic upgrade head
 
-# Frontend development (example)
-# cd frontend && npm install && npm start
-
-# Docker/container commands (example)
-# docker-compose up
+# Run tests
+pytest
 ```
+
+### Production Deployment (EC2)
+
+**EC2 Location:** `/opt/mathvidya`
+
+**Production URL:** https://mathvidya.com
+
+```bash
+# SSH to EC2
+ssh -i ~/.ssh/your-key.pem ubuntu@<EC2-IP>
+
+# Navigate to project
+cd /opt/mathvidya
+
+# Pull latest code
+git pull origin main
+
+# Rebuild and restart containers
+sudo docker-compose -f docker-compose.prod.yml build --no-cache backend
+sudo docker-compose -f docker-compose.prod.yml up -d --force-recreate
+
+# View logs
+sudo docker-compose -f docker-compose.prod.yml logs -f backend
+
+# Run database migrations in container
+sudo docker-compose -f docker-compose.prod.yml exec backend python -m alembic upgrade head
+
+# Batch import questions
+sudo docker-compose -f docker-compose.prod.yml exec backend python scripts/batch_import_questions.py /app/Data-BatchUpload/MCQ-ClassXII-Batch1.xlsx
+```
+
+### Docker Configuration
+
+**Compose file:** `docker-compose.prod.yml`
+
+Key services:
+- `backend` - FastAPI application (port 8000)
+- `postgres` - PostgreSQL database
+- `redis` - Redis cache
+- `nginx` - Reverse proxy (ports 80, 443)
+
+### Batch Question Import
+
+Excel format for batch import (`Data-BatchUpload/` folder):
+- Columns: Class, Chapter/Unit, Question Type, Topic, Difficulty, Marks, Question Text in LaTeX, Option A-D text, Correct option and answer, Explanation or solution text in LaTeX, image
+- All imported questions marked as `is_verified=false`
+- Use Verify Questions page to review and approve
 
 ## Critical Technical Considerations
 
