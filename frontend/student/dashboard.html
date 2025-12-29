@@ -507,7 +507,7 @@
             <div class="profile-avatar" id="profileAvatar">S</div>
             <div>
               <div style="font-weight: 600; font-size: var(--text-sm);" id="userName">Student</div>
-              <div style="font-size: var(--text-xs); color: var(--color-gray-500);">Class XII</div>
+              <div style="font-size: var(--text-xs); color: var(--color-gray-500);" id="userClass">Class XII</div>
             </div>
             <i class="fas fa-chevron-down"></i>
           </button>
@@ -725,6 +725,8 @@
     document.getElementById('userName').textContent = user.name || user.email.split('@')[0];
     document.getElementById('welcomeName').textContent = user.name || user.email.split('@')[0];
     document.getElementById('profileAvatar').textContent = (user.name || user.email)[0].toUpperCase();
+    // Update class display
+    document.getElementById('userClass').textContent = `Class ${user.student_class || 'XII'}`;
 
     // Profile dropdown toggle
     const profileButton = document.getElementById('profileButton');
@@ -816,9 +818,18 @@
       return template ? template.template_id : null;
     }
 
-    // Load units
-    function loadUnits() {
-      const units = [
+    // Units by class level
+    const unitsByClass = {
+      'X': [
+        'Number Systems',
+        'Algebra',
+        'Coordinate Geometry',
+        'Geometry',
+        'Trigonometry',
+        'Mensuration',
+        'Statistics and Probability'
+      ],
+      'XII': [
         'Relations and Functions',
         'Inverse Trigonometric Functions',
         'Matrices',
@@ -832,7 +843,14 @@
         'Three Dimensional Geometry',
         'Linear Programming',
         'Probability'
-      ];
+      ]
+    };
+
+    // Load units based on student's class
+    function loadUnits() {
+      // Get student's class from user object
+      const studentClass = user.student_class || 'XII'; // Default to XII if not set
+      const units = unitsByClass[studentClass] || unitsByClass['XII'];
 
       const unitSelection = document.getElementById('unitSelection');
       unitSelection.innerHTML = units.map((unit, index) => `
