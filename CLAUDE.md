@@ -196,21 +196,29 @@ Student uploads scanned pages → Exam enters "Pending Evaluation" → SLA Manag
 
 ### Local Development (Windows)
 
-```bash
-# Backend setup
-cd backend
-python -m venv venv
-source venv/Scripts/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+**Local Project Path:** `C:\Users\jpthi\work\ThiruAgenticAI\en9\mathvidya`
 
-# Run backend locally
-uvicorn main:app --reload --port 8000
+**Virtual Environment:** `backend\mvenv`
+
+```bash
+# Activate virtual environment
+cd backend
+.\mvenv\Scripts\activate
+
+# Or run Python directly without activating
+.\mvenv\Scripts\python -m uvicorn main:app --reload --port 8000
+
+# Install dependencies (if needed)
+.\mvenv\Scripts\pip install -r requirements.txt
 
 # Database migrations
-python -m alembic upgrade head
+.\mvenv\Scripts\python -m alembic upgrade head
 
 # Run tests
-pytest
+.\mvenv\Scripts\python -m pytest
+
+# Batch import questions locally (dry run)
+.\mvenv\Scripts\python scripts\batch_import_questions.py ..\Data-BatchUpload\MCQ-ClassXII-Batch1.xlsx --dry-run
 ```
 
 ### Production Deployment (EC2)
