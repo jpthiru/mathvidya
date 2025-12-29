@@ -235,6 +235,19 @@ class ApiClient {
     return this.post('/questions/check-duplicate', data);
   }
 
+  async verifyQuestion(questionId) {
+    return this.post(`/questions/${questionId}/verify`, {});
+  }
+
+  async getUnverifiedStats() {
+    return this.get('/questions/stats/unverified');
+  }
+
+  async getUnverifiedQuestions(filters = {}) {
+    // Add is_verified: false filter for unverified questions
+    return this.post('/questions/search', { ...filters, is_verified: false });
+  }
+
   async uploadQuestionImage(file) {
     const formData = new FormData();
     formData.append('file', file);

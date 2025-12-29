@@ -28,7 +28,9 @@ from schemas.question import (
     ArchiveQuestionRequest,
     CloneQuestionRequest,
     CheckDuplicateRequest,
-    CheckDuplicateResponse
+    CheckDuplicateResponse,
+    VerifyQuestionResponse,
+    UnverifiedQuestionsStatsResponse
 )
 from services import question_service, s3_service
 
@@ -295,6 +297,7 @@ async def search_questions(
             marks=q.marks,
             difficulty=q.difficulty,
             status=q.status,
+            is_verified=q.is_verified,
             created_at=q.created_at
         )
         for q in questions
@@ -510,6 +513,7 @@ async def check_duplicate_question(
                 marks=matching_question.marks,
                 difficulty=matching_question.difficulty,
                 status=matching_question.status,
+                is_verified=matching_question.is_verified,
                 created_at=matching_question.created_at
             ),
             message="A similar question already exists in the question bank."
@@ -519,4 +523,72 @@ async def check_duplicate_question(
         is_duplicate=False,
         matching_question=None,
         message="No duplicate found. You can proceed."
+    )
+
+
+@router.post("/questions/{question_id}/verify", response_model=VerifyQuestionResponse)
+async def verify_question(
+    question_id: str,
+    current_user: User = Depends(require_teacher_or_admin),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Verify a batch-processed question
+
+    - Marks a question as verified by a teacher
+    - Only unverified questions can be verified
+    - Records who verified and when
+
+    **Permissions**: Teachers and Admins only
+    """
+    question = await question_service.get_question_by_id(session, question_id)
+
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
+
+    if question.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Question is already verified"
+        )
+
+    verified_question = await question_service.verify_question(
+        session,
+        question_id,
+        str(current_user.user_id)
+    )
+
+    return VerifyQuestionResponse(
+        question_id=str(verified_question.question_id),
+        is_verified=verified_question.is_verified,
+        verified_by_user_id=str(verified_question.verified_by_user_id),
+        verified_at=verified_question.verified_at,
+        message="Question verified successfully"
+    )
+
+
+@router.get("/questions/stats/unverified", response_model=UnverifiedQuestionsStatsResponse)
+async def get_unverified_stats(
+    current_user: User = Depends(require_teacher_or_admin),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Get statistics about unverified questions
+
+    - Total unverified count
+    - Breakdown by class, type, and unit
+    - Useful for batch verification dashboard
+
+    **Permissions**: Teachers and Admins only
+    """
+    stats = await question_service.get_unverified_stats(session)
+
+    return UnverifiedQuestionsStatsResponse(
+        total_unverified=stats['total_unverified'],
+        by_class=stats['by_class'],
+        by_type=stats['by_type'],
+        by_unit=stats['by_unit']
     )

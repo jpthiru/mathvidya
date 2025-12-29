@@ -215,6 +215,9 @@ class QuestionService:
             for tag in filters['tags']:
                 conditions.append(Question.tags.contains([tag]))
 
+        if filters.get('is_verified') is not None:
+            conditions.append(Question.is_verified == filters['is_verified'])
+
         # Build base query
         base_query = select(Question)
         if conditions:
@@ -498,6 +501,94 @@ class QuestionService:
                         return q
 
         return None
+
+    @staticmethod
+    async def verify_question(
+        session: AsyncSession,
+        question_id: str,
+        verified_by_user_id: str
+    ) -> Optional[Question]:
+        """
+        Verify a batch-processed question
+
+        Args:
+            session: Database session
+            question_id: Question UUID
+            verified_by_user_id: User ID of the verifier
+
+        Returns:
+            Updated Question or None
+        """
+        question = await session.get(Question, question_id)
+        if not question:
+            return None
+
+        question.is_verified = True
+        question.verified_by_user_id = verified_by_user_id
+        question.verified_at = datetime.now(timezone.utc)
+        question.updated_at = datetime.now(timezone.utc)
+
+        await session.commit()
+        await session.refresh(question)
+
+        return question
+
+    @staticmethod
+    async def get_unverified_stats(
+        session: AsyncSession
+    ) -> Dict:
+        """
+        Get statistics about unverified questions
+
+        Args:
+            session: Database session
+
+        Returns:
+            Dictionary with unverified question statistics
+        """
+        # Total unverified
+        total_result = await session.execute(
+            select(func.count()).select_from(Question).where(Question.is_verified == False)
+        )
+        total_unverified = total_result.scalar() or 0
+
+        # By class
+        class_result = await session.execute(
+            select(
+                Question.class_level,
+                func.count(Question.question_id)
+            ).where(Question.is_verified == False)
+            .group_by(Question.class_level)
+        )
+        by_class = {row[0]: row[1] for row in class_result}
+
+        # By type
+        type_result = await session.execute(
+            select(
+                Question.question_type,
+                func.count(Question.question_id)
+            ).where(Question.is_verified == False)
+            .group_by(Question.question_type)
+        )
+        by_type = {row[0]: row[1] for row in type_result}
+
+        # By unit
+        unit_result = await session.execute(
+            select(
+                Question.unit,
+                func.count(Question.question_id)
+            ).where(Question.is_verified == False)
+            .group_by(Question.unit)
+            .order_by(func.count(Question.question_id).desc())
+        )
+        by_unit = {row[0]: row[1] for row in unit_result}
+
+        return {
+            'total_unverified': total_unverified,
+            'by_class': by_class,
+            'by_type': by_type,
+            'by_unit': by_unit
+        }
 
 
 # Global question service instance

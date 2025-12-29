@@ -173,6 +173,38 @@
       color: #2563eb;
     }
 
+    .stat-icon.verify {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .action-card.highlight {
+      border: 2px solid #f59e0b;
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    }
+
+    .action-card.highlight i {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #dc2626;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 10px;
+      margin-left: 0.5rem;
+    }
+
     .stat-info h3 {
       font-size: var(--text-2xl);
       margin-bottom: 0.25rem;
@@ -315,6 +347,16 @@
           <p>Questions Created <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
         </div>
       </a>
+
+      <a href="verify-questions.html" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="Click to verify batch-processed questions">
+        <div class="stat-icon verify">
+          <i class="fas fa-clipboard-check"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="unverifiedCount">0</h3>
+          <p>Pending Verification <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
+        </div>
+      </a>
     </div>
 
     <!-- Action Cards -->
@@ -335,6 +377,12 @@
         <i class="fas fa-list"></i>
         <h3>View Question Bank</h3>
         <p>Browse and manage all questions</p>
+      </a>
+
+      <a href="verify-questions.html" class="action-card highlight" id="verifyCard" style="display: none;">
+        <i class="fas fa-clipboard-check"></i>
+        <h3>Verify Questions <span class="badge-count" id="verifyBadge">0</span></h3>
+        <p>Review and verify batch-processed questions</p>
       </a>
     </div>
   </main>
@@ -374,6 +422,26 @@
       } catch (error) {
         console.log('Could not load questions:', error);
         document.getElementById('questionsCount').textContent = '0';
+      }
+
+      try {
+        // Get unverified questions stats
+        const unverifiedStats = await api.getUnverifiedStats();
+        const unverifiedCount = unverifiedStats.total_unverified || 0;
+        document.getElementById('unverifiedCount').textContent = unverifiedCount;
+
+        // Show/hide verify action card based on unverified count
+        const verifyCard = document.getElementById('verifyCard');
+        const verifyBadge = document.getElementById('verifyBadge');
+        if (unverifiedCount > 0) {
+          verifyCard.style.display = 'block';
+          verifyBadge.textContent = unverifiedCount;
+        } else {
+          verifyCard.style.display = 'none';
+        }
+      } catch (error) {
+        console.log('Could not load unverified stats:', error);
+        document.getElementById('unverifiedCount').textContent = '0';
       }
     }
 

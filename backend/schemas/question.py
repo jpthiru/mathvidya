@@ -124,6 +124,11 @@ class QuestionDetailResponse(BaseModel):
     tags: Optional[List[str]]
     status: str
 
+    # Verification
+    is_verified: bool = True
+    verified_by_user_id: Optional[str] = None
+    verified_at: Optional[datetime] = None
+
     # Audit
     created_by_user_id: Optional[str]
     version: int
@@ -144,6 +149,7 @@ class QuestionSummaryResponse(BaseModel):
     marks: int
     difficulty: Optional[str]
     status: str
+    is_verified: bool = True
     created_at: datetime
 
     class Config:
@@ -183,6 +189,7 @@ class QuestionFilterRequest(BaseModel):
     status: Optional[QuestionStatus] = None
     tags: Optional[List[str]] = None
     search_text: Optional[str] = None  # Search in question_text
+    is_verified: Optional[bool] = None  # Filter by verification status
 
     class Config:
         use_enum_values = True
@@ -235,3 +242,25 @@ class CheckDuplicateResponse(BaseModel):
     is_duplicate: bool
     matching_question: Optional[QuestionSummaryResponse] = None
     message: str
+
+
+class VerifyQuestionRequest(BaseModel):
+    """Request to verify a batch-processed question"""
+    pass  # No additional data needed, just the question_id from URL
+
+
+class VerifyQuestionResponse(BaseModel):
+    """Response after verifying a question"""
+    question_id: str
+    is_verified: bool
+    verified_by_user_id: str
+    verified_at: datetime
+    message: str
+
+
+class UnverifiedQuestionsStatsResponse(BaseModel):
+    """Statistics about unverified questions"""
+    total_unverified: int
+    by_class: dict  # {"X": 10, "XII": 20}
+    by_type: dict  # {"MCQ": 15, "VSA": 10, ...}
+    by_unit: dict  # {"Algebra": 5, ...}

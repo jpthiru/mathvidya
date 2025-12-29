@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Questions - Mathvidya Teacher Portal</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .page-title i {
+      color: var(--color-warning);
+    }
+
+    .page-subtitle {
+      color: var(--color-gray-600);
+      font-size: var(--text-lg);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .stat-icon.pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .stat-icon.class-x {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .stat-icon.class-xii {
+      background: #e0e7ff;
+      color: #4f46e5;
+    }
+
+    .stat-info h3 {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      margin-bottom: 0.125rem;
+    }
+
+    .stat-info p {
+      color: var(--color-gray-600);
+      font-size: var(--text-sm);
+    }
+
+    /* Filters Bar */
+    .filters-bar {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .filter-group label {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-gray-700);
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      min-width: 150px;
+    }
+
+    /* Questions Table */
+    .table-container {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--color-gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      background: var(--color-gray-50);
+      padding: 0.875rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: var(--text-sm);
+      color: var(--color-gray-700);
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--color-gray-100);
+      vertical-align: top;
+    }
+
+    .table tr:hover {
+      background: var(--color-gray-50);
+    }
+
+    .question-text {
+      max-width: 400px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+    }
+
+    .badge-primary {
+      background: var(--color-primary-light);
+      color: var(--color-primary-dark);
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .difficulty-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+
+    .difficulty-easy {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .difficulty-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .difficulty-hard {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-verify {
+      background: var(--gradient-success);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-verify:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-verify:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Question Preview Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: var(--z-modal);
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--color-gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: var(--text-xl);
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--color-gray-500);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .preview-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .preview-label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-gray-500);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .preview-content {
+      background: var(--color-gray-50);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      line-height: 1.6;
+    }
+
+    .preview-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+    }
+
+    .meta-item i {
+      color: var(--color-primary);
+    }
+
+    .mcq-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .mcq-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      border: 2px solid transparent;
+    }
+
+    .mcq-option.correct {
+      background: #d1fae5;
+      border-color: #059669;
+    }
+
+    .option-letter {
+      font-weight: 700;
+      color: var(--color-gray-700);
+      min-width: 24px;
+    }
+
+    /* Duplicate Warning */
+    .duplicate-alert {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .duplicate-alert-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 0.5rem;
+    }
+
+    .duplicate-alert-content {
+      font-size: var(--text-sm);
+      color: #78350f;
+    }
+
+    .duplicate-alert-content a {
+      color: #b45309;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--color-gray-200);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1.5rem;
+      border-top: 1px solid var(--color-gray-200);
+    }
+
+    .pagination button {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--color-gray-300);
+      background: white;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: var(--color-gray-100);
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination button.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--color-gray-500);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      opacity: 0.3;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: var(--text-xl);
+      color: var(--color-gray-700);
+      margin-bottom: 0.5rem;
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--color-gray-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .logout-btn:hover {
+      color: var(--color-error);
+      background: #fef2f2;
+    }
+
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .filters-row {
+        flex-direction: column;
+      }
+
+      .filter-group select,
+      .filter-group input {
+        width: 100%;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <div class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+          <a href="questions.html" class="nav-link">
+            <i class="fas fa-book"></i> Question Bank
+          </a>
+          <a href="verify-questions.html" class="nav-link active">
+            <i class="fas fa-clipboard-check"></i> Verify Questions
+          </a>
+        </nav>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="profile-button">
+          <div class="profile-avatar" id="userAvatar">T</div>
+          <span id="userName">Teacher</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">
+        <i class="fas fa-clipboard-check"></i>
+        Verify Batch-Processed Questions
+      </h1>
+      <p class="page-subtitle">Review and verify LLM-generated questions before adding to the question bank</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="totalPending">0</h3>
+          <p>Pending Verification</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon class-x">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="classXCount">0</h3>
+          <p>Class X Questions</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon class-xii">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="classXIICount">0</h3>
+          <p>Class XII Questions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Bar -->
+    <div class="filters-bar">
+      <div class="filters-row">
+        <div class="filter-group">
+          <label for="filterClass">Class</label>
+          <select id="filterClass">
+            <option value="">All Classes</option>
+            <option value="X">Class X</option>
+            <option value="XII">Class XII</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterType">Question Type</label>
+          <select id="filterType">
+            <option value="">All Types</option>
+            <option value="MCQ">MCQ (1 mark)</option>
+            <option value="VSA">VSA (2 marks)</option>
+            <option value="SA">SA (3 marks)</option>
+            <option value="LA">LA (5-6 marks)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterUnit">Unit</label>
+          <select id="filterUnit">
+            <option value="">All Units</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterDifficulty">Difficulty</label>
+          <select id="filterDifficulty">
+            <option value="">All Levels</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="loadQuestions()">
+          <i class="fas fa-search"></i> Apply Filters
+        </button>
+        <button class="btn btn-ghost" onclick="resetFilters()">
+          <i class="fas fa-undo"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Questions Table -->
+    <div class="table-container">
+      <div class="table-header">
+        <span class="table-title">Unverified Questions (<span id="questionCount">0</span>)</span>
+        <button class="btn btn-ghost" onclick="loadQuestions()">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Question ID</th>
+            <th>Type</th>
+            <th>Class</th>
+            <th>Unit</th>
+            <th>Question</th>
+            <th>Difficulty</th>
+            <th>Marks</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="questionsTableBody">
+          <!-- Will be populated dynamically -->
+        </tbody>
+      </table>
+
+      <div class="pagination" id="pagination">
+        <!-- Will be populated dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Question Preview Modal -->
+  <div class="modal" id="previewModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Question Preview</h3>
+        <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Duplicate Alert (hidden by default) -->
+        <div class="duplicate-alert" id="duplicateAlert" style="display: none;">
+          <div class="duplicate-alert-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            Potential duplicate found!
+          </div>
+          <div class="duplicate-alert-content" id="duplicateAlertContent">
+            <!-- Content will be populated dynamically -->
+          </div>
+        </div>
+
+        <div class="preview-meta" id="previewMeta">
+          <!-- Meta info will be populated -->
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-label">Question</div>
+          <div class="preview-content" id="previewQuestionText"></div>
+        </div>
+
+        <div class="preview-section" id="previewOptionsSection" style="display: none;">
+          <div class="preview-label">Options</div>
+          <div class="mcq-options" id="previewOptions"></div>
+        </div>
+
+        <div class="preview-section" id="previewAnswerSection" style="display: none;">
+          <div class="preview-label">Model Answer / Solution</div>
+          <div class="preview-content" id="previewAnswer"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closePreviewModal()">Close</button>
+        <button class="btn btn-error" onclick="deleteCurrentQuestion()">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+        <button class="btn-verify" id="verifyModalBtn" onclick="verifyCurrentQuestion()">
+          <i class="fas fa-check"></i> Verify Question
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated()) {
+      window.location.href = '../login.html';
+    }
+
+    // Load user info
+    const user = getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.first_name || 'Teacher';
+      document.getElementById('userAvatar').textContent = (user.first_name || 'T').charAt(0).toUpperCase();
+    }
+
+    // State
+    let currentPage = 1;
+    const pageSize = 20;
+    let currentQuestion = null;
+
+    // CBSE Units
+    const units = {
+      'X': [
+        'Real Numbers',
+        'Polynomials',
+        'Pair of Linear Equations in Two Variables',
+        'Quadratic Equations',
+        'Arithmetic Progressions',
+        'Triangles',
+        'Coordinate Geometry',
+        'Introduction to Trigonometry',
+        'Some Applications of Trigonometry',
+        'Circles',
+        'Areas Related to Circles',
+        'Surface Areas and Volumes',
+        'Statistics',
+        'Probability'
+      ],
+      'XII': [
+        'Relations and Functions',
+        'Inverse Trigonometric Functions',
+        'Matrices',
+        'Determinants',
+        'Continuity and Differentiability',
+        'Application of Derivatives',
+        'Integrals',
+        'Application of Integrals',
+        'Differential Equations',
+        'Vector Algebra',
+        'Three Dimensional Geometry',
+        'Linear Programming',
+        'Probability'
+      ]
+    };
+
+    // Load stats
+    async function loadStats() {
+      try {
+        const stats = await api.getUnverifiedStats();
+        document.getElementById('totalPending').textContent = stats.total_unverified || 0;
+        document.getElementById('classXCount').textContent = stats.by_class?.['X'] || 0;
+        document.getElementById('classXIICount').textContent = stats.by_class?.['XII'] || 0;
+
+        // Populate unit filter based on available data
+        populateUnitFilter(stats.by_unit);
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    // Populate unit filter
+    function populateUnitFilter(unitStats) {
+      const select = document.getElementById('filterUnit');
+      select.innerHTML = '<option value="">All Units</option>';
+
+      if (unitStats) {
+        Object.keys(unitStats).sort().forEach(unit => {
+          const option = document.createElement('option');
+          option.value = unit;
+          option.textContent = `${unit} (${unitStats[unit]})`;
+          select.appendChild(option);
+        });
+      }
+    }
+
+    // Load questions
+    async function loadQuestions() {
+      const tbody = document.getElementById('questionsTableBody');
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+
+      try {
+        const filters = {
+          is_verified: false
+        };
+
+        const classLevel = document.getElementById('filterClass').value;
+        const questionType = document.getElementById('filterType').value;
+        const unit = document.getElementById('filterUnit').value;
+        const difficulty = document.getElementById('filterDifficulty').value;
+
+        if (classLevel) filters.class_level = classLevel;
+        if (questionType) filters.question_type = questionType;
+        if (unit) filters.unit = unit;
+        if (difficulty) filters.difficulty = difficulty;
+
+        const response = await api.post('/questions/search', filters);
+        const questions = response.questions || [];
+        const total = response.total || 0;
+
+        document.getElementById('questionCount').textContent = total;
+        displayQuestions(questions);
+        renderPagination(total);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--color-error);">Failed to load questions</td></tr>';
+      }
+    }
+
+    // Display questions
+    function displayQuestions(questions) {
+      const tbody = document.getElementById('questionsTableBody');
+
+      if (questions.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <h3>All caught up!</h3>
+                <p>No unverified questions at the moment.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = questions.map(q => `
+        <tr>
+          <td><code style="font-size: var(--text-xs); background: var(--color-gray-100); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); word-break: break-all;">${q.question_id}</code></td>
+          <td><span class="badge badge-primary">${q.question_type}</span></td>
+          <td>Class ${q.class_level}</td>
+          <td>${q.unit}</td>
+          <td>
+            <div class="question-text">${q.question_text.substring(0, 100)}${q.question_text.length > 100 ? '...' : ''}</div>
+          </td>
+          <td><span class="difficulty-badge difficulty-${q.difficulty || 'medium'}">${q.difficulty || 'medium'}</span></td>
+          <td>${q.marks}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-ghost btn-sm" onclick="previewQuestion('${q.question_id}')" style="color: var(--color-primary);">
+                <i class="fas fa-eye"></i> View
+              </button>
+              <button class="btn-verify" onclick="verifyQuestion('${q.question_id}', this)">
+                <i class="fas fa-check"></i> Verify
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      // Render LaTeX in table
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([tbody]);
+      }
+    }
+
+    // Render pagination
+    function renderPagination(total) {
+      const pagination = document.getElementById('pagination');
+      const totalPages = Math.ceil(total / pageSize);
+
+      if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+      }
+
+      let html = `
+        <button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">
+          <i class="fas fa-chevron-left"></i> Prev
+        </button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          html += '<span>...</span>';
+        }
+      }
+
+      html += `
+        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">
+          Next <i class="fas fa-chevron-right"></i>
+        </button>
+      `;
+
+      pagination.innerHTML = html;
+    }
+
+    // Go to page
+    function goToPage(page) {
+      currentPage = page;
+      loadQuestions();
+    }
+
+    // Reset filters
+    function resetFilters() {
+      document.getElementById('filterClass').value = '';
+      document.getElementById('filterType').value = '';
+      document.getElementById('filterUnit').value = '';
+      document.getElementById('filterDifficulty').value = '';
+      currentPage = 1;
+      loadQuestions();
+    }
+
+    // Preview question
+    async function previewQuestion(questionId) {
+      try {
+        const question = await api.getQuestion(questionId);
+        currentQuestion = question;
+
+        // Set meta info
+        document.getElementById('previewMeta').innerHTML = `
+          <div class="meta-item"><i class="fas fa-tag"></i> ${question.question_type}</div>
+          <div class="meta-item"><i class="fas fa-graduation-cap"></i> Class ${question.class_level}</div>
+          <div class="meta-item"><i class="fas fa-book"></i> ${question.unit}</div>
+          <div class="meta-item"><i class="fas fa-star"></i> ${question.marks} mark${question.marks > 1 ? 's' : ''}</div>
+          <div class="meta-item"><i class="fas fa-signal"></i> ${question.difficulty || 'medium'}</div>
+        `;
+
+        // Set question text
+        document.getElementById('previewQuestionText').innerHTML = question.question_text;
+
+        // MCQ options
+        const optionsSection = document.getElementById('previewOptionsSection');
+        if (question.question_type === 'MCQ' && question.options) {
+          optionsSection.style.display = 'block';
+          const optionLetters = ['A', 'B', 'C', 'D'];
+          document.getElementById('previewOptions').innerHTML = question.options.map((opt, i) => `
+            <div class="mcq-option ${optionLetters[i] === question.correct_option ? 'correct' : ''}">
+              <span class="option-letter">${optionLetters[i]}.</span>
+              <span>${opt}</span>
+              ${optionLetters[i] === question.correct_option ? '<i class="fas fa-check" style="margin-left: auto; color: #059669;"></i>' : ''}
+            </div>
+          `).join('');
+        } else {
+          optionsSection.style.display = 'none';
+        }
+
+        // Model answer
+        const answerSection = document.getElementById('previewAnswerSection');
+        if (question.model_answer) {
+          answerSection.style.display = 'block';
+          document.getElementById('previewAnswer').innerHTML = question.model_answer;
+        } else {
+          answerSection.style.display = 'none';
+        }
+
+        // Check for duplicates
+        await checkDuplicateForPreview(question);
+
+        // Show modal
+        document.getElementById('previewModal').classList.add('active');
+
+        // Render LaTeX
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise([document.getElementById('previewModal')]);
+        }
+      } catch (error) {
+        console.error('Error loading question:', error);
+        Toast.error('Failed to load question');
+      }
+    }
+
+    // Check for duplicates
+    async function checkDuplicateForPreview(question) {
+      const duplicateAlert = document.getElementById('duplicateAlert');
+      const duplicateContent = document.getElementById('duplicateAlertContent');
+
+      try {
+        const result = await api.checkDuplicateQuestion(
+          question.question_text,
+          question.class_level,
+          question.question_id
+        );
+
+        if (result.is_duplicate && result.matching_question) {
+          duplicateAlert.style.display = 'block';
+          const match = result.matching_question;
+          const truncatedText = match.question_text.length > 100
+            ? match.question_text.substring(0, 100) + '...'
+            : match.question_text;
+          duplicateContent.innerHTML = `
+            A similar question already exists: "<em>${truncatedText}</em>"
+            <br><small>ID: ${match.question_id} | Class ${match.class_level} | ${match.unit}</small>
+            <br><a href="questions.html?search=${encodeURIComponent(match.question_id.substring(0, 8))}" target="_blank">View existing question</a>
+          `;
+        } else {
+          duplicateAlert.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error checking duplicates:', error);
+        duplicateAlert.style.display = 'none';
+      }
+    }
+
+    // Close preview modal
+    function closePreviewModal() {
+      document.getElementById('previewModal').classList.remove('active');
+      currentQuestion = null;
+    }
+
+    // Verify question
+    async function verifyQuestion(questionId, button) {
+      if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+      }
+
+      try {
+        await api.verifyQuestion(questionId);
+        Toast.success('Question verified successfully!');
+        loadQuestions();
+        loadStats();
+      } catch (error) {
+        console.error('Error verifying question:', error);
+        Toast.error('Failed to verify question: ' + error.message);
+        if (button) {
+          button.disabled = false;
+          button.innerHTML = '<i class="fas fa-check"></i> Verify';
+        }
+      }
+    }
+
+    // Verify current question (from modal)
+    async function verifyCurrentQuestion() {
+      if (!currentQuestion) return;
+
+      const button = document.getElementById('verifyModalBtn');
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+      try {
+        await api.verifyQuestion(currentQuestion.question_id);
+        Toast.success('Question verified successfully!');
+        closePreviewModal();
+        loadQuestions();
+        loadStats();
+      } catch (error) {
+        console.error('Error verifying question:', error);
+        Toast.error('Failed to verify question: ' + error.message);
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-check"></i> Verify Question';
+      }
+    }
+
+    // Delete current question
+    async function deleteCurrentQuestion() {
+      if (!currentQuestion) return;
+
+      if (!confirm('Are you sure you want to delete this question? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        await api.deleteQuestion(currentQuestion.question_id);
+        Toast.success('Question deleted successfully!');
+        closePreviewModal();
+        loadQuestions();
+        loadStats();
+      } catch (error) {
+        console.error('Error deleting question:', error);
+        Toast.error('Failed to delete question: ' + error.message);
+      }
+    }
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+      } catch (error) {
+        console.log('Logout error:', error);
+      }
+      api.clearToken();
+      window.location.href = '../login.html';
+    });
+
+    // Initialize
+    loadStats();
+    loadQuestions();
+  </script>
+</body>
+</html>

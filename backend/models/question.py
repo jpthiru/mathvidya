@@ -79,6 +79,11 @@ class Question(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
+    # Verification (for batch-processed/LLM-generated questions)
+    is_verified = Column(Boolean, default=False, nullable=False)
+    verified_by_user_id = Column(UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=True)
+    verified_at = Column(DateTime(timezone=True), nullable=True)
+
     # Constraints
     __table_args__ = (
         CheckConstraint(
@@ -138,6 +143,9 @@ class Question(Base):
             "cbse_year": self.cbse_year,
             "tags": self.tags,
             "status": self.status,
+            "is_verified": self.is_verified,
+            "verified_by_user_id": str(self.verified_by_user_id) if self.verified_by_user_id else None,
+            "verified_at": self.verified_at.isoformat() if self.verified_at else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
