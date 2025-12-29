@@ -195,7 +195,6 @@ async def import_questions(excel_path: str, dry_run: bool = False):
         print("\n[DRY RUN] No changes made to database")
         print("\nSample question data:")
         if questions:
-            import json
             sample = questions[0].copy()
             sample['created_at'] = str(sample['created_at'])
             sample['updated_at'] = str(sample['updated_at'])
