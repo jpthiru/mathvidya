@@ -201,9 +201,9 @@ class ApiClient {
 
   // ==================== Questions ====================
 
-  async getQuestions(filters = {}) {
-    // Backend uses POST /questions/search for listing
-    return this.post('/questions/search', filters);
+  async getQuestions(filters = {}, page = 1, pageSize = 20) {
+    // Backend uses POST /questions/search for listing with query params for pagination
+    return this.post(`/questions/search?page=${page}&page_size=${pageSize}`, filters);
   }
 
   async getQuestion(questionId) {

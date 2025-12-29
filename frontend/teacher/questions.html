@@ -643,6 +643,83 @@
       text-decoration: underline;
     }
 
+    /* Pagination */
+    .pagination-container {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--color-gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: var(--color-gray-50);
+    }
+
+    .pagination-info {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pagination-pages {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .pagination-pages .page-btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      border: 1px solid var(--color-gray-300);
+      background: white;
+      color: var(--color-gray-700);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .pagination-pages .page-btn:hover:not(.active):not(:disabled) {
+      background: var(--color-gray-100);
+      border-color: var(--color-primary);
+    }
+
+    .pagination-pages .page-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+
+    .pagination-pages .page-btn.ellipsis {
+      border: none;
+      background: transparent;
+      cursor: default;
+    }
+
+    .pagination-size {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+    }
+
+    .pagination-size select {
+      padding: 0.375rem 0.75rem;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header-container {
@@ -797,6 +874,32 @@
             <!-- Will be populated dynamically -->
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" id="paginationContainer" style="display: none;">
+        <div class="pagination-info">
+          Showing <span id="showingStart">1</span>-<span id="showingEnd">20</span> of <span id="totalRecords">0</span> questions
+        </div>
+        <div class="pagination-controls">
+          <button class="btn btn-ghost btn-sm" id="prevPageBtn" disabled>
+            <i class="fas fa-chevron-left"></i> Previous
+          </button>
+          <div class="pagination-pages" id="paginationPages">
+            <!-- Page numbers will be generated here -->
+          </div>
+          <button class="btn btn-ghost btn-sm" id="nextPageBtn">
+            Next <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="pagination-size">
+          <label>Show:</label>
+          <select class="filter-select" id="pageSizeSelect" style="width: auto; padding: 0.5rem;">
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
       </div>
     </div>
   </main>
@@ -1030,6 +1133,22 @@
     const filterUnit = document.getElementById('filterUnit');
     const filterDifficulty = document.getElementById('filterDifficulty');
 
+    // Pagination state
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalPages = 1;
+    let totalRecords = 0;
+
+    // Pagination elements
+    const paginationContainer = document.getElementById('paginationContainer');
+    const showingStart = document.getElementById('showingStart');
+    const showingEnd = document.getElementById('showingEnd');
+    const totalRecordsSpan = document.getElementById('totalRecords');
+    const paginationPages = document.getElementById('paginationPages');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const pageSizeSelect = document.getElementById('pageSizeSelect');
+
     // Image upload
     const imageUpload = document.getElementById('imageUpload');
     const questionImage = document.getElementById('questionImage');
@@ -1063,7 +1182,7 @@
 
     filterClass.addEventListener('change', (e) => {
       updateUnits(e.target.value, filterUnit);
-      loadQuestions();
+      loadQuestions(true); // Reset to page 1 when filter changes
     });
 
     // Image upload handling
@@ -1409,9 +1528,14 @@
       await saveQuestion(false, saveAndAddBtn);
     });
 
-    // Load questions
-    async function loadQuestions() {
+    // Load questions with pagination
+    async function loadQuestions(resetPage = false) {
       try {
+        // Reset to page 1 when filters change
+        if (resetPage) {
+          currentPage = 1;
+        }
+
         const filters = {
           question_type: filterType.value || undefined,
           class_level: filterClass.value || undefined,
@@ -1424,16 +1548,125 @@
           if (!filters[key]) delete filters[key];
         });
 
-        const response = await api.getQuestions(filters);
-        // API returns paginated response: {questions: [...], total: N, ...}
-        displayQuestions(response.questions || [], response.total || 0);
+        const response = await api.getQuestions(filters, currentPage, pageSize);
+        // API returns paginated response: {questions: [...], total: N, page: N, page_size: N, total_pages: N}
+        totalRecords = response.total || 0;
+        totalPages = response.total_pages || 1;
+        displayQuestions(response.questions || [], totalRecords);
+        updatePagination();
 
       } catch (error) {
         console.error('Error loading questions:', error);
         // Show empty state instead of error toast on initial load
         displayQuestions([], 0);
+        updatePagination();
       }
     }
+
+    // Update pagination UI
+    function updatePagination() {
+      // Show/hide pagination based on total records
+      if (totalRecords <= 0) {
+        paginationContainer.style.display = 'none';
+        return;
+      }
+
+      paginationContainer.style.display = 'flex';
+
+      // Update info text
+      const start = (currentPage - 1) * pageSize + 1;
+      const end = Math.min(currentPage * pageSize, totalRecords);
+      showingStart.textContent = start;
+      showingEnd.textContent = end;
+      totalRecordsSpan.textContent = totalRecords;
+
+      // Update prev/next buttons
+      prevPageBtn.disabled = currentPage <= 1;
+      nextPageBtn.disabled = currentPage >= totalPages;
+
+      // Generate page numbers
+      paginationPages.innerHTML = '';
+      const pages = generatePageNumbers(currentPage, totalPages);
+
+      pages.forEach(page => {
+        if (page === '...') {
+          const ellipsis = document.createElement('span');
+          ellipsis.className = 'page-btn ellipsis';
+          ellipsis.textContent = '...';
+          paginationPages.appendChild(ellipsis);
+        } else {
+          const btn = document.createElement('button');
+          btn.className = `page-btn ${page === currentPage ? 'active' : ''}`;
+          btn.textContent = page;
+          btn.onclick = () => goToPage(page);
+          paginationPages.appendChild(btn);
+        }
+      });
+    }
+
+    // Generate array of page numbers to display
+    function generatePageNumbers(current, total) {
+      if (total <= 7) {
+        // Show all pages if 7 or fewer
+        return Array.from({ length: total }, (_, i) => i + 1);
+      }
+
+      const pages = [];
+
+      // Always show first page
+      pages.push(1);
+
+      if (current > 3) {
+        pages.push('...');
+      }
+
+      // Show pages around current
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (current < total - 2) {
+        pages.push('...');
+      }
+
+      // Always show last page
+      if (total > 1) {
+        pages.push(total);
+      }
+
+      return pages;
+    }
+
+    // Navigate to specific page
+    function goToPage(page) {
+      if (page < 1 || page > totalPages || page === currentPage) return;
+      currentPage = page;
+      loadQuestions();
+    }
+
+    // Pagination event handlers
+    prevPageBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadQuestions();
+      }
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadQuestions();
+      }
+    });
+
+    pageSizeSelect.addEventListener('change', (e) => {
+      pageSize = parseInt(e.target.value);
+      currentPage = 1; // Reset to first page when changing page size
+      loadQuestions();
+    });
 
     // Display questions in table
     function displayQuestions(questions, total) {
@@ -1690,10 +1923,10 @@
       }
     });
 
-    // Filter change handlers
-    filterType.addEventListener('change', loadQuestions);
-    filterUnit.addEventListener('change', loadQuestions);
-    filterDifficulty.addEventListener('change', loadQuestions);
+    // Filter change handlers - reset to page 1 when filters change
+    filterType.addEventListener('change', () => loadQuestions(true));
+    filterUnit.addEventListener('change', () => loadQuestions(true));
+    filterDifficulty.addEventListener('change', () => loadQuestions(true));
 
     // Refresh button
     document.getElementById('refreshBtn').addEventListener('click', loadQuestions);
