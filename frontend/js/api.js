@@ -226,6 +226,15 @@ class ApiClient {
     return this.delete(`/questions/${questionId}`);
   }
 
+  async checkDuplicateQuestion(questionText, classLevel = null, excludeQuestionId = null) {
+    const data = {
+      question_text: questionText
+    };
+    if (classLevel) data.class_level = classLevel;
+    if (excludeQuestionId) data.exclude_question_id = excludeQuestionId;
+    return this.post('/questions/check-duplicate', data);
+  }
+
   async uploadQuestionImage(file) {
     const formData = new FormData();
     formData.append('file', file);

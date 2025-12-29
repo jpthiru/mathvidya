@@ -582,6 +582,67 @@
       color: var(--color-gray-700);
     }
 
+    /* Duplicate Check Indicator */
+    .duplicate-check-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .duplicate-status {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: var(--text-sm);
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-md);
+    }
+
+    .duplicate-status.checking {
+      color: var(--color-gray-600);
+      background: var(--color-gray-100);
+    }
+
+    .duplicate-status.unique {
+      color: #059669;
+      background: #d1fae5;
+    }
+
+    .duplicate-status.duplicate {
+      color: #dc2626;
+      background: #fee2e2;
+    }
+
+    .duplicate-status .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .duplicate-warning {
+      margin-top: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      color: #92400e;
+    }
+
+    .duplicate-warning a {
+      color: #b45309;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header-container {
@@ -808,6 +869,16 @@
             <textarea class="form-textarea" id="questionText" rows="3" required
               placeholder="Enter the question text. Use $...$ for inline math or $$...$$ for display math. Example: $x^2 + y^2 = r^2$"></textarea>
             <span class="form-hint">Use LaTeX notation: $inline$ or $$display$$. Examples: $\frac{a}{b}$, $\sqrt{x}$, $\int_0^1 x dx$</span>
+            <div class="duplicate-check-container" id="duplicateCheckContainer" style="display: none;">
+              <div class="duplicate-status" id="duplicateStatus">
+                <span class="spinner"></span>
+                <span>Checking for duplicates...</span>
+              </div>
+            </div>
+            <div class="duplicate-warning" id="duplicateWarning" style="display: none;">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span id="duplicateWarningText"></span>
+            </div>
             <div class="latex-preview-container">
               <div class="latex-preview-label">
                 <i class="fas fa-eye"></i> Live Preview:
@@ -1050,6 +1121,87 @@
     // Also update on blur for immediate feedback
     questionText.addEventListener('blur', updateLatexPreview);
 
+    // Duplicate check elements
+    const duplicateCheckContainer = document.getElementById('duplicateCheckContainer');
+    const duplicateStatus = document.getElementById('duplicateStatus');
+    const duplicateWarning = document.getElementById('duplicateWarning');
+    const duplicateWarningText = document.getElementById('duplicateWarningText');
+    let duplicateCheckTimeout = null;
+    let currentDuplicateMatch = null;
+
+    // Duplicate check function
+    async function checkForDuplicates() {
+      const text = questionText.value.trim();
+      const classLevel = document.getElementById('questionClass').value;
+      const questionId = document.getElementById('questionId').value; // For edits, exclude current question
+
+      // Only check if text is at least 10 characters (matching backend validation)
+      if (text.length < 10) {
+        duplicateCheckContainer.style.display = 'none';
+        duplicateWarning.style.display = 'none';
+        currentDuplicateMatch = null;
+        return;
+      }
+
+      // Show checking status
+      duplicateCheckContainer.style.display = 'flex';
+      duplicateStatus.className = 'duplicate-status checking';
+      duplicateStatus.innerHTML = '<span class="spinner"></span><span>Checking for duplicates...</span>';
+      duplicateWarning.style.display = 'none';
+
+      try {
+        const result = await api.checkDuplicateQuestion(text, classLevel || null, questionId || null);
+
+        if (result.is_duplicate) {
+          // Duplicate found
+          currentDuplicateMatch = result.matching_question;
+          duplicateStatus.className = 'duplicate-status duplicate';
+          duplicateStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Potential duplicate found!</span>';
+
+          // Show warning with details
+          duplicateWarning.style.display = 'block';
+          const truncatedText = result.matching_question.question_text.length > 100
+            ? result.matching_question.question_text.substring(0, 100) + '...'
+            : result.matching_question.question_text;
+          duplicateWarningText.innerHTML = `A similar question already exists: "<em>${truncatedText}</em>"
+            <br><small>ID: ${result.matching_question.question_id} | Class ${result.matching_question.class_level} | ${result.matching_question.unit}</small>
+            <br><a href="javascript:void(0)" onclick="previewQuestion('${result.matching_question.question_id}')">View existing question</a>`;
+        } else {
+          // No duplicate
+          currentDuplicateMatch = null;
+          duplicateStatus.className = 'duplicate-status unique';
+          duplicateStatus.innerHTML = '<i class="fas fa-check-circle"></i><span>No duplicates found</span>';
+          duplicateWarning.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Duplicate check error:', error);
+        // Hide on error, don't block the user
+        duplicateCheckContainer.style.display = 'none';
+        duplicateWarning.style.display = 'none';
+        currentDuplicateMatch = null;
+      }
+    }
+
+    // Debounced duplicate check on question text input
+    questionText.addEventListener('input', () => {
+      if (duplicateCheckTimeout) {
+        clearTimeout(duplicateCheckTimeout);
+      }
+      // Wait 800ms after typing stops before checking (longer than preview to reduce API calls)
+      duplicateCheckTimeout = setTimeout(checkForDuplicates, 800);
+    });
+
+    // Also check on blur
+    questionText.addEventListener('blur', () => {
+      if (questionText.value.trim().length >= 10) {
+        // Clear any pending timeout and check immediately
+        if (duplicateCheckTimeout) {
+          clearTimeout(duplicateCheckTimeout);
+        }
+        checkForDuplicates();
+      }
+    });
+
     // MCQ Option previews
     const optionInputs = ['A', 'B', 'C', 'D'];
     const optionTimeouts = {};
@@ -1109,6 +1261,10 @@
       questionPreview.innerHTML = '';  // Clear LaTeX preview
       explanationPreview.innerHTML = '';  // Clear explanation preview
       clearOptionPreviews();  // Clear MCQ option previews
+      // Reset duplicate check state
+      duplicateCheckContainer.style.display = 'none';
+      duplicateWarning.style.display = 'none';
+      currentDuplicateMatch = null;
       questionModal.classList.add('active');
     });
 
@@ -1298,7 +1454,7 @@
 
       tbody.innerHTML = questions.map(q => `
         <tr>
-          <td><code style="font-size: var(--text-xs); background: var(--color-gray-100); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm);">${q.question_id.substring(0, 8)}...</code></td>
+          <td><code style="font-size: var(--text-xs); background: var(--color-gray-100); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); word-break: break-all;">${q.question_id}</code></td>
           <td><span class="badge badge-primary">${q.question_type}</span></td>
           <td>Class ${q.class_level}</td>
           <td>${q.unit}</td>
@@ -1344,6 +1500,10 @@
         questionPreview.innerHTML = '';
         explanationPreview.innerHTML = '';
         imagePreview.style.display = 'none';
+        // Reset duplicate check state (will be hidden for edits since question already exists)
+        duplicateCheckContainer.style.display = 'none';
+        duplicateWarning.style.display = 'none';
+        currentDuplicateMatch = null;
 
         // Set modal title
         document.getElementById('modalTitle').textContent = 'Edit Question';
