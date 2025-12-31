@@ -1433,13 +1433,6 @@
       showLoading(triggerButton);
 
       try {
-        // Upload image if present
-        let imageUrl = null;
-        if (questionImage.files[0]) {
-          const uploadResult = await api.uploadQuestionImage(questionImage.files[0]);
-          imageUrl = uploadResult.url;
-        }
-
         // Prepare question data matching backend schema
         const questionData = {
           question_type: questionType,
@@ -1450,7 +1443,7 @@
           marks: parseInt(document.getElementById('questionMarks').value),
           question_text: document.getElementById('questionText').value,
           model_answer: document.getElementById('questionExplanation').value || null,
-          question_image_url: imageUrl,
+          question_image_url: null,
         };
 
         // Add MCQ specific fields - options must be a List[str], not a dict
@@ -1465,14 +1458,36 @@
         }
 
         // Create or update question
-        const questionId = document.getElementById('questionId').value;
+        let questionId = document.getElementById('questionId').value;
+        let createdQuestion = null;
+
         if (questionId) {
           await api.updateQuestion(questionId, questionData);
-          Toast.success('Question updated successfully!');
         } else {
-          await api.createQuestion(questionData);
-          Toast.success('Question created successfully!');
+          createdQuestion = await api.createQuestion(questionData);
+          questionId = createdQuestion.question_id;
         }
+
+        // Upload image if present (after question is created/updated)
+        if (questionImage.files[0] && questionId) {
+          try {
+            const file = questionImage.files[0];
+            const uploadResult = await api.uploadQuestionImage(questionId, file.name);
+            // Upload to S3 using presigned URL
+            await fetch(uploadResult.presigned_url, {
+              method: 'PUT',
+              body: file,
+              headers: {
+                'Content-Type': file.type || 'image/jpeg',
+              },
+            });
+          } catch (imgError) {
+            console.error('Image upload failed:', imgError);
+            Toast.warning('Question saved but image upload failed. You can edit the question to add the image.');
+          }
+        }
+
+        Toast.success(createdQuestion ? 'Question created successfully!' : 'Question updated successfully!');
 
         loadQuestions();
 

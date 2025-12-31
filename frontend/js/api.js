@@ -76,6 +76,11 @@ class ApiClient {
         throw new Error(errorMessage);
       }
 
+      // Handle 204 No Content (e.g., DELETE operations)
+      if (response.status === 204) {
+        return null;
+      }
+
       // Parse JSON response
       const data = await response.json();
       return data;
@@ -248,23 +253,12 @@ class ApiClient {
     return this.post('/questions/search', { ...filters, is_verified: false });
   }
 
-  async uploadQuestionImage(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch(`${this.baseURL}/questions/upload-image`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-      },
-      body: formData,
+  async uploadQuestionImage(questionId, fileName) {
+    // Get presigned URL from backend
+    const response = await this.post(`/questions/${questionId}/upload-image`, {
+      file_name: fileName
     });
-
-    if (!response.ok) {
-      throw new Error('Image upload failed');
-    }
-
-    return response.json();
+    return response;
   }
 
   // ==================== Analytics ====================
