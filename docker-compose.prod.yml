@@ -50,8 +50,11 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - DEBUG=False
       - AWS_REGION=${AWS_REGION:-ap-south-1}
-      - S3_MEDIA_BUCKET=${S3_MEDIA_BUCKET}
-      - S3_BACKUP_BUCKET=${S3_BACKUP_BUCKET}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - S3_BUCKET=${S3_BUCKET:-mathvidya-media-prod}
+      - S3_QUESTION_IMAGES_PREFIX=${S3_QUESTION_IMAGES_PREFIX:-question-images/}
+      - S3_ANSWER_SHEETS_PREFIX=${S3_ANSWER_SHEETS_PREFIX:-answer-sheets/}
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -77,8 +80,11 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
       - AWS_REGION=${AWS_REGION:-ap-south-1}
-      - S3_MEDIA_BUCKET=${S3_MEDIA_BUCKET}
-      - S3_BACKUP_BUCKET=${S3_BACKUP_BUCKET}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - S3_BUCKET=${S3_BUCKET:-mathvidya-media-prod}
+      - S3_QUESTION_IMAGES_PREFIX=${S3_QUESTION_IMAGES_PREFIX:-question-images/}
+      - S3_ANSWER_SHEETS_PREFIX=${S3_ANSWER_SHEETS_PREFIX:-answer-sheets/}
     depends_on:
       - redis
       - postgres
