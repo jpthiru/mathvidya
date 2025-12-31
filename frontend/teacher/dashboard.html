@@ -178,6 +178,11 @@
       color: #d97706;
     }
 
+    .stat-icon.verified {
+      background: #d1fae5;
+      color: #059669;
+    }
+
     .action-card.highlight {
       border: 2px solid #f59e0b;
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
@@ -344,7 +349,17 @@
         </div>
         <div class="stat-info">
           <h3 id="questionsCount">0</h3>
-          <p>Questions Created <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
+          <p>Total Questions <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
+        </div>
+      </a>
+
+      <a href="questions.html?verified=true" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="View verified questions">
+        <div class="stat-icon verified">
+          <i class="fas fa-check-double"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="verifiedCount">0</h3>
+          <p>Verified Questions <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
         </div>
       </a>
 
@@ -419,9 +434,11 @@
         // Get questions stats
         const stats = await api.getQuestionStats();
         document.getElementById('questionsCount').textContent = stats.total_questions || 0;
+        document.getElementById('verifiedCount').textContent = stats.total_verified || 0;
       } catch (error) {
         console.log('Could not load questions:', error);
         document.getElementById('questionsCount').textContent = '0';
+        document.getElementById('verifiedCount').textContent = '0';
       }
 
       try {

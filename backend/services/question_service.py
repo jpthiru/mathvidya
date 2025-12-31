@@ -295,14 +295,13 @@ class QuestionService:
         )
         by_difficulty = {row[0]: row[1] for row in difficulty_result}
 
-        # By unit (top 10)
+        # By unit (all units, not limited)
         unit_result = await session.execute(
             select(
                 Question.unit,
                 func.count(Question.question_id)
             ).group_by(Question.unit)
             .order_by(func.count(Question.question_id).desc())
-            .limit(10)
         )
         by_unit = {row[0]: row[1] for row in unit_result}
 
@@ -321,14 +320,49 @@ class QuestionService:
                 by_unit_type[unit] = {}
             by_unit_type[unit][qtype] = count
 
+        # Verified vs Unverified counts
+        verified_result = await session.execute(
+            select(func.count()).select_from(Question).where(Question.is_verified == True)
+        )
+        total_verified = verified_result.scalar() or 0
+
+        unverified_result = await session.execute(
+            select(func.count()).select_from(Question).where(Question.is_verified == False)
+        )
+        total_unverified = unverified_result.scalar() or 0
+
+        # By unit - unverified counts
+        unit_unverified_result = await session.execute(
+            select(
+                Question.unit,
+                func.count(Question.question_id)
+            ).where(Question.is_verified == False)
+            .group_by(Question.unit)
+        )
+        by_unit_unverified = {row[0]: row[1] for row in unit_unverified_result}
+
+        # By class - unverified counts
+        class_unverified_result = await session.execute(
+            select(
+                Question.class_level,
+                func.count(Question.question_id)
+            ).where(Question.is_verified == False)
+            .group_by(Question.class_level)
+        )
+        by_class_unverified = {row[0]: row[1] for row in class_unverified_result}
+
         return {
             'total_questions': total_questions,
+            'total_verified': total_verified,
+            'total_unverified': total_unverified,
             'by_type': by_type,
             'by_class': by_class,
             'by_unit': by_unit,
             'by_status': by_status,
             'by_difficulty': by_difficulty,
-            'by_unit_type': by_unit_type
+            'by_unit_type': by_unit_type,
+            'by_unit_unverified': by_unit_unverified,
+            'by_class_unverified': by_class_unverified
         }
 
     @staticmethod
