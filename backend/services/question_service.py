@@ -218,6 +218,10 @@ class QuestionService:
         if filters.get('is_verified') is not None:
             conditions.append(Question.is_verified == filters['is_verified'])
 
+        # Exclude archived questions by default (unless specifically requesting archived)
+        if filters.get('status') != 'archived' and not filters.get('include_archived'):
+            conditions.append(Question.status != 'archived')
+
         # Build base query
         base_query = select(Question)
         if conditions:
