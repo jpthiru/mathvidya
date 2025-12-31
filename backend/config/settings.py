@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     AWS_REGION: str = "ap-south-1"
     AWS_ACCESS_KEY_ID: str = ""
     AWS_SECRET_ACCESS_KEY: str = ""
-    S3_BUCKET: str = "mathvidya-production"
+    S3_BUCKET: str = "mathvidya-media-prod"
     S3_PRESIGNED_URL_EXPIRY: int = 900  # 15 minutes
     S3_QUESTION_IMAGES_PREFIX: str = "question-images/"
     S3_ANSWER_SHEETS_PREFIX: str = "answer-sheets/"
