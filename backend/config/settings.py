@@ -54,6 +54,8 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str = ""
     S3_BUCKET: str = "mathvidya-production"
     S3_PRESIGNED_URL_EXPIRY: int = 900  # 15 minutes
+    S3_QUESTION_IMAGES_PREFIX: str = "question-images/"
+    S3_ANSWER_SHEETS_PREFIX: str = "answer-sheets/"
 
     # Celery Configuration
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"
