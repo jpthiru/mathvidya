@@ -1472,15 +1472,19 @@
         if (questionImage.files[0] && questionId) {
           try {
             const file = questionImage.files[0];
-            const uploadResult = await api.uploadQuestionImage(questionId, file.name);
+            const contentType = file.type || 'image/jpeg';
+            const uploadResult = await api.uploadQuestionImage(questionId, file.name, contentType);
             // Upload to S3 using presigned URL
-            await fetch(uploadResult.presigned_url, {
+            const uploadResponse = await fetch(uploadResult.presigned_url, {
               method: 'PUT',
               body: file,
               headers: {
-                'Content-Type': file.type || 'image/jpeg',
+                'Content-Type': contentType,
               },
             });
+            if (!uploadResponse.ok) {
+              throw new Error(`S3 upload failed: ${uploadResponse.status}`);
+            }
           } catch (imgError) {
             console.error('Image upload failed:', imgError);
             Toast.warning('Question saved but image upload failed. You can edit the question to add the image.');

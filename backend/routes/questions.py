@@ -456,8 +456,11 @@ async def get_question_image_upload_url(
     file_extension = request.file_name.split('.')[-1] if '.' in request.file_name else 'jpg'
     s3_key = s3_service.generate_question_image_key(question_id, file_extension)
 
-    # Generate presigned URL
-    presigned_url = s3_service.generate_presigned_upload_url(s3_key)
+    # Use provided content_type or derive from extension
+    content_type = request.content_type or "image/jpeg"
+
+    # Generate presigned URL with correct content type
+    presigned_url = s3_service.generate_presigned_upload_url(s3_key, content_type=content_type)
 
     if not presigned_url:
         raise HTTPException(

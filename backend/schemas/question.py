@@ -208,8 +208,8 @@ class QuestionStatsResponse(BaseModel):
 
 class UploadQuestionImageRequest(BaseModel):
     """Request to upload question image"""
-    question_id: str
     file_name: str
+    content_type: Optional[str] = "image/jpeg"  # MIME type of the file
 
 
 class UploadQuestionImageResponse(BaseModel):

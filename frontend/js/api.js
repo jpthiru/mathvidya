@@ -253,10 +253,11 @@ class ApiClient {
     return this.post('/questions/search', { ...filters, is_verified: false });
   }
 
-  async uploadQuestionImage(questionId, fileName) {
-    // Get presigned URL from backend
+  async uploadQuestionImage(questionId, fileName, contentType = 'image/jpeg') {
+    // Get presigned URL from backend with correct content type
     const response = await this.post(`/questions/${questionId}/upload-image`, {
-      file_name: fileName
+      file_name: fileName,
+      content_type: contentType
     });
     return response;
   }

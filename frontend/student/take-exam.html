@@ -915,8 +915,8 @@
 
         // Update question image
         const imageEl = document.getElementById('questionImage');
-        if (question.image_url) {
-          imageEl.src = question.image_url;
+        if (question.question_image_url) {
+          imageEl.src = question.question_image_url;
           imageEl.classList.remove('hidden');
         } else {
           imageEl.classList.add('hidden');
