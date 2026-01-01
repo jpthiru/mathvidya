@@ -722,9 +722,10 @@
     const user = getUser();
 
     // Update profile
-    document.getElementById('userName').textContent = user.name || user.email.split('@')[0];
-    document.getElementById('welcomeName').textContent = user.name || user.email.split('@')[0];
-    document.getElementById('profileAvatar').textContent = (user.name || user.email)[0].toUpperCase();
+    const displayName = user.first_name || user.full_name || user.name || user.email.split('@')[0];
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('welcomeName').textContent = displayName;
+    document.getElementById('profileAvatar').textContent = displayName[0].toUpperCase();
     // Update class display
     document.getElementById('userClass').textContent = `Class ${user.student_class || 'XII'}`;
 
