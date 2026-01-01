@@ -61,13 +61,17 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
 
-    # Email Configuration (for future use)
-    SMTP_HOST: str = "smtp.gmail.com"
+    # Email Configuration (AWS SES)
+    SMTP_HOST: str = "email-smtp.ap-south-1.amazonaws.com"
     SMTP_PORT: int = 587
-    SMTP_USER: str = ""
-    SMTP_PASSWORD: str = ""
+    SMTP_USER: str = ""  # SES SMTP username (starts with AKIA...)
+    SMTP_PASSWORD: str = ""  # SES SMTP password
     EMAILS_FROM_EMAIL: str = "noreply@mathvidya.com"
     EMAILS_FROM_NAME: str = "Mathvidya"
+
+    # Email Verification
+    EMAIL_VERIFICATION_EXPIRE_MINUTES: int = 15  # OTP expires in 15 minutes
+    EMAIL_VERIFICATION_MAX_ATTEMPTS: int = 3  # Max wrong attempts before new code required
 
     # Rate Limiting
     RATE_LIMIT_PER_MINUTE: int = 60

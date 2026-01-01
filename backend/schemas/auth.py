@@ -82,3 +82,63 @@ class PasswordResetConfirm(BaseModel):
     """Confirm password reset with token"""
     token: str
     new_password: str = Field(..., min_length=8)
+
+
+class SendVerificationRequest(BaseModel):
+    """Request to send email verification code"""
+    email: EmailStr
+    first_name: str = Field(..., min_length=1, max_length=100)
+    verification_type: str = Field(default="registration", description="Type: registration or password_reset")
+
+
+class VerifyEmailRequest(BaseModel):
+    """Request to verify email with code"""
+    email: EmailStr
+    code: str = Field(..., min_length=6, max_length=6, description="6-digit verification code")
+
+
+class ResendVerificationRequest(BaseModel):
+    """Request to resend verification code"""
+    email: EmailStr
+    verification_type: str = Field(default="registration")
+
+
+class VerificationResponse(BaseModel):
+    """Response for verification actions"""
+    success: bool
+    message: str
+    expires_in_minutes: Optional[int] = None
+
+
+class ResetPasswordRequest(BaseModel):
+    """Request to reset password with verification code"""
+    email: EmailStr
+    code: str = Field(..., min_length=6, max_length=6, description="6-digit verification code")
+    new_password: str = Field(..., min_length=8, description="New password (min 8 characters)")
+
+
+class RegisterWithVerificationRequest(BaseModel):
+    """User registration with email verification code"""
+    email: EmailStr
+    password: str = Field(..., min_length=8, description="Password must be at least 8 characters")
+    verification_code: str = Field(..., min_length=6, max_length=6, description="6-digit verification code")
+    role: UserRole
+    first_name: str = Field(..., min_length=1, max_length=100)
+    last_name: str = Field(..., min_length=1, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+
+    # Student-specific fields
+    student_class: Optional[str] = Field(None, description="Required for students: X or XII")
+    school_name: Optional[str] = Field(None, max_length=255)
+
+    @validator('student_class')
+    def validate_student_class(cls, v, values):
+        """Ensure student_class is provided for students"""
+        if values.get('role') == UserRole.STUDENT and not v:
+            raise ValueError("student_class is required for student registration")
+        if v and v not in ['X', 'XII']:
+            raise ValueError("student_class must be 'X' or 'XII'")
+        return v
+
+    class Config:
+        use_enum_values = True

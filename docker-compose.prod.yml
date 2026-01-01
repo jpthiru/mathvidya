@@ -55,6 +55,12 @@ services:
       - S3_BUCKET=${S3_BUCKET:-mathvidya-media-prod}
       - S3_QUESTION_IMAGES_PREFIX=${S3_QUESTION_IMAGES_PREFIX:-question-images/}
       - S3_ANSWER_SHEETS_PREFIX=${S3_ANSWER_SHEETS_PREFIX:-answer-sheets/}
+      - SMTP_HOST=${SMTP_HOST:-email-smtp.ap-south-1.amazonaws.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - EMAILS_FROM_EMAIL=${EMAILS_FROM_EMAIL:-noreply@mathvidya.com}
+      - EMAILS_FROM_NAME=${EMAILS_FROM_NAME:-Mathvidya}
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -85,6 +91,12 @@ services:
       - S3_BUCKET=${S3_BUCKET:-mathvidya-media-prod}
       - S3_QUESTION_IMAGES_PREFIX=${S3_QUESTION_IMAGES_PREFIX:-question-images/}
       - S3_ANSWER_SHEETS_PREFIX=${S3_ANSWER_SHEETS_PREFIX:-answer-sheets/}
+      - SMTP_HOST=${SMTP_HOST:-email-smtp.ap-south-1.amazonaws.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - EMAILS_FROM_EMAIL=${EMAILS_FROM_EMAIL:-noreply@mathvidya.com}
+      - EMAILS_FROM_NAME=${EMAILS_FROM_NAME:-Mathvidya}
     depends_on:
       - redis
       - postgres

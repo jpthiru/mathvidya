@@ -168,6 +168,49 @@ class ApiClient {
     return this.get('/auth/me');
   }
 
+  // Email Verification
+  async sendVerificationCode(email, firstName, verificationType = 'registration') {
+    return this.post('/auth/send-verification', {
+      email,
+      first_name: firstName,
+      verification_type: verificationType,
+    });
+  }
+
+  async verifyEmail(email, code) {
+    return this.post('/auth/verify-email', {
+      email,
+      code,
+    });
+  }
+
+  async resendVerificationCode(email, verificationType = 'registration') {
+    return this.post('/auth/resend-verification', {
+      email,
+      verification_type: verificationType,
+    });
+  }
+
+  async registerWithVerification(userData) {
+    const data = await this.post('/auth/register-verified', userData);
+    return data;
+  }
+
+  async forgotPassword(email) {
+    return this.post('/auth/forgot-password', {
+      email,
+      verification_type: 'password_reset',
+    });
+  }
+
+  async resetPassword(email, code, newPassword) {
+    return this.post('/auth/reset-password', {
+      email,
+      code,
+      new_password: newPassword,
+    });
+  }
+
   // ==================== Exams ====================
 
   async getAvailableExams() {

@@ -46,6 +46,9 @@ from models.system import AuditLog, Holiday, SystemConfig
 # Notifications
 from models.notification import Notification, NotificationPreference
 
+# Email Verification
+from models.email_verification import EmailVerification
+
 # Export all models
 __all__ = [
     # Enums
@@ -77,4 +80,5 @@ __all__ = [
     "SystemConfig",
     "Notification",
     "NotificationPreference",
+    "EmailVerification",
 ]
