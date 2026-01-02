@@ -49,6 +49,9 @@ from models.notification import Notification, NotificationPreference
 # Email Verification
 from models.email_verification import EmailVerification
 
+# Feedback
+from models.feedback import ExamFeedback, QuestionFeedback, FeedbackType, FeedbackStatus
+
 # Export all models
 __all__ = [
     # Enums
@@ -81,4 +84,8 @@ __all__ = [
     "Notification",
     "NotificationPreference",
     "EmailVerification",
+    "ExamFeedback",
+    "QuestionFeedback",
+    "FeedbackType",
+    "FeedbackStatus",
 ]

@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Performance - Mathvidya Teacher</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Back Button */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      text-decoration: none;
+      margin-bottom: 1rem;
+      font-size: var(--text-sm);
+    }
+
+    .back-link:hover {
+      color: var(--color-primary);
+    }
+
+    /* Student Header */
+    .student-header {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .student-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .student-info h1 {
+      margin: 0 0 0.25rem 0;
+      font-size: var(--text-2xl);
+      color: var(--color-gray-800);
+    }
+
+    .student-meta {
+      display: flex;
+      gap: 1rem;
+      color: var(--color-gray-600);
+      font-size: var(--text-sm);
+    }
+
+    .student-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .class-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+    }
+
+    .class-badge.xii {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .class-badge.x {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--color-gray-600);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all var(--transition-fast);
+    }
+
+    .tab-btn:hover {
+      color: var(--color-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .stat-icon.primary { background: var(--gradient-primary); }
+    .stat-icon.success { background: var(--gradient-success); }
+    .stat-icon.warning { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .stat-icon.info { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); }
+
+    .stat-content .stat-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-content .stat-value {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-gray-800);
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .chart-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    /* Unit Performance */
+    .unit-performance {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: var(--text-xl);
+      margin: 0;
+    }
+
+    .unit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .unit-card {
+      padding: 1rem;
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-fast);
+    }
+
+    .unit-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .unit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .unit-name {
+      font-weight: 600;
+      color: var(--color-gray-800);
+    }
+
+    .unit-score {
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+    }
+
+    .unit-score.good { background: #D1FAE5; color: #065F46; }
+    .unit-score.average { background: #FEF3C7; color: #92400E; }
+    .unit-score.poor { background: #FEE2E2; color: #991B1B; }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--color-gray-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+
+    .progress-fill.good { background: var(--gradient-success); }
+    .progress-fill.average { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .progress-fill.poor { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+
+    .unit-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: var(--text-xs);
+      color: var(--color-gray-500);
+    }
+
+    /* Insights */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .insight-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+    }
+
+    .insight-card.strengths { border-left: 4px solid #10B981; }
+    .insight-card.weaknesses { border-left: 4px solid #EF4444; }
+
+    .insight-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .insight-title.strengths { color: #059669; }
+    .insight-title.weaknesses { color: #DC2626; }
+
+    .insight-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .insight-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 0.5rem;
+    }
+
+    .insight-item.strength { background: rgba(16, 185, 129, 0.1); }
+    .insight-item.weakness { background: rgba(239, 68, 68, 0.1); }
+
+    /* Exams Table */
+    .exams-table-container {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .exams-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .exams-table th {
+      background: var(--color-gray-50);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--color-gray-700);
+      font-size: var(--text-sm);
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .exams-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--color-gray-100);
+      font-size: var(--text-sm);
+    }
+
+    .exams-table tr:hover {
+      background: var(--color-gray-50);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+    }
+
+    .status-badge.completed { background: #d1fae5; color: #065f46; }
+    .status-badge.submitted { background: #fef3c7; color: #92400e; }
+    .status-badge.in_progress { background: #dbeafe; color: #1d4ed8; }
+
+    /* Loading & Empty States */
+    .loading-state, .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--color-gray-500);
+    }
+
+    .loading-state i, .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .loading-state i {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--color-gray-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .logout-btn:hover {
+      color: var(--color-error);
+      background: #fef2f2;
+    }
+
+    .action-btn {
+      padding: 0.5rem 0.75rem;
+      background: var(--color-gray-100);
+      color: var(--color-gray-700);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--text-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      background: var(--color-gray-200);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .student-header { flex-direction: column; text-align: center; }
+      .student-meta { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <div class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+          <a href="students.html" class="nav-link active">
+            <i class="fas fa-users"></i> Students
+          </a>
+          <a href="questions.html" class="nav-link">
+            <i class="fas fa-book"></i> Question Bank
+          </a>
+          <a href="#" class="nav-link" id="evaluationsLink">
+            <i class="fas fa-check-double"></i> Evaluations
+          </a>
+        </nav>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="profile-button">
+          <div class="profile-avatar" id="userAvatar">T</div>
+          <span id="userName">Teacher</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <a href="students.html" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Students
+    </a>
+
+    <!-- Loading State -->
+    <div class="loading-state" id="loadingState">
+      <i class="fas fa-spinner"></i>
+      <p>Loading student performance...</p>
+    </div>
+
+    <!-- Main Content (hidden initially) -->
+    <div id="mainContentArea" style="display: none;">
+      <!-- Student Header -->
+      <div class="student-header">
+        <div class="student-avatar" id="studentAvatar">S</div>
+        <div class="student-info">
+          <h1 id="studentName">Student Name</h1>
+          <div class="student-meta">
+            <span><i class="fas fa-envelope"></i> <span id="studentEmail">email@example.com</span></span>
+            <span id="classContainer">
+              <i class="fas fa-graduation-cap"></i>
+              <span class="class-badge xii" id="studentClass">XII</span>
+            </span>
+            <span><i class="fas fa-calendar"></i> Joined <span id="joinedDate">-</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="analytics">
+          <i class="fas fa-chart-pie"></i> Analytics
+        </button>
+        <button class="tab-btn" data-tab="exams">
+          <i class="fas fa-file-alt"></i> Exam History
+        </button>
+      </div>
+
+      <!-- Analytics Tab -->
+      <div class="tab-content active" id="analyticsTab">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Total Exams</div>
+              <div class="stat-value" id="totalExams">0</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Average Score</div>
+              <div class="stat-value" id="averageScore">0%</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Predicted Board Score</div>
+              <div class="stat-value" id="predictedScore">-</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon info">
+              <i class="fas fa-medal"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Class Rank</div>
+              <div class="stat-value" id="classRank">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Performance Trend</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="performanceChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Question Type Analysis</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="questionTypeChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unit Performance -->
+        <div class="unit-performance">
+          <div class="section-header">
+            <h2 class="section-title">Unit-wise Performance</h2>
+          </div>
+          <div class="unit-grid" id="unitGrid">
+            <!-- Units will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Strengths & Weaknesses -->
+        <div class="insights-grid">
+          <div class="insight-card strengths">
+            <h3 class="insight-title strengths">
+              <i class="fas fa-arrow-up"></i>
+              Strengths
+            </h3>
+            <ul class="insight-list" id="strengthsList">
+              <!-- Strengths will be loaded here -->
+            </ul>
+          </div>
+
+          <div class="insight-card weaknesses">
+            <h3 class="insight-title weaknesses">
+              <i class="fas fa-arrow-down"></i>
+              Areas to Improve
+            </h3>
+            <ul class="insight-list" id="weaknessesList">
+              <!-- Weaknesses will be loaded here -->
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exams Tab -->
+      <div class="tab-content" id="examsTab">
+        <div class="exams-table-container">
+          <table class="exams-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Questions</th>
+                <th>Score</th>
+                <th>Percentage</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="examsTableBody">
+              <!-- Exams will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <i class="fas fa-user-slash"></i>
+      <h3>Student not found</h3>
+      <p>The student you're looking for doesn't exist or you don't have access.</p>
+      <a href="students.html" class="action-btn" style="margin-top: 1rem; display: inline-block;">
+        <i class="fas fa-arrow-left"></i> Back to Students
+      </a>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated()) {
+      window.location.href = '../login.html';
+    }
+
+    const user = getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.first_name || 'Teacher';
+      document.getElementById('userAvatar').textContent = (user.first_name || 'T').charAt(0).toUpperCase();
+    }
+
+    // Get student ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = urlParams.get('id');
+
+    if (!studentId) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+    }
+
+    // Chart instances
+    let performanceChart = null;
+    let questionTypeChart = null;
+
+    // Tab handling
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(`${btn.dataset.tab}Tab`).classList.add('active');
+      });
+    });
+
+    // Load student data
+    async function loadStudentData() {
+      if (!studentId) return;
+
+      try {
+        // Load analytics dashboard
+        const dashboard = await api.getStudentDashboardById(studentId);
+
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('mainContentArea').style.display = 'block';
+
+        // Update student header
+        document.getElementById('studentName').textContent = dashboard.student_name;
+        document.getElementById('studentEmail').textContent = dashboard.student_email || studentId;
+        document.getElementById('studentAvatar').textContent = dashboard.student_name[0].toUpperCase();
+
+        // Update joined date
+        if (dashboard.student_created_at) {
+          const joinedDate = new Date(dashboard.student_created_at);
+          document.getElementById('joinedDate').textContent = joinedDate.toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+        }
+
+        const classLevel = dashboard.class_level || 'XII';
+        const classEl = document.getElementById('studentClass');
+        classEl.textContent = classLevel;
+        classEl.className = `class-badge ${classLevel.toLowerCase()}`;
+
+        // Update stats
+        document.getElementById('totalExams').textContent = dashboard.total_exams || 0;
+        const avgScore = dashboard.overall_percentage || 0;
+        document.getElementById('averageScore').textContent = avgScore ? `${parseFloat(avgScore).toFixed(1)}%` : '0%';
+        document.getElementById('predictedScore').textContent = dashboard.board_prediction
+          ? `${dashboard.board_prediction.predicted_percentage}/100`
+          : '-';
+        document.getElementById('classRank').textContent = dashboard.overall_rank || '-';
+
+        // Render charts
+        renderPerformanceChart(dashboard.recent_exams || []);
+        renderQuestionTypeChart(dashboard.question_type_analysis || []);
+
+        // Render unit performance
+        renderUnitPerformance(dashboard.unit_performance || []);
+
+        // Render strengths and weaknesses
+        const sw = dashboard.strength_weakness || {};
+        renderStrengthsWeaknesses(
+          sw.strengths || [],
+          sw.weaknesses || []
+        );
+
+        // Load exam history
+        await loadExamHistory();
+
+      } catch (error) {
+        console.error('Error loading student data:', error);
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+      }
+    }
+
+    // Load exam history
+    async function loadExamHistory() {
+      try {
+        const response = await api.getStudentExams(studentId);
+        const tableBody = document.getElementById('examsTableBody');
+
+        if (!response.exams || response.exams.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; color: var(--color-gray-500); padding: 2rem;">
+                No exams found for this student
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tableBody.innerHTML = response.exams.map(exam => {
+          const date = new Date(exam.started_at).toLocaleDateString('en-IN');
+
+          // Format exam type for display
+          const examTypeMap = {
+            'section_mcq': 'MCQ',
+            'section_vsa': 'VSA',
+            'section_sa': 'SA',
+            'section_la': 'LA',
+            'unit_practice': 'Unit Practice',
+            'full_board': 'Full Board',
+            'mock_test': 'Mock Test'
+          };
+          const displayExamType = examTypeMap[exam.exam_type] || exam.exam_type;
+
+          // Format status for display
+          const statusMap = {
+            'created': 'Created',
+            'in_progress': 'In Progress',
+            'submitted_mcq': 'Submitted',
+            'uploaded': 'Uploaded',
+            'pending_evaluation': 'Pending Evaluation',
+            'evaluated': 'Evaluated'
+          };
+          const displayStatus = statusMap[exam.status] || exam.status;
+          const statusClass = exam.status === 'evaluated' ? 'completed' :
+                              exam.status.includes('submitted') || exam.status.includes('uploaded') ? 'submitted' :
+                              'in_progress';
+
+          // Get score from mcq_score if total_score is not available
+          const score = exam.total_score !== null && exam.total_score !== undefined ? exam.total_score :
+                        exam.mcq_score !== null && exam.mcq_score !== undefined ? exam.mcq_score : null;
+          const scoreDisplay = score !== null ? score : '-';
+
+          // Calculate percentage if not provided
+          let percentage = exam.percentage;
+          if (!percentage && score !== null && exam.total_marks > 0) {
+            percentage = (score / exam.total_marks) * 100;
+          }
+          const percentageDisplay = percentage ? `${parseFloat(percentage).toFixed(1)}%` : '-';
+
+          return `
+            <tr>
+              <td>${date}</td>
+              <td>${displayExamType}</td>
+              <td>${exam.total_questions || '-'}</td>
+              <td>${scoreDisplay} / ${exam.total_marks}</td>
+              <td>${percentageDisplay}</td>
+              <td><span class="status-badge ${statusClass}">${displayStatus}</span></td>
+              <td>
+                <a href="exam-review.html?id=${exam.exam_instance_id}&student=${studentId}" class="action-btn">
+                  <i class="fas fa-eye"></i> View
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (error) {
+        console.error('Error loading exam history:', error);
+      }
+    }
+
+    // Render performance chart
+    function renderPerformanceChart(exams) {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+
+      const sortedExams = [...exams]
+        .sort((a, b) => new Date(a.started_at) - new Date(b.started_at))
+        .slice(-10);
+
+      const labels = sortedExams.map((exam, idx) => `Exam ${idx + 1}`);
+      const data = sortedExams.map(exam => exam.percentage || 0);
+
+      if (performanceChart) performanceChart.destroy();
+
+      performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Score %',
+            data: data,
+            borderColor: '#6366F1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#6366F1',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { callback: value => value + '%' }
+            }
+          }
+        }
+      });
+    }
+
+    // Render question type chart
+    function renderQuestionTypeChart(analysis) {
+      const ctx = document.getElementById('questionTypeChart').getContext('2d');
+
+      const labels = analysis.length > 0
+        ? analysis.map(a => a.question_type)
+        : ['MCQ', 'VSA', 'SA'];
+      const data = analysis.length > 0
+        ? analysis.map(a => a.percentage || 0)
+        : [0, 0, 0];
+
+      if (questionTypeChart) questionTypeChart.destroy();
+
+      questionTypeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Accuracy %',
+            data: data,
+            backgroundColor: [
+              'rgba(99, 102, 241, 0.8)',
+              'rgba(16, 185, 129, 0.8)',
+              'rgba(245, 158, 11, 0.8)',
+              'rgba(239, 68, 68, 0.8)'
+            ],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { callback: value => value + '%' }
+            }
+          }
+        }
+      });
+    }
+
+    // Render unit performance
+    function renderUnitPerformance(units) {
+      const unitGrid = document.getElementById('unitGrid');
+
+      if (!units || units.length === 0) {
+        unitGrid.innerHTML = `
+          <p style="color: var(--color-gray-500); text-align: center; grid-column: 1/-1; padding: 2rem;">
+            No unit-wise data available yet.
+          </p>
+        `;
+        return;
+      }
+
+      unitGrid.innerHTML = units.map(unit => {
+        const percentage = unit.percentage || 0;
+        let scoreClass = 'poor';
+        if (percentage >= 75) scoreClass = 'good';
+        else if (percentage >= 50) scoreClass = 'average';
+
+        return `
+          <div class="unit-card">
+            <div class="unit-header">
+              <span class="unit-name">${unit.unit}</span>
+              <span class="unit-score ${scoreClass}">${percentage.toFixed(1)}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill ${scoreClass}" style="width: ${percentage}%"></div>
+            </div>
+            <div class="unit-stats">
+              <span>${unit.questions_attempted || 0} questions</span>
+              <span>${unit.questions_correct || 0} correct</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render strengths and weaknesses
+    function renderStrengthsWeaknesses(strengths, weaknesses) {
+      const strengthsList = document.getElementById('strengthsList');
+      const weaknessesList = document.getElementById('weaknessesList');
+
+      if (strengths.length === 0) {
+        strengthsList.innerHTML = `
+          <li class="insight-item strength">
+            <i class="fas fa-info-circle"></i>
+            <span>Not enough data to identify strengths</span>
+          </li>
+        `;
+      } else {
+        strengthsList.innerHTML = strengths.map(s => `
+          <li class="insight-item strength">
+            <i class="fas fa-check-circle" style="color: #10B981;"></i>
+            <span>${typeof s === 'object' ? s.topic : s}</span>
+          </li>
+        `).join('');
+      }
+
+      if (weaknesses.length === 0) {
+        weaknessesList.innerHTML = `
+          <li class="insight-item weakness">
+            <i class="fas fa-info-circle"></i>
+            <span>Not enough data to identify areas for improvement</span>
+          </li>
+        `;
+      } else {
+        weaknessesList.innerHTML = weaknesses.map(w => `
+          <li class="insight-item weakness">
+            <i class="fas fa-exclamation-circle" style="color: #EF4444;"></i>
+            <span>${typeof w === 'object' ? w.topic : w}</span>
+          </li>
+        `).join('');
+      }
+    }
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+      } catch (error) {
+        console.log('Logout error:', error);
+      }
+      api.clearToken();
+      window.location.href = '../login.html';
+    });
+
+    // Initialize
+    loadStudentData();
+  </script>
+</body>
+</html>

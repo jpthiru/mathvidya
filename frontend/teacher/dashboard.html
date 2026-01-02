@@ -183,6 +183,11 @@
       color: #059669;
     }
 
+    .stat-icon.students {
+      background: #e0e7ff;
+      color: #4f46e5;
+    }
+
     .action-card.highlight {
       border: 2px solid #f59e0b;
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
@@ -294,6 +299,9 @@
           <a href="dashboard.html" class="nav-link active">
             <i class="fas fa-home"></i> Dashboard
           </a>
+          <a href="students.html" class="nav-link">
+            <i class="fas fa-users"></i> Students
+          </a>
           <a href="questions.html" class="nav-link">
             <i class="fas fa-book"></i> Question Bank
           </a>
@@ -372,6 +380,26 @@
           <p>Pending Verification <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
         </div>
       </a>
+
+      <a href="students.html" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="View all students">
+        <div class="stat-icon students">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="studentsCount">0</h3>
+          <p>Total Students <i class="fas fa-external-link-alt" style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.25rem;"></i></p>
+        </div>
+      </a>
+
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="examsCount">0</h3>
+          <p>Exams Taken</p>
+        </div>
+      </div>
     </div>
 
     <!-- Action Cards -->
@@ -392,6 +420,12 @@
         <i class="fas fa-list"></i>
         <h3>View Question Bank</h3>
         <p>Browse and manage all questions</p>
+      </a>
+
+      <a href="students.html" class="action-card">
+        <i class="fas fa-user-graduate"></i>
+        <h3>View Students</h3>
+        <p>View student performance and analytics</p>
       </a>
 
       <a href="verify-questions.html" class="action-card highlight" id="verifyCard" style="display: none;">
@@ -459,6 +493,17 @@
       } catch (error) {
         console.log('Could not load unverified stats:', error);
         document.getElementById('unverifiedCount').textContent = '0';
+      }
+
+      // Load student stats
+      try {
+        const studentStats = await api.getStudentStats();
+        document.getElementById('studentsCount').textContent = studentStats.total_students || 0;
+        document.getElementById('examsCount').textContent = studentStats.total_exams_taken || 0;
+      } catch (error) {
+        console.log('Could not load student stats:', error);
+        document.getElementById('studentsCount').textContent = '0';
+        document.getElementById('examsCount').textContent = '0';
       }
     }
 

@@ -350,6 +350,24 @@ class ApiClient {
   async completeEvaluation(evaluationId) {
     return this.post(`/evaluations/${evaluationId}/complete`, {});
   }
+
+  // ==================== Teacher - Student Management ====================
+
+  async getStudentStats() {
+    return this.get('/teacher/students/stats');
+  }
+
+  async getStudents(params = {}) {
+    return this.get('/teacher/students', params);
+  }
+
+  async getStudentExams(studentId, page = 1, pageSize = 20) {
+    return this.get(`/teacher/students/${studentId}/exams`, { page, page_size: pageSize });
+  }
+
+  async getStudentDashboardById(studentId) {
+    return this.get(`/analytics/dashboard/student/${studentId}`);
+  }
 }
 
 // Export singleton instance

@@ -124,6 +124,8 @@ class StudentDashboardResponse(BaseModel):
     """Complete student dashboard"""
     student_id: str
     student_name: str
+    student_email: Optional[str] = None
+    student_created_at: Optional[datetime] = None
     class_level: str
 
     # Overall statistics

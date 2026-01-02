@@ -17,7 +17,7 @@ import logging
 
 from config.settings import settings
 from database import engine
-from routes import auth, exams, questions, evaluations, analytics, subscriptions, notifications, admin
+from routes import auth, exams, questions, evaluations, analytics, subscriptions, notifications, admin, teacher
 
 # Configure logging
 logging.basicConfig(
@@ -132,6 +132,7 @@ app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytic
 app.include_router(subscriptions.router, prefix="/api/v1", tags=["Subscriptions"])
 app.include_router(notifications.router, prefix="/api/v1", tags=["Notifications"])
 app.include_router(admin.router, prefix="/api/v1", tags=["Admin"])
+app.include_router(teacher.router, prefix="/api/v1/teacher", tags=["Teacher"])
 
 
 @app.get("/")

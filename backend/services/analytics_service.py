@@ -150,6 +150,8 @@ class AnalyticsService:
         return {
             'student_id': str(student.user_id),
             'student_name': f"{student.first_name} {student.last_name}",
+            'student_email': student.email,
+            'student_created_at': student.created_at,
             'class_level': student.student_class,
             'total_exams': total_exams,
             'exams_completed': exams_completed,

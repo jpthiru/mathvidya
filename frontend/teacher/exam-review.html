@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Review - Mathvidya Teacher</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      font-size: var(--text-sm);
+    }
+
+    .back-link:hover {
+      color: var(--color-primary);
+    }
+
+    .exam-header {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2rem;
+    }
+
+    .exam-title {
+      font-size: var(--text-2xl);
+      margin: 0 0 1rem 0;
+      color: var(--color-gray-800);
+    }
+
+    .exam-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      color: var(--color-gray-600);
+    }
+
+    .exam-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .exam-meta-item i {
+      color: var(--color-primary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      color: var(--color-gray-800);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+    }
+
+    .stat-card.success .stat-value { color: #059669; }
+    .stat-card.warning .stat-value { color: #d97706; }
+    .stat-card.primary .stat-value { color: var(--color-primary); }
+
+    .questions-section {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .section-title {
+      font-size: var(--text-xl);
+      margin: 0 0 1.5rem 0;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .question-card {
+      padding: 1.5rem;
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      margin-bottom: 1rem;
+    }
+
+    .question-card.correct {
+      border-left: 4px solid #10B981;
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .question-card.incorrect {
+      border-left: 4px solid #EF4444;
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .question-number {
+      font-weight: 600;
+      color: var(--color-gray-800);
+    }
+
+    .question-marks {
+      font-size: var(--text-sm);
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      background: var(--color-gray-100);
+    }
+
+    .question-text {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .answer-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--color-gray-200);
+    }
+
+    .answer-box {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+    }
+
+    .answer-box.student {
+      background: var(--color-gray-100);
+    }
+
+    .answer-box.correct-answer {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10B981;
+    }
+
+    .answer-label {
+      font-weight: 600;
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      color: var(--color-gray-600);
+    }
+
+    .loading-state, .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--color-gray-500);
+    }
+
+    .loading-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--color-gray-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .logout-btn:hover {
+      color: var(--color-error);
+      background: #fef2f2;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <i class="fas fa-calculator"></i>
+        Mathvidya
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <a href="#" class="back-link" id="backLink">
+      <i class="fas fa-arrow-left"></i> Back to Student Performance
+    </a>
+
+    <!-- Loading State -->
+    <div class="loading-state" id="loadingState">
+      <i class="fas fa-spinner"></i>
+      <p>Loading exam details...</p>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="mainContentArea" style="display: none;">
+      <!-- Exam Header -->
+      <div class="exam-header">
+        <h1 class="exam-title" id="examTitle">Exam Review</h1>
+        <div class="exam-meta">
+          <div class="exam-meta-item">
+            <i class="fas fa-user"></i>
+            <span id="studentName">Student Name</span>
+          </div>
+          <div class="exam-meta-item">
+            <i class="fas fa-calendar"></i>
+            <span id="examDate">-</span>
+          </div>
+          <div class="exam-meta-item">
+            <i class="fas fa-clock"></i>
+            <span id="examDuration">-</span>
+          </div>
+          <div class="exam-meta-item">
+            <i class="fas fa-graduation-cap"></i>
+            <span id="examClass">Class XII</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-value" id="totalQuestions">0</div>
+          <div class="stat-label">Total Questions</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-value" id="correctAnswers">0</div>
+          <div class="stat-label">Correct Answers</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-value" id="scoreDisplay">0/0</div>
+          <div class="stat-label">Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="percentageDisplay">0%</div>
+          <div class="stat-label">Percentage</div>
+        </div>
+      </div>
+
+      <!-- Questions Section -->
+      <div class="questions-section">
+        <h2 class="section-title">Question Details</h2>
+        <div id="questionsContainer">
+          <!-- Questions will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+      <h3>Exam not found</h3>
+      <p>The exam you're looking for doesn't exist or you don't have access.</p>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated()) {
+      window.location.href = '../login.html';
+    }
+
+    // Get exam ID and student ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const examId = urlParams.get('id');
+    const studentId = urlParams.get('student');
+
+    // Update back link
+    if (studentId) {
+      document.getElementById('backLink').href = `student-performance.html?id=${studentId}`;
+    } else {
+      document.getElementById('backLink').href = 'students.html';
+    }
+
+    if (!examId) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+    }
+
+    // Format exam type for display
+    function formatExamType(examType) {
+      const examTypeMap = {
+        'section_mcq': 'MCQ Practice',
+        'section_vsa': 'VSA Practice',
+        'section_sa': 'SA Practice',
+        'section_la': 'LA Practice',
+        'unit_practice': 'Unit Practice',
+        'full_board': 'Full Board Exam',
+        'mock_test': 'Mock Test'
+      };
+      return examTypeMap[examType] || examType;
+    }
+
+    // Load exam data
+    async function loadExamData() {
+      if (!examId) return;
+
+      try {
+        // Get exam details using the existing API endpoint
+        const examData = await api.get(`/exams/${examId}/results`);
+
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('mainContentArea').style.display = 'block';
+
+        // Update exam header
+        document.getElementById('examTitle').textContent = formatExamType(examData.exam_type);
+        document.getElementById('studentName').textContent = examData.student_name || 'Student';
+        document.getElementById('examClass').textContent = `Class ${examData.class_level || 'XII'}`;
+
+        if (examData.started_at) {
+          const date = new Date(examData.started_at);
+          document.getElementById('examDate').textContent = date.toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+
+        if (examData.time_taken_minutes) {
+          document.getElementById('examDuration').textContent = `${examData.time_taken_minutes} mins`;
+        } else {
+          document.getElementById('examDuration').textContent = '-';
+        }
+
+        // Update stats
+        const questions = examData.questions || [];
+        const mcqAnswers = examData.mcq_answers || [];
+        const totalQuestions = questions.length;
+        const correctAnswers = mcqAnswers.filter(a => a.is_correct).length;
+        const score = examData.mcq_score || examData.total_score || 0;
+        const totalMarks = examData.total_marks || 0;
+        const percentage = totalMarks > 0 ? (score / totalMarks * 100) : 0;
+
+        document.getElementById('totalQuestions').textContent = totalQuestions;
+        document.getElementById('correctAnswers').textContent = correctAnswers;
+        document.getElementById('scoreDisplay').textContent = `${score}/${totalMarks}`;
+        document.getElementById('percentageDisplay').textContent = `${percentage.toFixed(1)}%`;
+
+        // Render questions
+        renderQuestions(questions, mcqAnswers);
+
+      } catch (error) {
+        console.error('Error loading exam data:', error);
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+      }
+    }
+
+    // Render questions
+    function renderQuestions(questions, mcqAnswers) {
+      const container = document.getElementById('questionsContainer');
+
+      if (!questions || questions.length === 0) {
+        container.innerHTML = `
+          <p style="text-align: center; color: var(--color-gray-500); padding: 2rem;">
+            No question details available for this exam.
+          </p>
+        `;
+        return;
+      }
+
+      // Create a map of answers by question number
+      const answerMap = {};
+      mcqAnswers.forEach(answer => {
+        answerMap[answer.question_number] = answer;
+      });
+
+      container.innerHTML = questions.map((q, index) => {
+        const questionNumber = q.question_number || (index + 1);
+        const answer = answerMap[questionNumber];
+        const isCorrect = answer ? answer.is_correct : false;
+        const studentAnswer = answer ? (answer.selected_choices || []).join(', ') : '-';
+        const correctAnswer = q.correct_answer || '-';
+
+        return `
+          <div class="question-card ${answer ? (isCorrect ? 'correct' : 'incorrect') : ''}">
+            <div class="question-header">
+              <span class="question-number">Question ${questionNumber}</span>
+              <span class="question-marks">${q.marks || 1} mark${(q.marks || 1) > 1 ? 's' : ''}</span>
+            </div>
+            <div class="question-text">
+              ${q.question_text || q.question_content?.text || 'Question text not available'}
+            </div>
+            ${answer ? `
+              <div class="answer-section">
+                <div class="answer-box student">
+                  <div class="answer-label">Student's Answer</div>
+                  <div>${studentAnswer}</div>
+                </div>
+                <div class="answer-box correct-answer">
+                  <div class="answer-label">Correct Answer</div>
+                  <div>${correctAnswer}</div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+      } catch (error) {
+        console.log('Logout error:', error);
+      }
+      api.clearToken();
+      window.location.href = '../login.html';
+    });
+
+    // Initialize
+    loadExamData();
+  </script>
+</body>
+</html>
