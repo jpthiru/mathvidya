@@ -11,7 +11,7 @@ from typing import Optional
 import logging
 
 from database import get_session
-from models import User, ExamInstance, Evaluation
+from models import User, ExamInstance, Evaluation, Question
 from models.enums import UserRole, ExamStatus, EvaluationStatus
 from dependencies.auth import require_teacher, require_teacher_or_admin
 from schemas.teacher import (
@@ -321,3 +321,108 @@ async def get_student_exams(
         page=page,
         page_size=page_size
     )
+
+
+@router.get("/exams/{exam_instance_id}/results")
+async def get_student_exam_results(
+    exam_instance_id: str,
+    current_user: User = Depends(require_teacher_or_admin),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Get detailed exam results for a student's exam.
+
+    Teachers can view any student's exam results with question-by-question breakdown.
+
+    **Permissions**: Teachers and Admins
+    """
+    # Get exam instance
+    exam = await session.get(ExamInstance, exam_instance_id)
+    if not exam:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Exam not found"
+        )
+
+    # Get student info
+    student = await session.get(User, exam.student_user_id)
+    student_name = f"{student.first_name} {student.last_name}" if student else "Unknown Student"
+
+    # Get exam snapshot with question IDs and answers
+    snapshot = exam.exam_snapshot or {}
+    question_ids = snapshot.get('question_ids', [])
+    student_answers = snapshot.get('student_answers', {})
+
+    # Load questions
+    questions = []
+    mcq_answers = []
+    correct_count = 0
+    incorrect_count = 0
+    unanswered_count = 0
+
+    for idx, q_id in enumerate(question_ids, 1):
+        question = await session.get(Question, q_id)
+        if question:
+            student_answer = student_answers.get(str(idx))
+            is_correct = student_answer == question.correct_option if student_answer else False
+
+            if student_answer is None:
+                unanswered_count += 1
+            elif is_correct:
+                correct_count += 1
+            else:
+                incorrect_count += 1
+
+            # Build question data
+            question_data = {
+                "question_id": str(question.question_id),
+                "question_number": idx,
+                "question_text": question.question_text,
+                "question_type": question.question_type,
+                "options": question.options,
+                "correct_option": question.correct_option,
+                "correct_answer": question.correct_option,  # For frontend compatibility
+                "marks": question.marks,
+                "unit": question.unit,
+                "student_answer": student_answer,
+                "is_correct": is_correct,
+                "model_answer": question.model_answer,
+                "marking_scheme": question.marking_scheme
+            }
+            questions.append(question_data)
+
+            # Build MCQ answer data for frontend compatibility
+            if student_answer is not None:
+                mcq_answers.append({
+                    "question_number": idx,
+                    "selected_choices": [student_answer] if student_answer else [],
+                    "is_correct": is_correct
+                })
+
+    # Calculate time taken
+    time_taken_minutes = None
+    if exam.started_at and exam.submitted_at:
+        delta = exam.submitted_at - exam.started_at
+        time_taken_minutes = int(delta.total_seconds() / 60)
+
+    return {
+        "exam_instance_id": str(exam.exam_instance_id),
+        "exam_type": exam.exam_type,
+        "class_level": exam.class_level,
+        "status": exam.status,
+        "student_name": student_name,
+        "started_at": exam.started_at.isoformat() if exam.started_at else None,
+        "submitted_at": exam.submitted_at.isoformat() if exam.submitted_at else None,
+        "total_marks": exam.total_marks,
+        "mcq_score": float(exam.mcq_score) if exam.mcq_score else 0,
+        "total_score": float(exam.total_score) if exam.total_score else 0,
+        "percentage": (exam.total_score / exam.total_marks * 100) if exam.total_marks and exam.total_score else 0,
+        "total_questions": len(questions),
+        "correct_count": correct_count,
+        "incorrect_count": incorrect_count,
+        "unanswered_count": unanswered_count,
+        "time_taken_minutes": time_taken_minutes,
+        "questions": questions,
+        "mcq_answers": mcq_answers,  # For frontend compatibility
+        "answers": student_answers
+    }

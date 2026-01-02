@@ -391,8 +391,8 @@
       if (!examId) return;
 
       try {
-        // Get exam details using the existing API endpoint
-        const examData = await api.get(`/exams/${examId}/results`);
+        // Get exam details using the teacher API endpoint
+        const examData = await api.get(`/teacher/exams/${examId}/results`);
 
         document.getElementById('loadingState').style.display = 'none';
         document.getElementById('mainContentArea').style.display = 'block';
