@@ -16,6 +16,21 @@
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="../css/main.css">
 
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -151,39 +166,49 @@
     }
 
     .question-card {
-      padding: 1.5rem;
       border: 1px solid var(--color-gray-200);
       border-radius: var(--radius-lg);
       margin-bottom: 1rem;
-    }
-
-    .question-card.correct {
-      border-left: 4px solid #10B981;
-      background: rgba(16, 185, 129, 0.05);
-    }
-
-    .question-card.incorrect {
-      border-left: 4px solid #EF4444;
-      background: rgba(239, 68, 68, 0.05);
+      overflow: hidden;
     }
 
     .question-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
+      align-items: center;
+      padding: 1rem;
+      background: var(--color-gray-50);
+      border-bottom: 1px solid var(--color-gray-200);
     }
 
     .question-number {
       font-weight: 600;
-      color: var(--color-gray-800);
+      color: var(--color-gray-700);
     }
 
-    .question-marks {
-      font-size: var(--text-sm);
+    .question-result {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       padding: 0.25rem 0.75rem;
       border-radius: var(--radius-full);
-      background: var(--color-gray-100);
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+
+    .question-result.correct {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .question-result.incorrect {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .question-result.unanswered {
+      background: #FEF3C7;
+      color: #92400E;
     }
 
     .question-text {
@@ -222,25 +247,11 @@
       color: var(--color-gray-600);
     }
 
-    .options-section {
-      margin: 1rem 0;
-      padding: 1rem;
-      background: var(--color-gray-50);
-      border-radius: var(--radius-md);
-    }
-
-    .options-label {
-      font-weight: 600;
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-      color: var(--color-gray-600);
-    }
-
     .options-list {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      margin-top: 1rem;
     }
 
     .option-item {
@@ -248,31 +259,47 @@
       align-items: flex-start;
       gap: 0.75rem;
       padding: 0.75rem 1rem;
-      background: white;
       border-radius: var(--radius-md);
       border: 1px solid var(--color-gray-200);
-      font-size: var(--text-sm);
-    }
-
-    .option-item.correct {
-      background: rgba(16, 185, 129, 0.1);
-      border-color: #10B981;
     }
 
     .option-item.selected {
       border-color: var(--color-primary);
-      border-width: 2px;
+      background: rgba(99, 102, 241, 0.05);
     }
 
-    .option-item.selected.wrong {
-      background: rgba(239, 68, 68, 0.1);
+    .option-item.correct {
+      border-color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .option-item.incorrect {
       border-color: #EF4444;
+      background: rgba(239, 68, 68, 0.1);
     }
 
-    .option-letter {
+    .option-indicator {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 600;
-      color: var(--color-gray-700);
-      min-width: 1.5rem;
+      font-size: var(--text-sm);
+      flex-shrink: 0;
+      background: var(--color-gray-100);
+      color: var(--color-gray-600);
+    }
+
+    .option-item.correct .option-indicator {
+      background: #10B981;
+      color: white;
+    }
+
+    .option-item.incorrect .option-indicator {
+      background: #EF4444;
+      color: white;
     }
 
     .option-text {
@@ -280,26 +307,35 @@
       line-height: 1.5;
     }
 
-    .option-icons {
-      display: flex;
-      gap: 0.25rem;
-      align-items: center;
-    }
-
-    .option-icons i {
+    .answer-info {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
       font-size: var(--text-sm);
     }
 
-    .option-icons .fa-check {
-      color: #10B981;
+    .answer-info strong {
+      color: var(--color-gray-700);
     }
 
-    .option-icons .fa-times {
-      color: #EF4444;
+    .explanation-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: var(--radius-md);
     }
 
-    .option-icons .fa-user {
-      color: var(--color-primary);
+    .explanation-box .explanation-title {
+      font-weight: 600;
+      color: #1E40AF;
+      margin-bottom: 0.5rem;
+    }
+
+    .explanation-box .explanation-content {
+      color: #1E3A8A;
+      line-height: 1.6;
     }
 
     .loading-state, .empty-state {
@@ -523,7 +559,7 @@
       }
     }
 
-    // Render questions
+    // Render questions (same design as student's exam-results.html)
     function renderQuestions(questions, mcqAnswers) {
       const container = document.getElementById('questionsContainer');
 
@@ -536,83 +572,109 @@
         return;
       }
 
-      // Create a map of answers by question number
-      const answerMap = {};
-      mcqAnswers.forEach(answer => {
-        answerMap[answer.question_number] = answer;
-      });
+      container.innerHTML = questions.map((q, idx) => {
+        const questionNum = q.question_number || (idx + 1);
+        const studentAnswer = q.student_answer || null;
+        const correctAnswer = q.correct_option || q.correct_answer;
+        const isCorrect = q.is_correct !== undefined ? q.is_correct : (studentAnswer === correctAnswer);
+        const isAnswered = studentAnswer !== null && studentAnswer !== undefined;
 
-      container.innerHTML = questions.map((q, index) => {
-        const questionNumber = q.question_number || (index + 1);
-        const answer = answerMap[questionNumber];
-        const isCorrect = answer ? answer.is_correct : false;
-        const studentAnswer = answer ? (answer.selected_choices || []).join(', ') : q.student_answer || '-';
-        const correctAnswer = q.correct_answer || q.correct_option || '-';
+        // Determine result styling
+        let resultClass = 'unanswered';
+        let resultText = 'Unanswered';
+        let resultIcon = 'fa-minus';
 
-        // Build options HTML
-        let optionsHtml = '';
-        if (q.options && typeof q.options === 'object') {
-          const optionLetters = ['A', 'B', 'C', 'D'];
-          optionsHtml = `
-            <div class="options-section">
-              <div class="options-label">Options</div>
-              <div class="options-list">
-                ${optionLetters.map(letter => {
-                  const optionText = q.options[letter] || q.options[letter.toLowerCase()];
-                  if (!optionText) return '';
+        if (isAnswered) {
+          if (isCorrect) {
+            resultClass = 'correct';
+            resultText = 'Correct';
+            resultIcon = 'fa-check';
+          } else {
+            resultClass = 'incorrect';
+            resultText = 'Incorrect';
+            resultIcon = 'fa-times';
+          }
+        }
 
-                  const isCorrectOption = correctAnswer === letter;
-                  const isSelectedOption = studentAnswer === letter;
-                  const isWrong = isSelectedOption && !isCorrectOption;
+        // Handle options - can be object {A: "text", B: "text"} or array
+        const optionLetters = ['A', 'B', 'C', 'D'];
+        let optionTexts = [];
 
-                  let classes = 'option-item';
-                  if (isCorrectOption) classes += ' correct';
-                  if (isSelectedOption) classes += ' selected';
-                  if (isWrong) classes += ' wrong';
+        if (q.options) {
+          if (Array.isArray(q.options)) {
+            optionTexts = q.options;
+          } else if (typeof q.options === 'object') {
+            optionTexts = optionLetters.map(letter => q.options[letter] || q.options[letter.toLowerCase()] || '-');
+          }
+        }
 
-                  let icons = '';
-                  if (isCorrectOption) icons += '<i class="fas fa-check" title="Correct Answer"></i>';
-                  if (isSelectedOption && isWrong) icons += '<i class="fas fa-times" title="Wrong Answer"></i>';
-                  if (isSelectedOption) icons += '<i class="fas fa-user" title="Student Selected"></i>';
-
-                  return `
-                    <div class="${classes}">
-                      <span class="option-letter">${letter}.</span>
-                      <span class="option-text">${optionText}</span>
-                      <span class="option-icons">${icons}</span>
-                    </div>
-                  `;
-                }).join('')}
+        // Build explanation section if model_answer exists
+        let explanationHtml = '';
+        if (q.model_answer) {
+          explanationHtml = `
+            <div class="explanation-box">
+              <div class="explanation-title">
+                <i class="fas fa-lightbulb" style="margin-right: 0.5rem;"></i>Explanation / Solution
               </div>
+              <div class="explanation-content">${q.model_answer}</div>
             </div>
           `;
         }
 
         return `
-          <div class="question-card ${answer || q.student_answer ? (isCorrect ? 'correct' : 'incorrect') : ''}">
+          <div class="question-card">
             <div class="question-header">
-              <span class="question-number">Question ${questionNumber}</span>
-              <span class="question-marks">${q.marks || 1} mark${(q.marks || 1) > 1 ? 's' : ''}</span>
+              <span class="question-number">Question ${questionNum}</span>
+              <span class="question-result ${resultClass}">
+                <i class="fas ${resultIcon}"></i>
+                ${resultText}
+              </span>
             </div>
-            <div class="question-text">
-              ${q.question_text || q.question_content?.text || 'Question text not available'}
-            </div>
-            ${optionsHtml}
-            ${(answer || q.student_answer) ? `
-              <div class="answer-section">
-                <div class="answer-box student">
-                  <div class="answer-label">Student's Answer</div>
-                  <div>${studentAnswer}</div>
-                </div>
-                <div class="answer-box correct-answer">
-                  <div class="answer-label">Correct Answer</div>
-                  <div>${correctAnswer}</div>
-                </div>
+            <div class="question-body" style="padding: 1.5rem;">
+              <div class="question-text">${q.question_text || 'Question text not available'}</div>
+              <div class="options-list">
+                ${optionLetters.map((opt, i) => {
+                  const optionText = optionTexts[i] || '-';
+                  let optionClass = '';
+
+                  // Highlight correct answer in green
+                  if (opt === correctAnswer) optionClass = 'correct';
+                  // Highlight wrong student answer in red
+                  else if (opt === studentAnswer && !isCorrect) optionClass = 'incorrect';
+
+                  // Show indicator for student's selection
+                  const isSelected = opt === studentAnswer;
+                  const selectionMarker = isSelected ? '<i class="fas fa-arrow-left" style="margin-left: 0.5rem; font-size: 0.75rem;"></i> Student\'s answer' : '';
+
+                  return `
+                    <div class="option-item ${optionClass}" ${isSelected ? 'style="font-weight: 500;"' : ''}>
+                      <div class="option-indicator">${opt}</div>
+                      <div class="option-text">${optionText}${selectionMarker}</div>
+                    </div>
+                  `;
+                }).join('')}
               </div>
-            ` : ''}
+              ${!isCorrect && isAnswered ? `
+                <div class="answer-info">
+                  <strong><i class="fas fa-check-circle" style="color: #10B981; margin-right: 0.25rem;"></i>Correct Answer:</strong> Option ${correctAnswer}
+                </div>
+              ` : ''}
+              ${!isAnswered ? `
+                <div class="answer-info" style="background: #FEF3C7;">
+                  <strong><i class="fas fa-info-circle" style="color: #D97706; margin-right: 0.25rem;"></i>Student did not answer this question.</strong>
+                  Correct Answer: Option ${correctAnswer}
+                </div>
+              ` : ''}
+              ${explanationHtml}
+            </div>
           </div>
         `;
       }).join('');
+
+      // Trigger MathJax for rendered questions
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([container]);
+      }
     }
 
     // Logout handler
