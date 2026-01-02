@@ -222,6 +222,86 @@
       color: var(--color-gray-600);
     }
 
+    .options-section {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+    }
+
+    .options-label {
+      font-weight: 600;
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      color: var(--color-gray-600);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: white;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-gray-200);
+      font-size: var(--text-sm);
+    }
+
+    .option-item.correct {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: #10B981;
+    }
+
+    .option-item.selected {
+      border-color: var(--color-primary);
+      border-width: 2px;
+    }
+
+    .option-item.selected.wrong {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #EF4444;
+    }
+
+    .option-letter {
+      font-weight: 600;
+      color: var(--color-gray-700);
+      min-width: 1.5rem;
+    }
+
+    .option-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .option-icons {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+
+    .option-icons i {
+      font-size: var(--text-sm);
+    }
+
+    .option-icons .fa-check {
+      color: #10B981;
+    }
+
+    .option-icons .fa-times {
+      color: #EF4444;
+    }
+
+    .option-icons .fa-user {
+      color: var(--color-primary);
+    }
+
     .loading-state, .empty-state {
       text-align: center;
       padding: 4rem 2rem;
@@ -466,11 +546,50 @@
         const questionNumber = q.question_number || (index + 1);
         const answer = answerMap[questionNumber];
         const isCorrect = answer ? answer.is_correct : false;
-        const studentAnswer = answer ? (answer.selected_choices || []).join(', ') : '-';
-        const correctAnswer = q.correct_answer || '-';
+        const studentAnswer = answer ? (answer.selected_choices || []).join(', ') : q.student_answer || '-';
+        const correctAnswer = q.correct_answer || q.correct_option || '-';
+
+        // Build options HTML
+        let optionsHtml = '';
+        if (q.options && typeof q.options === 'object') {
+          const optionLetters = ['A', 'B', 'C', 'D'];
+          optionsHtml = `
+            <div class="options-section">
+              <div class="options-label">Options</div>
+              <div class="options-list">
+                ${optionLetters.map(letter => {
+                  const optionText = q.options[letter] || q.options[letter.toLowerCase()];
+                  if (!optionText) return '';
+
+                  const isCorrectOption = correctAnswer === letter;
+                  const isSelectedOption = studentAnswer === letter;
+                  const isWrong = isSelectedOption && !isCorrectOption;
+
+                  let classes = 'option-item';
+                  if (isCorrectOption) classes += ' correct';
+                  if (isSelectedOption) classes += ' selected';
+                  if (isWrong) classes += ' wrong';
+
+                  let icons = '';
+                  if (isCorrectOption) icons += '<i class="fas fa-check" title="Correct Answer"></i>';
+                  if (isSelectedOption && isWrong) icons += '<i class="fas fa-times" title="Wrong Answer"></i>';
+                  if (isSelectedOption) icons += '<i class="fas fa-user" title="Student Selected"></i>';
+
+                  return `
+                    <div class="${classes}">
+                      <span class="option-letter">${letter}.</span>
+                      <span class="option-text">${optionText}</span>
+                      <span class="option-icons">${icons}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }
 
         return `
-          <div class="question-card ${answer ? (isCorrect ? 'correct' : 'incorrect') : ''}">
+          <div class="question-card ${answer || q.student_answer ? (isCorrect ? 'correct' : 'incorrect') : ''}">
             <div class="question-header">
               <span class="question-number">Question ${questionNumber}</span>
               <span class="question-marks">${q.marks || 1} mark${(q.marks || 1) > 1 ? 's' : ''}</span>
@@ -478,7 +597,8 @@
             <div class="question-text">
               ${q.question_text || q.question_content?.text || 'Question text not available'}
             </div>
-            ${answer ? `
+            ${optionsHtml}
+            ${(answer || q.student_answer) ? `
               <div class="answer-section">
                 <div class="answer-box student">
                   <div class="answer-label">Student's Answer</div>
