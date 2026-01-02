@@ -38,6 +38,21 @@ from services import question_service, s3_service
 router = APIRouter()
 
 
+def get_presigned_image_url(image_url: str) -> str:
+    """Convert S3 URL to presigned download URL"""
+    if not image_url:
+        return None
+
+    s3_key = s3_service.extract_key_from_url(image_url)
+    if s3_key:
+        presigned_url = s3_service.generate_presigned_download_url(s3_key, expires_in=3600)
+        if presigned_url:
+            return presigned_url
+
+    # Fallback to original URL if presigning fails
+    return image_url
+
+
 @router.post("/questions", response_model=QuestionDetailResponse, status_code=status.HTTP_201_CREATED)
 async def create_question(
     request: CreateQuestionRequest,
@@ -71,7 +86,7 @@ async def create_question(
         chapter=question.chapter,
         topic=question.topic,
         question_text=question.question_text,
-        question_image_url=question.question_image_url,
+        question_image_url=get_presigned_image_url(question.question_image_url),
         options=question.options,
         correct_option=question.correct_option,
         model_answer=question.model_answer,
@@ -114,7 +129,7 @@ async def get_question(
         chapter=question.chapter,
         topic=question.topic,
         question_text=question.question_text,
-        question_image_url=question.question_image_url,
+        question_image_url=get_presigned_image_url(question.question_image_url),
         options=question.options,
         correct_option=question.correct_option,
         model_answer=question.model_answer,
@@ -169,7 +184,7 @@ async def update_question(
         chapter=question.chapter,
         topic=question.topic,
         question_text=question.question_text,
-        question_image_url=question.question_image_url,
+        question_image_url=get_presigned_image_url(question.question_image_url),
         options=question.options,
         correct_option=question.correct_option,
         model_answer=question.model_answer,
@@ -242,7 +257,7 @@ async def activate_question(
         chapter=question.chapter,
         topic=question.topic,
         question_text=question.question_text,
-        question_image_url=question.question_image_url,
+        question_image_url=get_presigned_image_url(question.question_image_url),
         options=question.options,
         correct_option=question.correct_option,
         model_answer=question.model_answer,
@@ -412,7 +427,7 @@ async def clone_question(
         chapter=cloned.chapter,
         topic=cloned.topic,
         question_text=cloned.question_text,
-        question_image_url=cloned.question_image_url,
+        question_image_url=get_presigned_image_url(cloned.question_image_url),
         options=cloned.options,
         correct_option=cloned.correct_option,
         model_answer=cloned.model_answer,
@@ -480,6 +495,57 @@ async def get_question_image_upload_url(
         s3_key=s3_key,
         expires_in=900  # 15 minutes
     )
+
+
+@router.get("/questions/{question_id}/image-url")
+async def get_question_image_url(
+    question_id: str,
+    current_user: User = Depends(require_teacher_or_admin),
+    session: AsyncSession = Depends(get_session)
+):
+    """
+    Get presigned URL for viewing a question's image
+
+    - Returns a presigned download URL valid for 1 hour
+    - Required for viewing images since S3 bucket is private
+
+    **Permissions**: Teachers and Admins only
+    """
+    # Get the question
+    question = await question_service.get_question_by_id(session, question_id)
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
+
+    if not question.question_image_url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question has no image"
+        )
+
+    # Extract S3 key from the stored URL
+    s3_key = s3_service.extract_key_from_url(question.question_image_url)
+    if not s3_key:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Invalid image URL format"
+        )
+
+    # Generate presigned download URL (valid for 1 hour)
+    presigned_url = s3_service.generate_presigned_download_url(s3_key, expires_in=3600)
+    if not presigned_url:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to generate image URL"
+        )
+
+    return {
+        "question_id": question_id,
+        "image_url": presigned_url,
+        "expires_in": 3600
+    }
 
 
 @router.post("/questions/check-duplicate", response_model=CheckDuplicateResponse)

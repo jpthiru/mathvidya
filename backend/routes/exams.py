@@ -36,6 +36,21 @@ from services import exam_service, s3_service
 router = APIRouter()
 
 
+def get_presigned_image_url(image_url: str) -> str:
+    """Convert S3 URL to presigned download URL"""
+    if not image_url:
+        return None
+
+    s3_key = s3_service.extract_key_from_url(image_url)
+    if s3_key:
+        presigned_url = s3_service.generate_presigned_download_url(s3_key, expires_in=3600)
+        if presigned_url:
+            return presigned_url
+
+    # Fallback to original URL if presigning fails
+    return image_url
+
+
 @router.get("/exams/templates", response_model=AvailableTemplatesResponse)
 async def get_available_templates(
     current_user: User = Depends(require_student),
@@ -98,7 +113,7 @@ async def start_exam(
             detail=str(e)
         )
 
-    # Convert questions to response format
+    # Convert questions to response format with presigned image URLs
     question_responses = []
     for idx, q in enumerate(questions, 1):
         question_responses.append(QuestionResponse(
@@ -110,7 +125,7 @@ async def start_exam(
             chapter=q.chapter,
             topic=q.topic,
             question_text=q.question_text,
-            question_image_url=q.question_image_url,
+            question_image_url=get_presigned_image_url(q.question_image_url),
             options=q.options if q.question_type == 'MCQ' else None,
             difficulty=q.difficulty
         ))
@@ -157,7 +172,7 @@ async def start_unit_practice(
             detail=str(e)
         )
 
-    # Convert questions to response format
+    # Convert questions to response format with presigned image URLs
     question_responses = []
     for idx, q in enumerate(questions, 1):
         question_responses.append(QuestionResponse(
@@ -169,7 +184,7 @@ async def start_unit_practice(
             chapter=q.chapter,
             topic=q.topic,
             question_text=q.question_text,
-            question_image_url=q.question_image_url,
+            question_image_url=get_presigned_image_url(q.question_image_url),
             options=q.options if q.question_type == 'MCQ' else None,
             difficulty=q.difficulty
         ))

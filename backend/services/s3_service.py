@@ -168,6 +168,35 @@ class S3Service:
         except ClientError:
             return False
 
+    def extract_key_from_url(self, s3_url: str) -> Optional[str]:
+        """
+        Extract S3 key from a full S3 URL
+
+        Args:
+            s3_url: Full S3 URL like https://bucket.s3.region.amazonaws.com/key
+
+        Returns:
+            S3 key or None if invalid URL
+        """
+        if not s3_url:
+            return None
+
+        # Handle format: https://bucket.s3.region.amazonaws.com/key
+        bucket_prefix = f"https://{self.bucket}.s3.{settings.AWS_REGION}.amazonaws.com/"
+        if s3_url.startswith(bucket_prefix):
+            return s3_url[len(bucket_prefix):]
+
+        # Handle format: https://s3.region.amazonaws.com/bucket/key
+        alt_prefix = f"https://s3.{settings.AWS_REGION}.amazonaws.com/{self.bucket}/"
+        if s3_url.startswith(alt_prefix):
+            return s3_url[len(alt_prefix):]
+
+        # If it's already just a key (starts with question-images/ or answer-sheets/)
+        if s3_url.startswith(settings.S3_QUESTION_IMAGES_PREFIX) or s3_url.startswith(settings.S3_ANSWER_SHEETS_PREFIX):
+            return s3_url
+
+        return None
+
 
 # Global S3 service instance
 s3_service = S3Service()
