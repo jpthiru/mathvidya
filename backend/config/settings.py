@@ -61,13 +61,14 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
 
-    # Email Configuration (AWS SES)
-    SMTP_HOST: str = "email-smtp.ap-south-1.amazonaws.com"
+    # Email Configuration (Gmail SMTP via Google Workspace)
+    SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
-    SMTP_USER: str = ""  # SES SMTP username (starts with AKIA...)
-    SMTP_PASSWORD: str = ""  # SES SMTP password
+    SMTP_USER: str = "noreply@mathvidya.com"  # Google Workspace email
+    SMTP_PASSWORD: str = ""  # Google Workspace App Password (16 chars, no spaces)
     EMAILS_FROM_EMAIL: str = "noreply@mathvidya.com"
     EMAILS_FROM_NAME: str = "Mathvidya"
+    SMTP_USE_TLS: bool = True  # Gmail requires TLS
 
     # Email Verification
     EMAIL_VERIFICATION_EXPIRE_MINUTES: int = 15  # OTP expires in 15 minutes

@@ -1,7 +1,7 @@
 """
 Email Service
 
-Handles sending emails via AWS SES SMTP.
+Handles sending emails via SMTP (Gmail/Google Workspace).
 Provides reusable email functionality for verification, notifications, etc.
 """
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class EmailService:
-    """Service for sending emails via AWS SES"""
+    """Service for sending emails via Gmail SMTP (Google Workspace)"""
 
     def __init__(self):
         self.smtp_host = settings.SMTP_HOST
@@ -27,12 +27,18 @@ class EmailService:
         self.smtp_password = settings.SMTP_PASSWORD
         self.from_email = settings.EMAILS_FROM_EMAIL
         self.from_name = settings.EMAILS_FROM_NAME
+        self._configured = bool(self.smtp_user and self.smtp_password)
 
     def _get_smtp_connection(self):
-        """Create SMTP connection with TLS"""
+        """Create SMTP connection with STARTTLS (required for Gmail)"""
+        if not self._configured:
+            raise ValueError("SMTP credentials not configured. Set SMTP_USER and SMTP_PASSWORD.")
+
         context = ssl.create_default_context()
         server = smtplib.SMTP(self.smtp_host, self.smtp_port)
+        server.ehlo()  # Identify ourselves to the server
         server.starttls(context=context)
+        server.ehlo()  # Re-identify after STARTTLS
         server.login(self.smtp_user, self.smtp_password)
         return server
 
