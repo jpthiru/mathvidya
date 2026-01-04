@@ -429,6 +429,241 @@
       color: #92400E;
     }
 
+    /* Coming Soon Badge */
+    .coming-soon-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 0.5rem;
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3); }
+      50% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.6); }
+    }
+
+    .question-type-disabled {
+      opacity: 0.6;
+      cursor: not-allowed !important;
+      position: relative;
+    }
+
+    .question-type-disabled:hover {
+      border-color: var(--color-gray-200) !important;
+      background: var(--color-gray-50) !important;
+    }
+
+    .board-exam-disabled {
+      opacity: 0.7;
+      position: relative;
+    }
+
+    .board-exam-disabled .btn {
+      background: var(--color-gray-400) !important;
+      cursor: not-allowed;
+    }
+
+    /* Feedback Widget */
+    .feedback-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .feedback-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    }
+
+    .feedback-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .feedback-modal.active {
+      display: flex;
+    }
+
+    .feedback-modal-content {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .feedback-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .feedback-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .feedback-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6b7280;
+    }
+
+    .feedback-form {
+      padding: 24px;
+    }
+
+    .feedback-form .form-group {
+      margin-bottom: 20px;
+    }
+
+    .feedback-form label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .star-rating {
+      display: flex;
+      gap: 4px;
+    }
+
+    .star-rating button {
+      background: none;
+      border: none;
+      font-size: 1.75rem;
+      color: #d1d5db;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .star-rating button:hover,
+    .star-rating button.active {
+      color: #f59e0b;
+      transform: scale(1.1);
+    }
+
+    .type-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .type-btn {
+      padding: 8px 14px;
+      background: #f3f4f6;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #4b5563;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .type-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .type-btn.active {
+      background: #eef2ff;
+      border-color: #6366f1;
+      color: #4f46e5;
+    }
+
+    .feedback-form textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: vertical;
+    }
+
+    .feedback-form textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    .feedback-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .feedback-submit:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .feedback-submit:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    .feedback-success {
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .feedback-success-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
     /* Empty State */
     .empty-state {
       text-align: center;
@@ -625,23 +860,23 @@
               <div style="font-weight: 600;">MCQ</div>
               <div style="font-size: var(--text-sm); color: var(--color-gray-500);">1 mark each, max 10</div>
             </label>
-            <label class="question-type-option" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); text-align: center;">
-              <input type="radio" name="questionType" value="VSA" style="display: none;">
+            <label class="question-type-option question-type-disabled" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); text-align: center;" title="Coming Soon - VSA exams will be available in the next release">
+              <input type="radio" name="questionType" value="VSA" style="display: none;" disabled>
               <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-edit"></i></div>
-              <div style="font-weight: 600;">VSA</div>
-              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">2 marks each, max 10</div>
+              <div style="font-weight: 600;">VSA <span class="coming-soon-badge">Coming Soon</span></div>
+              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">2 marks each</div>
             </label>
-            <label class="question-type-option" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); text-align: center;">
-              <input type="radio" name="questionType" value="SA" style="display: none;">
+            <label class="question-type-option question-type-disabled" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); text-align: center;" title="Coming Soon - SA exams will be available in the next release">
+              <input type="radio" name="questionType" value="SA" style="display: none;" disabled>
               <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-file-alt"></i></div>
-              <div style="font-weight: 600;">SA</div>
-              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">3 marks each, max 6</div>
+              <div style="font-weight: 600;">SA <span class="coming-soon-badge">Coming Soon</span></div>
+              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">3 marks each</div>
             </label>
-            <label class="question-type-option" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); text-align: center;">
-              <input type="radio" name="questionType" value="LA" style="display: none;">
+            <label class="question-type-option question-type-disabled" style="flex: 1; min-width: 150px; padding: 1rem; background: var(--color-gray-50); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); text-align: center;" title="Coming Soon - LA exams will be available in the next release">
+              <input type="radio" name="questionType" value="LA" style="display: none;" disabled>
               <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-file-signature"></i></div>
-              <div style="font-weight: 600;">LA</div>
-              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">5 marks each, max 4</div>
+              <div style="font-weight: 600;">LA <span class="coming-soon-badge">Coming Soon</span></div>
+              <div style="font-size: var(--text-sm); color: var(--color-gray-500);">5 marks each</div>
             </label>
           </div>
           <div style="display: flex; gap: 1rem;">
@@ -659,22 +894,28 @@
 
       <!-- Board Exam Tab Content -->
       <div class="exam-tab-content" id="board-exam">
-        <p style="margin-bottom: 1rem; color: var(--color-gray-600);">
-          Start a full board examination practice (CBSE pattern):
-        </p>
-        <div style="padding: 1.5rem; background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
-          <h4 style="margin-bottom: 1rem;">Exam Details:</h4>
-          <ul style="list-style: none; padding: 0;">
-            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Duration: 3 hours</li>
-            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Total Marks: 80</li>
-            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Questions: 38 (as per CBSE pattern)</li>
-            <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Types: MCQ, VSA, SA</li>
-          </ul>
+        <div class="board-exam-disabled">
+          <p style="margin-bottom: 1rem; color: var(--color-gray-600);">
+            Full board examination practice (CBSE pattern):
+          </p>
+          <div style="padding: 1.5rem; background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
+            <h4 style="margin-bottom: 1rem;">Exam Details: <span class="coming-soon-badge">Coming Soon</span></h4>
+            <ul style="list-style: none; padding: 0;">
+              <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Duration: 3 hours</li>
+              <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Total Marks: 80</li>
+              <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Questions: 38 (as per CBSE pattern)</li>
+              <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Types: MCQ, VSA, SA</li>
+            </ul>
+            <p style="margin-top: 1rem; padding: 0.75rem; background: #FEF3C7; border-radius: var(--radius-md); color: #92400E; font-size: var(--text-sm);">
+              <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+              Full Board Exam feature is coming soon! Use Unit-Wise MCQ Practice for now.
+            </p>
+          </div>
+          <button class="btn btn-lg" id="startBoardExam" disabled style="background: var(--color-gray-400); cursor: not-allowed;">
+            <i class="fas fa-lock"></i>
+            Board Exam - Coming Soon
+          </button>
         </div>
-        <button class="btn btn-success btn-lg" id="startBoardExam">
-          <i class="fas fa-clipboard-check"></i>
-          Start Board Exam
-        </button>
       </div>
     </div>
 
@@ -709,6 +950,58 @@
       </div>
     </div>
   </main>
+
+  <!-- Feedback Widget -->
+  <button class="feedback-btn" id="feedbackBtn">
+    <i class="fas fa-comment-alt"></i>
+    Feedback
+  </button>
+
+  <div class="feedback-modal" id="feedbackModal">
+    <div class="feedback-modal-content">
+      <div class="feedback-header">
+        <h3>Share Your Feedback</h3>
+        <button class="feedback-close" id="feedbackClose">&times;</button>
+      </div>
+      <div id="feedbackFormContainer">
+        <form class="feedback-form" id="feedbackForm">
+          <div class="form-group">
+            <label>How would you rate your experience?</label>
+            <div class="star-rating" id="starRating">
+              <button type="button" data-rating="1"><i class="fas fa-star"></i></button>
+              <button type="button" data-rating="2"><i class="fas fa-star"></i></button>
+              <button type="button" data-rating="3"><i class="fas fa-star"></i></button>
+              <button type="button" data-rating="4"><i class="fas fa-star"></i></button>
+              <button type="button" data-rating="5"><i class="fas fa-star"></i></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>What type of feedback?</label>
+            <div class="type-buttons">
+              <button type="button" class="type-btn active" data-type="suggestion">💡 Suggestion</button>
+              <button type="button" class="type-btn" data-type="bug">🐛 Bug Report</button>
+              <button type="button" class="type-btn" data-type="compliment">❤️ Compliment</button>
+              <button type="button" class="type-btn" data-type="question">❓ Question</button>
+              <button type="button" class="type-btn" data-type="other">💬 Other</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Your feedback *</label>
+            <textarea id="feedbackMessage" placeholder="Tell us what you think... (minimum 10 characters)" rows="4" maxlength="2000"></textarea>
+            <div class="char-count"><span id="charCount">0</span>/2000 characters</div>
+          </div>
+          <button type="submit" class="feedback-submit" id="feedbackSubmit" disabled>
+            <i class="fas fa-paper-plane"></i> Submit Feedback
+          </button>
+        </form>
+      </div>
+      <div class="feedback-success" id="feedbackSuccess" style="display: none;">
+        <div class="feedback-success-icon">✅</div>
+        <h4>Thank You!</h4>
+        <p>Your feedback helps us improve Mathvidya.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="../js/api.js"></script>
@@ -1038,6 +1331,111 @@
     // Initialize
     loadDashboard();
     observeElements('.animate-slideUp');
+
+    // =============================================
+    // Feedback Widget
+    // =============================================
+    const feedbackBtn = document.getElementById('feedbackBtn');
+    const feedbackModal = document.getElementById('feedbackModal');
+    const feedbackClose = document.getElementById('feedbackClose');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const feedbackMessage = document.getElementById('feedbackMessage');
+    const feedbackSubmit = document.getElementById('feedbackSubmit');
+    const charCount = document.getElementById('charCount');
+    const feedbackSuccess = document.getElementById('feedbackSuccess');
+    const feedbackFormContainer = document.getElementById('feedbackFormContainer');
+
+    let selectedRating = 0;
+    let selectedType = 'suggestion';
+
+    // Open/Close modal
+    feedbackBtn.addEventListener('click', () => {
+      feedbackModal.classList.add('active');
+    });
+
+    feedbackClose.addEventListener('click', () => {
+      feedbackModal.classList.remove('active');
+    });
+
+    feedbackModal.addEventListener('click', (e) => {
+      if (e.target === feedbackModal) {
+        feedbackModal.classList.remove('active');
+      }
+    });
+
+    // Star rating
+    document.querySelectorAll('#starRating button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedRating = parseInt(btn.dataset.rating);
+        document.querySelectorAll('#starRating button').forEach((b, i) => {
+          b.classList.toggle('active', i < selectedRating);
+        });
+      });
+    });
+
+    // Feedback type
+    document.querySelectorAll('.type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = btn.dataset.type;
+      });
+    });
+
+    // Character count and validation
+    feedbackMessage.addEventListener('input', () => {
+      const length = feedbackMessage.value.length;
+      charCount.textContent = length;
+      feedbackSubmit.disabled = length < 10;
+    });
+
+    // Submit feedback
+    feedbackForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (feedbackMessage.value.trim().length < 10) {
+        Toast.error('Please enter at least 10 characters');
+        return;
+      }
+
+      feedbackSubmit.disabled = true;
+      feedbackSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+      try {
+        await api.post('/feedback/', {
+          rating: selectedRating || null,
+          type: selectedType,
+          message: feedbackMessage.value.trim(),
+          page: window.location.pathname
+        });
+
+        // Show success
+        feedbackFormContainer.style.display = 'none';
+        feedbackSuccess.style.display = 'block';
+        Toast.success('Thank you for your feedback!');
+
+        // Reset and close after 2 seconds
+        setTimeout(() => {
+          feedbackModal.classList.remove('active');
+          feedbackFormContainer.style.display = 'block';
+          feedbackSuccess.style.display = 'none';
+          feedbackForm.reset();
+          selectedRating = 0;
+          selectedType = 'suggestion';
+          charCount.textContent = '0';
+          document.querySelectorAll('#starRating button').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+          document.querySelector('.type-btn[data-type="suggestion"]').classList.add('active');
+          feedbackSubmit.disabled = true;
+          feedbackSubmit.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+        }, 2000);
+      } catch (error) {
+        console.error('Feedback error:', error);
+        Toast.error(error.message || 'Failed to submit feedback');
+        feedbackSubmit.disabled = false;
+        feedbackSubmit.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+      }
+    });
   </script>
 </body>
 </html>
