@@ -4,7 +4,7 @@ Site Feedback Routes
 Endpoints for general website feedback submission and management.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, Field, EmailStr
@@ -68,8 +68,8 @@ class FeedbackUpdateRequest(BaseModel):
 @router.post("/", response_model=FeedbackSubmitResponse, status_code=status.HTTP_201_CREATED)
 @feedback_limiter.limit("5/minute")  # Prevent feedback spam
 async def submit_feedback(
-    request: FeedbackSubmitRequest,
-    http_request: Request,
+    request: Request,  # slowapi requires this to be named 'request'
+    feedback_data: FeedbackSubmitRequest = Body(...),
     db: AsyncSession = Depends(get_session),
     current_user: Optional[User] = Depends(get_current_user_optional)
 ):
@@ -79,19 +79,19 @@ async def submit_feedback(
     """
     # Validate category
     valid_categories = [c.value for c in FeedbackCategory]
-    category = request.type if request.type in valid_categories else FeedbackCategory.OTHER.value
+    category = feedback_data.type if feedback_data.type in valid_categories else FeedbackCategory.OTHER.value
 
     # Get IP and user agent
-    client_ip = http_request.client.host if http_request.client else None
-    user_agent = http_request.headers.get("user-agent", "")[:500]
+    client_ip = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent", "")[:500]
 
     feedback = SiteFeedback(
         user_id=current_user.user_id if current_user else None,
-        email=request.email or (current_user.email if current_user else None),
-        rating=request.rating,
+        email=feedback_data.email or (current_user.email if current_user else None),
+        rating=feedback_data.rating,
         category=category,
-        message=request.message,
-        page_url=request.page,
+        message=feedback_data.message,
+        page_url=feedback_data.page,
         user_agent=user_agent,
         ip_address=client_ip,
         status=FeedbackStatus.NEW.value
