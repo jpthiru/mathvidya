@@ -384,6 +384,12 @@ class ApiClient {
   async getChatSuggestions() {
     return this.get('/chat/suggestions');
   }
+
+  // ==================== Promo Codes ====================
+
+  async validatePromoCode(code, plan = null) {
+    return this.post('/promo/validate', { code, plan });
+  }
 }
 
 // Export singleton instance

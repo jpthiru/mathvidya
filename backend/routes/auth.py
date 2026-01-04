@@ -485,6 +485,7 @@ async def register_with_verification(
 
     Requires a valid verification code that was previously verified.
     This is the preferred registration endpoint that ensures email ownership.
+    Optionally accepts a promo code for discounts or free trial.
     """
     # Check if email already exists
     result = await session.execute(
@@ -524,6 +525,33 @@ async def register_with_verification(
             detail="Verification expired. Please verify your email again."
         )
 
+    # Validate promo code if provided
+    promo = None
+    if request.promo_code:
+        from models.promo_code import PromoCode, PromoCodeUsage
+        code_upper = request.promo_code.upper().strip()
+        result = await session.execute(
+            select(PromoCode).where(PromoCode.code == code_upper)
+        )
+        promo = result.scalar_one_or_none()
+
+        if not promo:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid promo code"
+            )
+
+        if not promo.is_valid():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="This promo code is no longer valid"
+            )
+
+        # Check new_users_only restriction (they are always new during registration)
+        # This check passes automatically for registration
+
+        logger.info(f"Valid promo code '{code_upper}' applied during registration for {request.email}")
+
     # Hash password
     password_hash = hash_password(request.password)
 
@@ -545,12 +573,37 @@ async def register_with_verification(
     )
 
     session.add(new_user)
+    await session.flush()  # Get user_id without committing
+
+    # Record promo code usage if valid promo was provided
+    if promo:
+        from models.promo_code import PromoCodeUsage
+        promo_usage = PromoCodeUsage(
+            promo_code_id=promo.id,
+            user_id=new_user.user_id,
+        )
+        session.add(promo_usage)
+
+        # Increment promo code usage count
+        promo.current_uses += 1
+
+        logger.info(f"Promo code '{promo.code}' ({promo.get_discount_display()}) applied for user {new_user.email}")
+
     await session.commit()
     await session.refresh(new_user)
 
     logger.info(f"New user registered with verified email: {request.email}")
 
-    return new_user.to_dict()
+    # Include promo info in response if applicable
+    user_dict = new_user.to_dict()
+    if promo:
+        user_dict['promo_applied'] = {
+            'code': promo.code,
+            'type': promo.promo_type,
+            'discount_display': promo.get_discount_display()
+        }
+
+    return user_dict
 
 
 @router.post("/auth/forgot-password", response_model=VerificationResponse)

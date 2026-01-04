@@ -131,6 +131,9 @@ class RegisterWithVerificationRequest(BaseModel):
     student_class: Optional[str] = Field(None, description="Required for students: X or XII")
     school_name: Optional[str] = Field(None, max_length=255)
 
+    # Promo code (optional)
+    promo_code: Optional[str] = Field(None, max_length=50, description="Optional promotional code")
+
     @validator('student_class')
     def validate_student_class(cls, v, values):
         """Ensure student_class is provided for students"""

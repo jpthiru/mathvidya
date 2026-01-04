@@ -643,6 +643,35 @@
           </div>
         </div>
 
+        <!-- Promo Code (Optional) -->
+        <div class="form-section" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+          <div class="form-section-title">
+            <i class="fas fa-gift"></i>
+            Have a Promo Code? (Optional)
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label>Promo Code</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="text" class="form-input" id="promoCode" placeholder="Enter promo code" style="flex: 1; text-transform: uppercase;">
+                <button type="button" class="btn btn-secondary" id="validatePromoBtn" style="white-space: nowrap;">
+                  <i class="fas fa-check"></i> Apply
+                </button>
+              </div>
+              <span class="form-error" id="promoCodeError"></span>
+            </div>
+          </div>
+
+          <!-- Promo code result display -->
+          <div id="promoCodeResult" style="display: none; margin-top: 0.75rem; padding: 0.75rem; border-radius: var(--radius-md); background: white;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+              <span id="promoCodeMessage" style="font-weight: 500; color: var(--color-success);"></span>
+            </div>
+          </div>
+        </div>
+
         <!-- Terms Acceptance -->
         <div class="terms-section">
           <label class="terms-checkbox">
@@ -798,6 +827,68 @@
     let pendingRegistration = null;
     let verificationTimer = null;
     let timerSeconds = 900; // 15 minutes
+    let validatedPromoCode = null; // Store validated promo code
+
+    // Promo Code Validation
+    const promoCodeInput = document.getElementById('promoCode');
+    const validatePromoBtn = document.getElementById('validatePromoBtn');
+    const promoCodeError = document.getElementById('promoCodeError');
+    const promoCodeResult = document.getElementById('promoCodeResult');
+    const promoCodeMessage = document.getElementById('promoCodeMessage');
+
+    validatePromoBtn.addEventListener('click', async () => {
+      const code = promoCodeInput.value.trim().toUpperCase();
+
+      if (!code) {
+        promoCodeError.textContent = 'Please enter a promo code';
+        promoCodeResult.style.display = 'none';
+        validatedPromoCode = null;
+        return;
+      }
+
+      // Clear previous state
+      promoCodeError.textContent = '';
+      promoCodeResult.style.display = 'none';
+
+      // Show loading
+      validatePromoBtn.disabled = true;
+      validatePromoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validating...';
+
+      try {
+        const result = await api.validatePromoCode(code);
+
+        if (result.valid) {
+          validatedPromoCode = result.code;
+          promoCodeResult.style.display = 'block';
+          promoCodeMessage.textContent = result.message || result.discount_display;
+          promoCodeInput.classList.add('success');
+          promoCodeInput.classList.remove('error');
+          Toast.success('Promo code applied!');
+        } else {
+          validatedPromoCode = null;
+          promoCodeError.textContent = result.message || 'Invalid promo code';
+          promoCodeInput.classList.add('error');
+          promoCodeInput.classList.remove('success');
+        }
+      } catch (error) {
+        console.error('Promo validation error:', error);
+        validatedPromoCode = null;
+        promoCodeError.textContent = error.message || 'Failed to validate promo code';
+        promoCodeInput.classList.add('error');
+        promoCodeInput.classList.remove('success');
+      } finally {
+        validatePromoBtn.disabled = false;
+        validatePromoBtn.innerHTML = '<i class="fas fa-check"></i> Apply';
+      }
+    });
+
+    // Clear promo validation when input changes
+    promoCodeInput.addEventListener('input', () => {
+      promoCodeError.textContent = '';
+      promoCodeInput.classList.remove('error', 'success');
+      promoCodeResult.style.display = 'none';
+      validatedPromoCode = null;
+    });
 
     // Verification Modal Elements
     const verificationModal = document.getElementById('verificationModal');
@@ -943,7 +1034,7 @@
         showVerificationSuccess('Email verified! Creating your account...');
 
         // Then complete registration
-        await api.registerWithVerification({
+        const registrationData = {
           email: pendingRegistration.email,
           password: pendingRegistration.password,
           verification_code: code,
@@ -952,10 +1043,23 @@
           last_name: pendingRegistration.lastName,
           phone: pendingRegistration.phone,
           student_class: pendingRegistration.studentClass
-        });
+        };
+
+        // Include promo code if validated
+        if (pendingRegistration.promoCode) {
+          registrationData.promo_code = pendingRegistration.promoCode;
+        }
+
+        const result = await api.registerWithVerification(registrationData);
 
         showVerificationSuccess('Account created successfully!');
-        Toast.success('Account created! Redirecting to login...');
+
+        // Show appropriate success message
+        if (result.promo_applied) {
+          Toast.success(`Account created with ${result.promo_applied.discount_display}! Redirecting...`);
+        } else {
+          Toast.success('Account created! Redirecting to login...');
+        }
 
         setTimeout(() => {
           window.location.href = 'login.html';
@@ -1097,7 +1201,8 @@
         firstName: firstName,
         lastName: lastName,
         phone: studentPhone,
-        studentClass: selectedClass
+        studentClass: selectedClass,
+        promoCode: validatedPromoCode // Include validated promo code
       };
 
       // Show loading state
