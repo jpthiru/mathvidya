@@ -574,58 +574,92 @@
     <!-- Available Plans -->
     <div class="plans-section animate-slideUp">
       <h2 class="section-title">Available Plans</h2>
+
+      <!-- Introductory Offer Banner -->
+      <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+        <span style="font-size: 1.25rem; margin-right: 0.5rem;">🎉</span>
+        <strong>Limited Time Offer!</strong> 50% off with code <code style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">LAUNCH50</code>
+      </div>
+
       <div class="plans-grid" id="plansGrid">
         <!-- Basic Plan -->
         <div class="plan-card" data-plan="basic">
           <h3 class="plan-name">Basic</h3>
           <div class="plan-price">
-            <span class="plan-price-value">Free</span>
-            <span class="plan-price-period">/ forever</span>
+            <span style="text-decoration: line-through; font-size: 1rem; color: #9ca3af; margin-right: 0.5rem;">&#8377;499</span>
+            <span class="plan-price-value">&#8377;250</span>
+            <span class="plan-price-period">/ month</span>
           </div>
+          <p style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">Includes GST</p>
           <ul class="plan-features">
-            <li><i class="fas fa-check"></i> 5 exams per month</li>
+            <li><i class="fas fa-check"></i> 26 exams per month</li>
             <li><i class="fas fa-check"></i> MCQ practice only</li>
-            <li><i class="fas fa-check"></i> Basic analytics</li>
-            <li><i class="fas fa-check"></i> Email support</li>
+            <li><i class="fas fa-check"></i> Instant evaluation</li>
+            <li><i class="fas fa-check"></i> Performance tracking</li>
           </ul>
           <button class="btn btn-ghost" id="btnBasic">Current Plan</button>
         </div>
 
-        <!-- Premium Plan -->
-        <div class="plan-card popular" data-plan="premium">
+        <!-- Premium MCQ Plan -->
+        <div class="plan-card popular" data-plan="premium_mcq">
           <span class="popular-badge">Most Popular</span>
-          <h3 class="plan-name">Premium</h3>
+          <h3 class="plan-name">Premium MCQ</h3>
           <div class="plan-price">
-            <span class="plan-price-value">&#8377;499</span>
+            <span style="text-decoration: line-through; font-size: 1rem; color: #9ca3af; margin-right: 0.5rem;">&#8377;799</span>
+            <span class="plan-price-value">&#8377;400</span>
             <span class="plan-price-period">/ month</span>
           </div>
+          <p style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">Includes GST</p>
           <ul class="plan-features">
-            <li><i class="fas fa-check"></i> 50 exams per month</li>
-            <li><i class="fas fa-check"></i> All question types</li>
-            <li><i class="fas fa-check"></i> Board exam practice</li>
+            <li><i class="fas fa-check"></i> 65 exams per month</li>
+            <li><i class="fas fa-check"></i> MCQ questions only</li>
+            <li><i class="fas fa-check"></i> Instant evaluation</li>
             <li><i class="fas fa-check"></i> Advanced analytics</li>
-            <li><i class="fas fa-check"></i> Leaderboard access</li>
-            <li><i class="fas fa-check"></i> 48-hour evaluation SLA</li>
+            <li><i class="fas fa-check"></i> Unit-wise practice</li>
           </ul>
           <button class="btn btn-primary" id="btnPremium">Upgrade Now</button>
         </div>
 
-        <!-- Centum Plan -->
-        <div class="plan-card" data-plan="centum">
-          <h3 class="plan-name">Centum</h3>
+        <!-- Premium Plan (Coming Soon) -->
+        <div class="plan-card" data-plan="premium" style="opacity: 0.6; position: relative;">
+          <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(99, 102, 241, 0.95); color: white; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 700; z-index: 10;">
+            Coming Soon 🚀
+          </div>
+          <h3 class="plan-name">Premium</h3>
           <div class="plan-price">
-            <span class="plan-price-value">&#8377;999</span>
+            <span class="plan-price-value">&#8377;1,499</span>
             <span class="plan-price-period">/ month</span>
           </div>
+          <p style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">All question types</p>
+          <ul class="plan-features">
+            <li><i class="fas fa-check"></i> 50 exams per month</li>
+            <li><i class="fas fa-check"></i> MCQ, VSA, SA questions</li>
+            <li><i class="fas fa-check"></i> Teacher evaluation</li>
+            <li><i class="fas fa-check"></i> Leaderboard access</li>
+            <li><i class="fas fa-check"></i> Board score prediction</li>
+          </ul>
+          <button class="btn btn-ghost" disabled style="cursor: not-allowed;">Coming Soon</button>
+        </div>
+
+        <!-- Centum Plan (Coming Soon) -->
+        <div class="plan-card" data-plan="centum" style="opacity: 0.6; position: relative;">
+          <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(99, 102, 241, 0.95); color: white; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 700; z-index: 10;">
+            Coming Soon 🚀
+          </div>
+          <h3 class="plan-name">Centum</h3>
+          <div class="plan-price">
+            <span class="plan-price-value">&#8377;2,499</span>
+            <span class="plan-price-period">/ month</span>
+          </div>
+          <p style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">For top performers</p>
           <ul class="plan-features">
             <li><i class="fas fa-check"></i> Unlimited exams</li>
-            <li><i class="fas fa-check"></i> All Premium features</li>
+            <li><i class="fas fa-check"></i> All question types</li>
             <li><i class="fas fa-check"></i> Same-day evaluation</li>
             <li><i class="fas fa-check"></i> Direct teacher access</li>
             <li><i class="fas fa-check"></i> 1-on-1 coaching</li>
-            <li><i class="fas fa-check"></i> Priority support</li>
           </ul>
-          <button class="btn btn-primary" id="btnCentum">Upgrade Now</button>
+          <button class="btn btn-ghost" disabled style="cursor: not-allowed;">Coming Soon</button>
         </div>
       </div>
     </div>
