@@ -42,6 +42,14 @@ DOCUMENTS_FILE = CACHE_DIR / "knowledge_documents.json"
 SIMILARITY_THRESHOLD = 0.5  # Minimum similarity to use RAG response
 FALLBACK_THRESHOLD = 0.3   # Below this, use pure fallback
 
+# Check if ML models are available at module load time
+_ML_AVAILABLE = False
+try:
+    import sentence_transformers
+    _ML_AVAILABLE = True
+except ImportError:
+    logger.info("ML models not available - using fast keyword matching")
+
 
 # ============================================
 # Knowledge Base - Expanded FAQ Database
@@ -1045,7 +1053,49 @@ def generate_response(user_message: str) -> Dict:
             "source": "intent"
         }
 
-    # Try RAG with vector similarity
+    # Fast path: Skip RAG if ML models not available
+    if not _ML_AVAILABLE:
+        # Use keyword-based search directly (fast)
+        keyword_match, keyword_score = keyword_search(user_message)
+
+        if keyword_match and keyword_score >= FALLBACK_THRESHOLD:
+            return {
+                "response": keyword_match["content"],
+                "confidence": keyword_score,
+                "matched_question": keyword_match["title"],
+                "source": "keyword"
+            }
+
+        # Generic fallback
+        return {
+            "response": """I'm not sure I fully understand your question. Here are some topics I can help with:
+
+**Getting Started**
+- How to create an account
+- Taking your first exam
+
+**Subscriptions**
+- Plan options and pricing
+- Using promo codes (try MATHSTART!)
+
+**Exams & Results**
+- How exams work
+- Checking your scores
+- Understanding feedback
+
+**Technical Help**
+- Upload issues
+- Browser problems
+
+Could you please rephrase your question, or ask about one of these topics?
+
+For specific issues, email support@mathvidya.com""",
+            "confidence": 0.0,
+            "matched_question": None,
+            "source": "fallback"
+        }
+
+    # Try RAG with vector similarity (only if ML available)
     similar_docs = search_similar_documents(user_message, top_k=3)
 
     if similar_docs and similar_docs[0][1] >= SIMILARITY_THRESHOLD:

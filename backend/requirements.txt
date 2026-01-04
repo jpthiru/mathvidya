@@ -40,12 +40,14 @@ pandas==2.3.3
 openpyxl==3.1.2  # For reading Excel files in batch import
 scikit-learn==1.8.0
 
-# RAG Chatbot - HuggingFace Models
-sentence-transformers==2.2.2  # For text embeddings (~80MB model)
-faiss-cpu==1.7.4  # Vector similarity search
-transformers==4.36.2  # For LLM inference
-torch==2.1.2  # PyTorch for model inference (CPU version)
-accelerate==0.25.0  # For efficient model loading
+# RAG Chatbot - HuggingFace Models (OPTIONAL - adds ~4GB to Docker image)
+# Uncomment these for full RAG capability (requires larger EC2 instance):
+# sentence-transformers==2.2.2  # For text embeddings (~80MB model)
+# faiss-cpu==1.7.4  # Vector similarity search
+# transformers==4.36.2  # For LLM inference
+# torch==2.1.2  # PyTorch for model inference (CPU version)
+# accelerate==0.25.0  # For efficient model loading
+# NOTE: The chatbot gracefully falls back to keyword matching when these are unavailable
 
 # Image Processing (for future ML)
 pillow==10.2.0

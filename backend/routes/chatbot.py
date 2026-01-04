@@ -123,14 +123,24 @@ async def get_chat_status():
     Returns information about whether RAG is enabled and which models are loaded.
     """
     if RAG_ENABLED:
-        from services.rag_chatbot_service import EMBEDDING_MODEL, LLM_MODEL
-        return ChatStatusResponse(
-            status="online",
-            mode="rag",
-            rag_enabled=True,
-            embedding_model=EMBEDDING_MODEL,
-            llm_model=LLM_MODEL
-        )
+        from services.rag_chatbot_service import EMBEDDING_MODEL, LLM_MODEL, _ML_AVAILABLE
+        if _ML_AVAILABLE:
+            return ChatStatusResponse(
+                status="online",
+                mode="rag",
+                rag_enabled=True,
+                embedding_model=EMBEDDING_MODEL,
+                llm_model=LLM_MODEL
+            )
+        else:
+            # RAG service loaded but ML models not installed - using fast keyword mode
+            return ChatStatusResponse(
+                status="online",
+                mode="keyword",
+                rag_enabled=False,
+                embedding_model=None,
+                llm_model=None
+            )
     else:
         return ChatStatusResponse(
             status="online",
