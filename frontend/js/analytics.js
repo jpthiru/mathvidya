@@ -18,7 +18,7 @@ const MV_CONFIG = {
 
     // Google reCAPTCHA v3 Site Key
     // Get this from: https://www.google.com/recaptcha/admin
-    RECAPTCHA_SITE_KEY: '6Lfcdz8sAAAAAEcnmNPOqSiCklrykmlhNZ8L3KjN', // Test key - replace in production
+    RECAPTCHA_SITE_KEY: '6Leegj8sAAAAAP0tmSaU12fORJrZnNEKwlQL2iEZ', // Test key - replace in production
 
     // Tawk.to Property ID and Widget ID
     // Get this from: https://dashboard.tawk.to/ -> Administration -> Chat Widget
