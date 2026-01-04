@@ -15,7 +15,7 @@ import uuid
 from database import get_session
 from models.promo_code import PromoCode, PromoCodeUsage, PromoType
 from models.user import User
-from dependencies import get_current_user, get_current_admin
+from dependencies import get_current_user, get_current_admin, get_current_user_optional
 
 router = APIRouter(prefix="/promo", tags=["Promo Codes"])
 
@@ -88,7 +88,7 @@ class PromoCodeResponse(BaseModel):
 async def validate_promo_code(
     request: PromoCodeValidateRequest,
     db: AsyncSession = Depends(get_session),
-    current_user: Optional[User] = Depends(get_current_user)
+    current_user: Optional[User] = Depends(get_current_user_optional)
 ):
     """
     Validate a promo code and return discount details.
