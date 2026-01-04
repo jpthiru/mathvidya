@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    /* Page Layout */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .profile-button:hover {
+      background: var(--color-gray-200);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      min-width: 200px;
+      display: none;
+      z-index: var(--z-dropdown);
+    }
+
+    .profile-menu.active {
+      display: block;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--color-gray-700);
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .profile-menu-item:first-child {
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .profile-menu-item:last-child {
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .profile-menu-item:hover {
+      background: var(--color-gray-100);
+    }
+
+    .profile-menu-item.danger {
+      color: var(--color-error);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .page-subtitle {
+      color: var(--color-gray-600);
+      margin: 0;
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .profile-header {
+      background: var(--gradient-primary);
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .profile-header-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      border: 4px solid rgba(255,255,255,0.3);
+    }
+
+    .profile-header-info h2 {
+      color: white;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .profile-header-info p {
+      color: rgba(255,255,255,0.8);
+      margin: 0;
+    }
+
+    .profile-body {
+      padding: 2rem;
+    }
+
+    .profile-section {
+      margin-bottom: 2rem;
+    }
+
+    .profile-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .profile-section-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--color-gray-800);
+      margin: 0 0 1rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--color-gray-200);
+    }
+
+    .profile-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .profile-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .profile-info-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+      font-weight: 500;
+    }
+
+    .profile-info-value {
+      font-size: var(--text-base);
+      color: var(--color-gray-800);
+      font-weight: 500;
+    }
+
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--color-gray-100);
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      font-weight: 500;
+    }
+
+    .profile-badge.verified {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .profile-badge.unverified {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    /* Stats Cards */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat-mini-card {
+      background: var(--color-gray-50);
+      padding: 1rem;
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+
+    .stat-mini-value {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .stat-mini-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+    }
+
+    /* Action Buttons */
+    .profile-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--color-gray-200);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .profile-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="../index.html" class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </a>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="exams.html" class="nav-link">
+            <i class="fas fa-file-alt"></i>
+            My Exams
+          </a>
+          <a href="analytics.html" class="nav-link">
+            <i class="fas fa-chart-line"></i>
+            Analytics
+          </a>
+          <a href="leaderboard.html" class="nav-link">
+            <i class="fas fa-trophy"></i>
+            Leaderboard
+          </a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-button" id="profileButton">
+            <div class="profile-avatar" id="profileAvatar">S</div>
+            <div>
+              <div style="font-weight: 600; font-size: var(--text-sm);" id="userName">Student</div>
+              <div style="font-size: var(--text-xs); color: var(--color-gray-500);" id="userClass">Class XII</div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="profile-menu" id="profileMenu">
+            <a href="profile.html" class="profile-menu-item">
+              <i class="fas fa-user"></i>
+              My Profile
+            </a>
+            <a href="subscription.html" class="profile-menu-item">
+              <i class="fas fa-credit-card"></i>
+              Subscription
+            </a>
+            <a href="settings.html" class="profile-menu-item">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+            <div class="profile-menu-item danger" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header animate-slideUp">
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-subtitle">View and manage your account information</p>
+    </div>
+
+    <div class="profile-card animate-slideUp">
+      <div class="profile-header">
+        <div class="profile-header-avatar" id="largeAvatar">S</div>
+        <div class="profile-header-info">
+          <h2 id="profileFullName">Student Name</h2>
+          <p id="profileEmail">student@example.com</p>
+        </div>
+      </div>
+
+      <div class="profile-body">
+        <!-- Personal Information -->
+        <div class="profile-section">
+          <h3 class="profile-section-title"><i class="fas fa-user" style="margin-right: 0.5rem;"></i> Personal Information</h3>
+          <div class="profile-info-grid">
+            <div class="profile-info-item">
+              <span class="profile-info-label">Full Name</span>
+              <span class="profile-info-value" id="infoFullName">-</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="profile-info-label">Email</span>
+              <span class="profile-info-value" id="infoEmail">-</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="profile-info-label">Phone</span>
+              <span class="profile-info-value" id="infoPhone">-</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="profile-info-label">Email Status</span>
+              <span class="profile-badge" id="infoEmailStatus">
+                <i class="fas fa-check-circle"></i> Verified
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Information -->
+        <div class="profile-section">
+          <h3 class="profile-section-title"><i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i> Academic Information</h3>
+          <div class="profile-info-grid">
+            <div class="profile-info-item">
+              <span class="profile-info-label">Class</span>
+              <span class="profile-info-value" id="infoClass">-</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="profile-info-label">School</span>
+              <span class="profile-info-value" id="infoSchool">-</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="profile-info-label">Board</span>
+              <span class="profile-info-value" id="infoBoard">CBSE</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="profile-info-label">Member Since</span>
+              <span class="profile-info-value" id="infoMemberSince">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Summary -->
+        <div class="profile-section">
+          <h3 class="profile-section-title"><i class="fas fa-chart-bar" style="margin-right: 0.5rem;"></i> Performance Summary</h3>
+          <div class="stats-row">
+            <div class="stat-mini-card">
+              <div class="stat-mini-value" id="statExams">0</div>
+              <div class="stat-mini-label">Exams Taken</div>
+            </div>
+            <div class="stat-mini-card">
+              <div class="stat-mini-value" id="statAvgScore">0%</div>
+              <div class="stat-mini-label">Average Score</div>
+            </div>
+            <div class="stat-mini-card">
+              <div class="stat-mini-value" id="statRank">-</div>
+              <div class="stat-mini-label">Class Rank</div>
+            </div>
+            <div class="stat-mini-card">
+              <div class="stat-mini-value" id="statStreak">0</div>
+              <div class="stat-mini-label">Day Streak</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="profile-actions">
+          <a href="settings.html" class="btn btn-primary">
+            <i class="fas fa-edit"></i>
+            Edit Profile
+          </a>
+          <a href="subscription.html" class="btn btn-ghost">
+            <i class="fas fa-credit-card"></i>
+            Manage Subscription
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated() || getUserRole() !== 'student') {
+      window.location.href = '../login.html';
+    }
+
+    const user = getUser();
+
+    // Update header profile
+    const displayName = user.first_name || user.full_name || user.name || user.email.split('@')[0];
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('profileAvatar').textContent = displayName[0].toUpperCase();
+    document.getElementById('userClass').textContent = `Class ${user.student_class || 'XII'}`;
+
+    // Update profile page content
+    const fullName = user.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || displayName;
+    document.getElementById('profileFullName').textContent = fullName;
+    document.getElementById('profileEmail').textContent = user.email;
+    document.getElementById('largeAvatar').textContent = fullName[0].toUpperCase();
+
+    // Personal info
+    document.getElementById('infoFullName').textContent = fullName;
+    document.getElementById('infoEmail').textContent = user.email;
+    document.getElementById('infoPhone').textContent = user.phone || 'Not provided';
+
+    // Email verification status
+    const emailStatus = document.getElementById('infoEmailStatus');
+    if (user.is_email_verified) {
+      emailStatus.className = 'profile-badge verified';
+      emailStatus.innerHTML = '<i class="fas fa-check-circle"></i> Verified';
+    } else {
+      emailStatus.className = 'profile-badge unverified';
+      emailStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Not Verified';
+    }
+
+    // Academic info
+    document.getElementById('infoClass').textContent = `Class ${user.student_class || 'XII'}`;
+    document.getElementById('infoSchool').textContent = user.school_name || 'Not provided';
+    document.getElementById('infoBoard').textContent = user.board || 'CBSE';
+
+    // Member since
+    if (user.created_at) {
+      const memberDate = new Date(user.created_at);
+      document.getElementById('infoMemberSince').textContent = memberDate.toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    // Profile dropdown toggle
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', () => {
+      profileMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('profileDropdown').contains(e.target)) {
+        profileMenu.classList.remove('active');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+        Toast.success('Logged out successfully');
+        setTimeout(() => window.location.href = '../login.html', 500);
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '../login.html';
+      }
+    });
+
+    // Load dashboard stats
+    async function loadStats() {
+      try {
+        const dashboard = await api.getStudentDashboard();
+        document.getElementById('statExams').textContent = dashboard.total_exams || 0;
+        const avgScore = dashboard.overall_percentage || dashboard.average_score || 0;
+        document.getElementById('statAvgScore').textContent = avgScore ? `${parseFloat(avgScore).toFixed(1)}%` : '0%';
+        document.getElementById('statRank').textContent = dashboard.overall_rank || dashboard.rank || '-';
+        document.getElementById('statStreak').textContent = dashboard.streak || 0;
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    // Initialize
+    loadStats();
+    observeElements('.animate-slideUp');
+  </script>
+</body>
+</html>

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Subscription - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    /* Page Layout */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .profile-button:hover {
+      background: var(--color-gray-200);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      min-width: 200px;
+      display: none;
+      z-index: var(--z-dropdown);
+    }
+
+    .profile-menu.active {
+      display: block;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--color-gray-700);
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .profile-menu-item:first-child {
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .profile-menu-item:last-child {
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .profile-menu-item:hover {
+      background: var(--color-gray-100);
+    }
+
+    .profile-menu-item.danger {
+      color: var(--color-error);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .page-subtitle {
+      color: var(--color-gray-600);
+      margin: 0;
+    }
+
+    /* Current Plan Card */
+    .current-plan-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .current-plan-header {
+      background: var(--gradient-primary);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .current-plan-header h2 {
+      color: white;
+      margin: 0;
+      font-size: var(--text-xl);
+    }
+
+    .plan-badge {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: var(--text-sm);
+    }
+
+    .current-plan-body {
+      padding: 2rem;
+    }
+
+    .plan-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .plan-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .plan-detail-label {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+    }
+
+    .plan-detail-value {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--color-gray-800);
+    }
+
+    /* Usage Progress */
+    .usage-section {
+      background: var(--color-gray-50);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      margin-top: 1.5rem;
+    }
+
+    .usage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .usage-title {
+      font-weight: 600;
+      color: var(--color-gray-800);
+    }
+
+    .usage-count {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .usage-bar {
+      height: 12px;
+      background: var(--color-gray-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .usage-bar-fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+
+    .usage-bar-fill.warning {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    }
+
+    .usage-bar-fill.danger {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    }
+
+    /* Plans Grid */
+    .plans-section {
+      margin-top: 2rem;
+    }
+
+    .section-title {
+      font-size: var(--text-2xl);
+      margin: 0 0 1.5rem 0;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .plan-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+      position: relative;
+      transition: all var(--transition-base);
+      border: 2px solid transparent;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .plan-card.popular {
+      border-color: var(--color-primary);
+    }
+
+    .plan-card.current {
+      border-color: var(--color-accent);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0.25rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .current-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gradient-success);
+      color: white;
+      padding: 0.25rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .plan-name {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-gray-800);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .plan-price {
+      margin-bottom: 1rem;
+    }
+
+    .plan-price-value {
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .plan-price-period {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+    }
+
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      color: var(--color-gray-600);
+      font-size: var(--text-sm);
+    }
+
+    .plan-features li i {
+      color: var(--color-accent);
+      margin-top: 0.2rem;
+    }
+
+    .plan-card .btn {
+      width: 100%;
+    }
+
+    /* Free Trial Info */
+    .trial-info {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .trial-info-icon {
+      font-size: 2rem;
+      color: var(--color-primary);
+    }
+
+    .trial-info-content h4 {
+      margin: 0 0 0.25rem 0;
+      color: var(--color-gray-800);
+    }
+
+    .trial-info-content p {
+      margin: 0;
+      color: var(--color-gray-600);
+      font-size: var(--text-sm);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .current-plan-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .plan-details-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .plans-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="../index.html" class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </a>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="exams.html" class="nav-link">
+            <i class="fas fa-file-alt"></i>
+            My Exams
+          </a>
+          <a href="analytics.html" class="nav-link">
+            <i class="fas fa-chart-line"></i>
+            Analytics
+          </a>
+          <a href="leaderboard.html" class="nav-link">
+            <i class="fas fa-trophy"></i>
+            Leaderboard
+          </a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-button" id="profileButton">
+            <div class="profile-avatar" id="profileAvatar">S</div>
+            <div>
+              <div style="font-weight: 600; font-size: var(--text-sm);" id="userName">Student</div>
+              <div style="font-size: var(--text-xs); color: var(--color-gray-500);" id="userClass">Class XII</div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="profile-menu" id="profileMenu">
+            <a href="profile.html" class="profile-menu-item">
+              <i class="fas fa-user"></i>
+              My Profile
+            </a>
+            <a href="subscription.html" class="profile-menu-item">
+              <i class="fas fa-credit-card"></i>
+              Subscription
+            </a>
+            <a href="settings.html" class="profile-menu-item">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+            <div class="profile-menu-item danger" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header animate-slideUp">
+      <h1 class="page-title">My Subscription</h1>
+      <p class="page-subtitle">Manage your subscription and view available plans</p>
+    </div>
+
+    <!-- Current Plan -->
+    <div class="current-plan-card animate-slideUp">
+      <div class="current-plan-header">
+        <h2><i class="fas fa-crown" style="margin-right: 0.5rem;"></i> Current Plan</h2>
+        <span class="plan-badge" id="currentPlanBadge">Free Trial</span>
+      </div>
+      <div class="current-plan-body">
+        <div class="plan-details-grid">
+          <div class="plan-detail-item">
+            <span class="plan-detail-label">Plan Name</span>
+            <span class="plan-detail-value" id="currentPlanName">Free Trial</span>
+          </div>
+          <div class="plan-detail-item">
+            <span class="plan-detail-label">Status</span>
+            <span class="plan-detail-value" id="currentPlanStatus">Active</span>
+          </div>
+          <div class="plan-detail-item">
+            <span class="plan-detail-label">Valid Until</span>
+            <span class="plan-detail-value" id="currentPlanExpiry">-</span>
+          </div>
+          <div class="plan-detail-item">
+            <span class="plan-detail-label">Billing Cycle</span>
+            <span class="plan-detail-value" id="currentPlanCycle">Monthly</span>
+          </div>
+        </div>
+
+        <!-- Usage -->
+        <div class="usage-section">
+          <div class="usage-header">
+            <span class="usage-title">Monthly Exam Usage</span>
+            <span class="usage-count" id="usageCount">0 / 5 exams</span>
+          </div>
+          <div class="usage-bar">
+            <div class="usage-bar-fill" id="usageBarFill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Plans -->
+    <div class="plans-section animate-slideUp">
+      <h2 class="section-title">Available Plans</h2>
+      <div class="plans-grid" id="plansGrid">
+        <!-- Basic Plan -->
+        <div class="plan-card" data-plan="basic">
+          <h3 class="plan-name">Basic</h3>
+          <div class="plan-price">
+            <span class="plan-price-value">Free</span>
+            <span class="plan-price-period">/ forever</span>
+          </div>
+          <ul class="plan-features">
+            <li><i class="fas fa-check"></i> 5 exams per month</li>
+            <li><i class="fas fa-check"></i> MCQ practice only</li>
+            <li><i class="fas fa-check"></i> Basic analytics</li>
+            <li><i class="fas fa-check"></i> Email support</li>
+          </ul>
+          <button class="btn btn-ghost" id="btnBasic">Current Plan</button>
+        </div>
+
+        <!-- Premium Plan -->
+        <div class="plan-card popular" data-plan="premium">
+          <span class="popular-badge">Most Popular</span>
+          <h3 class="plan-name">Premium</h3>
+          <div class="plan-price">
+            <span class="plan-price-value">&#8377;499</span>
+            <span class="plan-price-period">/ month</span>
+          </div>
+          <ul class="plan-features">
+            <li><i class="fas fa-check"></i> 50 exams per month</li>
+            <li><i class="fas fa-check"></i> All question types</li>
+            <li><i class="fas fa-check"></i> Board exam practice</li>
+            <li><i class="fas fa-check"></i> Advanced analytics</li>
+            <li><i class="fas fa-check"></i> Leaderboard access</li>
+            <li><i class="fas fa-check"></i> 48-hour evaluation SLA</li>
+          </ul>
+          <button class="btn btn-primary" id="btnPremium">Upgrade Now</button>
+        </div>
+
+        <!-- Centum Plan -->
+        <div class="plan-card" data-plan="centum">
+          <h3 class="plan-name">Centum</h3>
+          <div class="plan-price">
+            <span class="plan-price-value">&#8377;999</span>
+            <span class="plan-price-period">/ month</span>
+          </div>
+          <ul class="plan-features">
+            <li><i class="fas fa-check"></i> Unlimited exams</li>
+            <li><i class="fas fa-check"></i> All Premium features</li>
+            <li><i class="fas fa-check"></i> Same-day evaluation</li>
+            <li><i class="fas fa-check"></i> Direct teacher access</li>
+            <li><i class="fas fa-check"></i> 1-on-1 coaching</li>
+            <li><i class="fas fa-check"></i> Priority support</li>
+          </ul>
+          <button class="btn btn-primary" id="btnCentum">Upgrade Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trial Info -->
+    <div class="trial-info animate-slideUp">
+      <div class="trial-info-icon">
+        <i class="fas fa-gift"></i>
+      </div>
+      <div class="trial-info-content">
+        <h4>Need Help Choosing?</h4>
+        <p>Contact our support team for personalized recommendations based on your preparation goals. We're here to help you succeed!</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated() || getUserRole() !== 'student') {
+      window.location.href = '../login.html';
+    }
+
+    const user = getUser();
+
+    // Update header profile
+    const displayName = user.first_name || user.full_name || user.name || user.email.split('@')[0];
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('profileAvatar').textContent = displayName[0].toUpperCase();
+    document.getElementById('userClass').textContent = `Class ${user.student_class || 'XII'}`;
+
+    // Profile dropdown toggle
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', () => {
+      profileMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('profileDropdown').contains(e.target)) {
+        profileMenu.classList.remove('active');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+        Toast.success('Logged out successfully');
+        setTimeout(() => window.location.href = '../login.html', 500);
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '../login.html';
+      }
+    });
+
+    // Load subscription data
+    async function loadSubscription() {
+      try {
+        const entitlement = await api.checkExamEntitlement();
+
+        // Update current plan info
+        const planName = entitlement.plan_name || 'Free Trial';
+        document.getElementById('currentPlanName').textContent = planName;
+        document.getElementById('currentPlanBadge').textContent = planName;
+        document.getElementById('currentPlanStatus').textContent = entitlement.is_active ? 'Active' : 'Inactive';
+
+        if (entitlement.expires_at) {
+          const expiryDate = new Date(entitlement.expires_at);
+          document.getElementById('currentPlanExpiry').textContent = expiryDate.toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+        } else {
+          document.getElementById('currentPlanExpiry').textContent = 'Never';
+        }
+
+        // Update usage
+        const used = entitlement.exams_used || 0;
+        const total = entitlement.exams_limit || entitlement.remaining_exams + used || 5;
+        const remaining = entitlement.remaining_exams || 0;
+        const percentage = total > 0 ? (used / total) * 100 : 0;
+
+        document.getElementById('usageCount').textContent = `${used} / ${total} exams`;
+
+        const usageBar = document.getElementById('usageBarFill');
+        usageBar.style.width = `${percentage}%`;
+
+        if (percentage >= 90) {
+          usageBar.classList.add('danger');
+        } else if (percentage >= 70) {
+          usageBar.classList.add('warning');
+        }
+
+        // Update plan buttons based on current plan
+        updatePlanButtons(planName.toLowerCase());
+
+      } catch (error) {
+        console.error('Error loading subscription:', error);
+        Toast.error('Failed to load subscription data');
+      }
+    }
+
+    function updatePlanButtons(currentPlan) {
+      const plans = ['basic', 'premium', 'centum'];
+      const planOrder = { 'free trial': 0, 'basic': 0, 'premium': 1, 'centum': 2 };
+
+      const currentIndex = planOrder[currentPlan] || 0;
+
+      plans.forEach((plan, index) => {
+        const btn = document.getElementById(`btn${plan.charAt(0).toUpperCase() + plan.slice(1)}`);
+        const card = document.querySelector(`.plan-card[data-plan="${plan}"]`);
+
+        if (index === currentIndex || (currentPlan === 'free trial' && plan === 'basic')) {
+          btn.textContent = 'Current Plan';
+          btn.className = 'btn btn-ghost';
+          btn.disabled = true;
+          card.classList.add('current');
+          card.classList.remove('popular');
+
+          // Add current badge
+          const existingBadge = card.querySelector('.current-badge, .popular-badge');
+          if (existingBadge) existingBadge.remove();
+          const badge = document.createElement('span');
+          badge.className = 'current-badge';
+          badge.textContent = 'Current';
+          card.appendChild(badge);
+        } else if (index < currentIndex) {
+          btn.textContent = 'Downgrade';
+          btn.className = 'btn btn-ghost';
+        } else {
+          btn.textContent = 'Upgrade Now';
+          btn.className = 'btn btn-primary';
+        }
+      });
+    }
+
+    // Plan upgrade buttons
+    document.getElementById('btnPremium').addEventListener('click', () => {
+      Toast.info('Premium subscription coming soon! Contact support for early access.');
+    });
+
+    document.getElementById('btnCentum').addEventListener('click', () => {
+      Toast.info('Centum subscription coming soon! Contact support for early access.');
+    });
+
+    // Initialize
+    loadSubscription();
+    observeElements('.animate-slideUp');
+  </script>
+</body>
+</html>

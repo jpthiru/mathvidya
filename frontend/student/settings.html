@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Mathvidya</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    /* Page Layout */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--color-gray-50);
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-gray-600);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--color-primary);
+      background: var(--color-gray-100);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .profile-button:hover {
+      background: var(--color-gray-200);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      min-width: 200px;
+      display: none;
+      z-index: var(--z-dropdown);
+    }
+
+    .profile-menu.active {
+      display: block;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--color-gray-700);
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .profile-menu-item:first-child {
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .profile-menu-item:last-child {
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .profile-menu-item:hover {
+      background: var(--color-gray-100);
+    }
+
+    .profile-menu-item.danger {
+      color: var(--color-error);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: var(--text-3xl);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .page-subtitle {
+      color: var(--color-gray-600);
+      margin: 0;
+    }
+
+    /* Settings Card */
+    .settings-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .settings-card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .settings-card-header i {
+      color: var(--color-primary);
+      font-size: 1.25rem;
+    }
+
+    .settings-card-header h3 {
+      margin: 0;
+      font-size: var(--text-lg);
+    }
+
+    .settings-card-body {
+      padding: 1.5rem;
+    }
+
+    /* Form Styles */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: var(--color-gray-700);
+      font-size: var(--text-sm);
+    }
+
+    .form-input {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: var(--text-base);
+      transition: all var(--transition-fast);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-input:disabled {
+      background: var(--color-gray-100);
+      color: var(--color-gray-500);
+      cursor: not-allowed;
+    }
+
+    .form-select {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: var(--text-base);
+      background: white;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+
+    .form-hint {
+      font-size: var(--text-xs);
+      color: var(--color-gray-500);
+    }
+
+    /* Toggle Switch */
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--color-gray-100);
+    }
+
+    .toggle-group:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-info {
+      flex: 1;
+    }
+
+    .toggle-label {
+      font-weight: 500;
+      color: var(--color-gray-800);
+      margin-bottom: 0.25rem;
+    }
+
+    .toggle-description {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--color-gray-300);
+      transition: 0.3s;
+      border-radius: 28px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .toggle-slider {
+      background: var(--gradient-primary);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Password Section */
+    .password-requirements {
+      background: var(--color-gray-50);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      margin-top: 1rem;
+    }
+
+    .password-requirements p {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .password-requirements ul {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .password-requirements li {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+      margin-bottom: 0.25rem;
+    }
+
+    /* Action Buttons */
+    .settings-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-gray-200);
+      margin-top: 1.5rem;
+    }
+
+    /* Danger Zone */
+    .danger-zone {
+      border: 2px solid var(--color-error);
+    }
+
+    .danger-zone .settings-card-header {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .danger-zone .settings-card-header i {
+      color: var(--color-error);
+    }
+
+    .danger-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--color-gray-100);
+    }
+
+    .danger-item:last-child {
+      border-bottom: none;
+    }
+
+    .danger-item-info h4 {
+      margin: 0 0 0.25rem 0;
+      color: var(--color-gray-800);
+    }
+
+    .danger-item-info p {
+      margin: 0;
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+    }
+
+    .btn-danger {
+      background: var(--color-error);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #DC2626;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toggle-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .danger-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="../index.html" class="logo">
+          <i class="fas fa-calculator"></i>
+          Mathvidya
+        </a>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="exams.html" class="nav-link">
+            <i class="fas fa-file-alt"></i>
+            My Exams
+          </a>
+          <a href="analytics.html" class="nav-link">
+            <i class="fas fa-chart-line"></i>
+            Analytics
+          </a>
+          <a href="leaderboard.html" class="nav-link">
+            <i class="fas fa-trophy"></i>
+            Leaderboard
+          </a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-button" id="profileButton">
+            <div class="profile-avatar" id="profileAvatar">S</div>
+            <div>
+              <div style="font-weight: 600; font-size: var(--text-sm);" id="userName">Student</div>
+              <div style="font-size: var(--text-xs); color: var(--color-gray-500);" id="userClass">Class XII</div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="profile-menu" id="profileMenu">
+            <a href="profile.html" class="profile-menu-item">
+              <i class="fas fa-user"></i>
+              My Profile
+            </a>
+            <a href="subscription.html" class="profile-menu-item">
+              <i class="fas fa-credit-card"></i>
+              Subscription
+            </a>
+            <a href="settings.html" class="profile-menu-item">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+            <div class="profile-menu-item danger" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header animate-slideUp">
+      <h1 class="page-title">Settings</h1>
+      <p class="page-subtitle">Manage your account settings and preferences</p>
+    </div>
+
+    <!-- Profile Settings -->
+    <div class="settings-card animate-slideUp">
+      <div class="settings-card-header">
+        <i class="fas fa-user"></i>
+        <h3>Profile Information</h3>
+      </div>
+      <div class="settings-card-body">
+        <form id="profileForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-input" id="firstName" placeholder="Enter first name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-input" id="lastName" placeholder="Enter last name">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" id="email" disabled>
+              <span class="form-hint">Email cannot be changed</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" class="form-input" id="phone" placeholder="+91 XXXXX XXXXX">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Class</label>
+              <select class="form-select" id="studentClass">
+                <option value="X">Class X</option>
+                <option value="XII">Class XII</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">School Name</label>
+              <input type="text" class="form-input" id="schoolName" placeholder="Enter your school name">
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button type="button" class="btn btn-ghost" id="resetProfile">Reset</button>
+            <button type="submit" class="btn btn-primary" id="saveProfile">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="settings-card animate-slideUp">
+      <div class="settings-card-header">
+        <i class="fas fa-bell"></i>
+        <h3>Notifications</h3>
+      </div>
+      <div class="settings-card-body">
+        <div class="toggle-group">
+          <div class="toggle-info">
+            <div class="toggle-label">Email Notifications</div>
+            <div class="toggle-description">Receive updates about exam results and evaluations</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="emailNotifications" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-group">
+          <div class="toggle-info">
+            <div class="toggle-label">Performance Reports</div>
+            <div class="toggle-description">Weekly summary of your performance and progress</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="performanceReports" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-group">
+          <div class="toggle-info">
+            <div class="toggle-label">Promotional Emails</div>
+            <div class="toggle-description">Tips, offers, and updates from Mathvidya</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="promoEmails">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Settings -->
+    <div class="settings-card animate-slideUp">
+      <div class="settings-card-header">
+        <i class="fas fa-lock"></i>
+        <h3>Change Password</h3>
+      </div>
+      <div class="settings-card-body">
+        <form id="passwordForm">
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label class="form-label">Current Password</label>
+              <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm new password">
+            </div>
+          </div>
+          <div class="password-requirements">
+            <p><strong>Password requirements:</strong></p>
+            <ul>
+              <li>At least 8 characters long</li>
+              <li>Contains at least one uppercase letter</li>
+              <li>Contains at least one number</li>
+              <li>Contains at least one special character</li>
+            </ul>
+          </div>
+          <div class="settings-actions">
+            <button type="submit" class="btn btn-primary" id="changePassword">
+              <i class="fas fa-key"></i> Change Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="settings-card danger-zone animate-slideUp">
+      <div class="settings-card-header">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Danger Zone</h3>
+      </div>
+      <div class="settings-card-body">
+        <div class="danger-item">
+          <div class="danger-item-info">
+            <h4>Export My Data</h4>
+            <p>Download all your data including exam history and performance records</p>
+          </div>
+          <button class="btn btn-ghost" id="exportData">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+        <div class="danger-item">
+          <div class="danger-item-info">
+            <h4>Delete Account</h4>
+            <p>Permanently delete your account and all associated data. This action cannot be undone.</p>
+          </div>
+          <button class="btn btn-danger" id="deleteAccount">
+            <i class="fas fa-trash"></i> Delete Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated() || getUserRole() !== 'student') {
+      window.location.href = '../login.html';
+    }
+
+    const user = getUser();
+
+    // Update header profile
+    const displayName = user.first_name || user.full_name || user.name || user.email.split('@')[0];
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('profileAvatar').textContent = displayName[0].toUpperCase();
+    document.getElementById('userClass').textContent = `Class ${user.student_class || 'XII'}`;
+
+    // Profile dropdown toggle
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', () => {
+      profileMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('profileDropdown').contains(e.target)) {
+        profileMenu.classList.remove('active');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api.logout();
+        Toast.success('Logged out successfully');
+        setTimeout(() => window.location.href = '../login.html', 500);
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '../login.html';
+      }
+    });
+
+    // Populate form with current user data
+    function populateForm() {
+      document.getElementById('firstName').value = user.first_name || '';
+      document.getElementById('lastName').value = user.last_name || '';
+      document.getElementById('email').value = user.email || '';
+      document.getElementById('phone').value = user.phone || '';
+      document.getElementById('studentClass').value = user.student_class || 'XII';
+      document.getElementById('schoolName').value = user.school_name || '';
+    }
+
+    // Reset form
+    document.getElementById('resetProfile').addEventListener('click', populateForm);
+
+    // Save profile
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const profileData = {
+        first_name: document.getElementById('firstName').value.trim(),
+        last_name: document.getElementById('lastName').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        student_class: document.getElementById('studentClass').value,
+        school_name: document.getElementById('schoolName').value.trim()
+      };
+
+      try {
+        const saveBtn = document.getElementById('saveProfile');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        await api.updateProfile(profileData);
+
+        // Update local storage
+        const updatedUser = { ...user, ...profileData };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+
+        Toast.success('Profile updated successfully!');
+
+        // Refresh page to reflect changes
+        setTimeout(() => window.location.reload(), 1000);
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        Toast.error(error.message || 'Failed to update profile');
+      } finally {
+        const saveBtn = document.getElementById('saveProfile');
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+      }
+    });
+
+    // Change password
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        Toast.warning('Please fill in all password fields');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        Toast.error('New passwords do not match');
+        return;
+      }
+
+      if (newPassword.length < 8) {
+        Toast.error('Password must be at least 8 characters long');
+        return;
+      }
+
+      try {
+        const changeBtn = document.getElementById('changePassword');
+        changeBtn.disabled = true;
+        changeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing...';
+
+        await api.changePassword(currentPassword, newPassword);
+
+        Toast.success('Password changed successfully!');
+        document.getElementById('passwordForm').reset();
+      } catch (error) {
+        console.error('Error changing password:', error);
+        Toast.error(error.message || 'Failed to change password');
+      } finally {
+        const changeBtn = document.getElementById('changePassword');
+        changeBtn.disabled = false;
+        changeBtn.innerHTML = '<i class="fas fa-key"></i> Change Password';
+      }
+    });
+
+    // Export data
+    document.getElementById('exportData').addEventListener('click', async () => {
+      Toast.info('Data export feature coming soon!');
+    });
+
+    // Delete account
+    document.getElementById('deleteAccount').addEventListener('click', async () => {
+      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        if (confirm('This will permanently delete all your data including exam history. Are you absolutely sure?')) {
+          Toast.info('Account deletion feature coming soon. Please contact support.');
+        }
+      }
+    });
+
+    // Initialize
+    populateForm();
+    observeElements('.animate-slideUp');
+  </script>
+</body>
+</html>
