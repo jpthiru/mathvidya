@@ -130,6 +130,44 @@
   color: white;
 }
 
+.examTab.disabled {
+  background: var(--color-gray-100);
+  color: var(--color-gray-400);
+  cursor: not-allowed;
+  opacity: 0.8;
+  position: relative;
+}
+
+.examTab.disabled:hover {
+  background: var(--color-gray-100);
+  transform: none;
+}
+
+.comingSoonBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.6);
+  }
+}
+
 /* Unit Selection */
 .unitSelection {
   animation: fadeIn 0.3s ease;

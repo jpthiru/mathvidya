@@ -304,4 +304,13 @@ export const subscriptionsAPI = {
   },
 };
 
+// ==================== Feedback ====================
+
+export const feedbackAPI = {
+  submitFeedback: async (feedbackData) => {
+    const response = await api.post('/feedback/', feedbackData);
+    return response.data;
+  },
+};
+
 export default api;

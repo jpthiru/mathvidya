@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Layouts
 import Layout from './components/common/Layout';
+import FeedbackWidget from './components/common/FeedbackWidget';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -151,11 +152,20 @@ function AppRoutes() {
   );
 }
 
+// Wrapper to show feedback on public pages only (Layout has its own for authenticated)
+const PublicFeedbackWrapper = () => {
+  const { user } = useAuth();
+  // Only show on public pages (when user is not logged in)
+  if (user) return null;
+  return <FeedbackWidget />;
+};
+
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
+        <PublicFeedbackWrapper />
         <Toaster
           position="top-right"
           toastOptions={{

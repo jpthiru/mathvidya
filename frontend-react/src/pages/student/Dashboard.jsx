@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { analyticsAPI, examsAPI } from '../../services/api';
 import { MathText } from '../../components/common/MathRenderer';
-import { FiPlay, FiFileText, FiTrendingUp, FiAward, FiClock, FiCheckCircle } from 'react-icons/fi';
+import { FiPlay, FiFileText, FiTrendingUp, FiAward, FiClock, FiCheckCircle, FiLock } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import styles from './Dashboard.module.css';
 
@@ -236,7 +236,23 @@ const Dashboard = () => {
             className={`${styles.examTab} ${examTab === 'unit' ? styles.active : ''}`}
             onClick={() => setExamTab('unit')}
           >
-            <FiPlay /> Unit-Wise Practice
+            <FiPlay /> MCQ Practice
+          </button>
+          <button
+            className={`${styles.examTab} ${styles.disabled}`}
+            disabled
+            title="Coming Soon - VSA (Very Short Answer) exams will be available in the next release"
+          >
+            <FiLock /> VSA Practice
+            <span className={styles.comingSoonBadge}>Coming Soon</span>
+          </button>
+          <button
+            className={`${styles.examTab} ${styles.disabled}`}
+            disabled
+            title="Coming Soon - SA (Short Answer) exams will be available in the next release"
+          >
+            <FiLock /> SA Practice
+            <span className={styles.comingSoonBadge}>Coming Soon</span>
           </button>
           <button
             className={`${styles.examTab} ${examTab === 'board' ? styles.active : ''}`}
@@ -309,7 +325,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <p className="text-gray">
-                Full CBSE board exam pattern with MCQ, VSA, and SA questions from all units.
+                Practice with MCQ questions from all units. VSA and SA sections coming soon!
               </p>
             </div>
             <button

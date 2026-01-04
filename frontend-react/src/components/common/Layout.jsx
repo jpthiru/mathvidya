@@ -19,6 +19,7 @@ import {
   FiX,
   FiChevronDown,
 } from 'react-icons/fi';
+import FeedbackWidget from './FeedbackWidget';
 import styles from './Layout.module.css';
 
 // Navigation items for each role
@@ -166,6 +167,9 @@ export const DashboardLayout = ({ children }) => {
       <main className={styles.main}>
         {children || <Outlet />}
       </main>
+
+      {/* Feedback Widget */}
+      <FeedbackWidget />
     </div>
   );
 };

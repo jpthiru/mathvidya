@@ -616,9 +616,10 @@ const Questions = () => {
                     onChange={(e) => setFormData({ ...formData, question_type: e.target.value })}
                   >
                     <option value="MCQ">MCQ (1 mark)</option>
-                    <option value="VSA">VSA (2 marks)</option>
-                    <option value="SA">SA (3 marks)</option>
+                    <option value="VSA" disabled>VSA (2 marks) - Coming Soon</option>
+                    <option value="SA" disabled>SA (3 marks) - Coming Soon</option>
                   </select>
+                  <small className="text-gray">VSA and SA question types coming in next release</small>
                 </div>
 
                 <div className="form-group">
