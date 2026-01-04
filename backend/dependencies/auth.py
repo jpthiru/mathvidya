@@ -149,3 +149,54 @@ require_parent = require_role(UserRole.PARENT)
 # Allow multiple roles
 require_student_or_parent = require_role(UserRole.STUDENT, UserRole.PARENT)
 require_teacher_or_admin = require_role(UserRole.TEACHER, UserRole.ADMIN)
+
+
+# Optional bearer for endpoints that work with or without authentication
+optional_security = HTTPBearer(auto_error=False)
+
+
+async def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security),
+    session: AsyncSession = Depends(get_session)
+) -> Optional[User]:
+    """
+    Dependency to optionally get the current user.
+    Returns None if no valid token is provided (does not raise exception).
+    Useful for endpoints that work for both authenticated and anonymous users.
+    """
+    if credentials is None:
+        return None
+
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id: str = payload.get("sub")
+
+        if user_id is None:
+            return None
+
+    except JWTError:
+        return None
+
+    # Fetch user from database
+    result = await session.execute(
+        select(User).where(User.user_id == user_id)
+    )
+    user = result.scalar_one_or_none()
+
+    return user
+
+
+async def get_current_admin(
+    current_user: User = Depends(get_current_active_user)
+) -> User:
+    """
+    Dependency to ensure the user is an admin.
+    Convenience wrapper for admin-only endpoints.
+    """
+    if current_user.role != UserRole.ADMIN.value:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user

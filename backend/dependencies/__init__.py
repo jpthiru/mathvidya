@@ -2,7 +2,9 @@
 
 from .auth import (
     get_current_user,
+    get_current_user_optional,
     get_current_active_user,
+    get_current_admin,
     require_role,
     require_student,
     require_teacher,
@@ -15,7 +17,9 @@ from .auth import (
 
 __all__ = [
     "get_current_user",
+    "get_current_user_optional",
     "get_current_active_user",
+    "get_current_admin",
     "require_role",
     "require_student",
     "require_teacher",

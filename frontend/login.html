@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Mathvidya</title>
+  <title>Login - Mathvidya | CBSE Math Practice Platform</title>
+  <meta name="description" content="Login to Mathvidya - Practice CBSE board exam questions online with expert teacher evaluation.">
+  <meta name="robots" content="noindex, nofollow">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -374,6 +376,7 @@
   <!-- Scripts -->
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/analytics.js"></script>
   <script>
     // Role selection
     let selectedRole = 'student';
@@ -450,8 +453,14 @@
       showLoading(loginBtn);
 
       try {
+        // Get reCAPTCHA token if available
+        let recaptchaToken = null;
+        if (window.MV_Analytics && window.MV_Analytics.getRecaptchaToken) {
+          recaptchaToken = await window.MV_Analytics.getRecaptchaToken('login');
+        }
+
         // Call login API
-        const response = await api.login(email, password);
+        const response = await api.login(email, password, recaptchaToken);
 
         // Check if user role matches selected tab
         if (response.user.role !== selectedRole) {

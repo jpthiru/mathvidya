@@ -17,7 +17,8 @@ import logging
 
 from config.settings import settings
 from database import engine
-from routes import auth, exams, questions, evaluations, analytics, subscriptions, notifications, admin, teacher
+from routes import auth, exams, questions, evaluations, analytics, subscriptions, notifications, admin, teacher, promo, site_feedback
+from middleware.security import SecurityMiddleware, AuditLogMiddleware
 
 # Configure logging
 logging.basicConfig(
@@ -56,6 +57,13 @@ app = FastAPI(
     redoc_url="/api/redoc" if settings.DEBUG else None,
     lifespan=lifespan
 )
+
+# Security Middleware (must be added first to wrap all requests)
+# Add security headers and abuse protection
+app.add_middleware(SecurityMiddleware)
+
+# Audit logging for state-changing operations
+app.add_middleware(AuditLogMiddleware)
 
 # CORS Configuration
 app.add_middleware(
@@ -133,6 +141,8 @@ app.include_router(subscriptions.router, prefix="/api/v1", tags=["Subscriptions"
 app.include_router(notifications.router, prefix="/api/v1", tags=["Notifications"])
 app.include_router(admin.router, prefix="/api/v1", tags=["Admin"])
 app.include_router(teacher.router, prefix="/api/v1/teacher", tags=["Teacher"])
+app.include_router(promo.router, prefix="/api/v1", tags=["Promo Codes"])
+app.include_router(site_feedback.router, prefix="/api/v1", tags=["Site Feedback"])
 
 
 @app.get("/")

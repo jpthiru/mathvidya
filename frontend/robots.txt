@@ -1,0 +1,25 @@
+# Mathvidya Robots.txt
+# https://mathvidya.com
+
+User-agent: *
+Allow: /
+
+# Disallow authenticated/private pages
+Disallow: /student/
+Disallow: /teacher/
+Disallow: /admin/
+Disallow: /api/
+
+# Allow public pages
+Allow: /index.html
+Allow: /login.html
+Allow: /register.html
+Allow: /privacy-policy.html
+Allow: /terms-and-conditions.html
+Allow: /refund-policy.html
+
+# Sitemap location
+Sitemap: https://mathvidya.com/sitemap.xml
+
+# Crawl delay (optional - be nice to server)
+Crawl-delay: 1

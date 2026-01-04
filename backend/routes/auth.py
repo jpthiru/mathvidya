@@ -4,13 +4,15 @@ Authentication Routes
 User registration, login, and authentication endpoints.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 import bcrypt
 from datetime import datetime, timedelta, timezone
 import logging
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from database import get_session
 from models import User, EmailVerification
@@ -36,6 +38,9 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+# Stricter rate limiter for auth endpoints
+auth_limiter = Limiter(key_func=get_remote_address)
+
 
 def hash_password(password: str) -> str:
     """Hash a password using bcrypt"""
@@ -56,8 +61,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 @router.post("/auth/register", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
+@auth_limiter.limit("5/minute")  # Strict limit: 5 registrations per minute per IP
 async def register(
-    request: RegisterRequest,
+    request: Request,  # Required for rate limiter
+    register_request: RegisterRequest,
     session: AsyncSession = Depends(get_session)
 ):
     """
@@ -70,47 +77,49 @@ async def register(
     - **last_name**: User's last name
     - **student_class**: Required for students (X or XII)
     """
-    
+
     # Check if email already exists
     result = await session.execute(
-        select(User).where(User.email == request.email)
+        select(User).where(User.email == register_request.email)
     )
     existing_user = result.scalar_one_or_none()
-    
+
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    
+
     # Hash password
-    password_hash = hash_password(request.password)
+    password_hash = hash_password(register_request.password)
 
     # Get role value (handle both enum and string)
-    role_value = request.role.value if hasattr(request.role, 'value') else str(request.role)
-    is_student = role_value == 'student' or request.role == UserRole.STUDENT
+    role_value = register_request.role.value if hasattr(register_request.role, 'value') else str(register_request.role)
+    is_student = role_value == 'student' or register_request.role == UserRole.STUDENT
 
     # Create new user
     new_user = User(
-        email=request.email,
+        email=register_request.email,
         password_hash=password_hash,
         role=role_value,
-        first_name=request.first_name,
-        last_name=request.last_name,
-        phone=request.phone,
-        student_class=request.student_class if is_student else None,
-        school_name=request.school_name if is_student else None,
+        first_name=register_request.first_name,
+        last_name=register_request.last_name,
+        phone=register_request.phone,
+        student_class=register_request.student_class if is_student else None,
+        school_name=register_request.school_name if is_student else None,
     )
-    
+
     session.add(new_user)
     await session.commit()
     await session.refresh(new_user)
-    
+
     return new_user.to_dict()
 
 
 @router.post("/auth/login", response_model=TokenResponse)
+@auth_limiter.limit("10/minute")  # Strict limit: 10 login attempts per minute per IP
 async def login(
+    request: Request,  # Required for rate limiter
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_session)
 ):
@@ -306,8 +315,10 @@ async def send_verification_code(
 
 
 @router.post("/auth/verify-email", response_model=VerificationResponse)
+@auth_limiter.limit("10/minute")  # Limit verification attempts
 async def verify_email(
-    request: VerifyEmailRequest,
+    request: Request,
+    verify_request: VerifyEmailRequest,
     session: AsyncSession = Depends(get_session)
 ):
     """
@@ -319,7 +330,7 @@ async def verify_email(
     result = await session.execute(
         select(EmailVerification).where(
             and_(
-                EmailVerification.email == request.email,
+                EmailVerification.email == verify_request.email,
                 EmailVerification.verification_type == "registration",
                 EmailVerification.verified_at.is_(None)
             )
@@ -348,7 +359,7 @@ async def verify_email(
         )
 
     # Verify code
-    if verification.code != request.code:
+    if verification.code != verify_request.code:
         verification.attempts += 1
         await session.commit()
 
@@ -362,7 +373,7 @@ async def verify_email(
     verification.verified_at = datetime.now(timezone.utc)
     await session.commit()
 
-    logger.info(f"Email verified successfully: {request.email}")
+    logger.info(f"Email verified successfully: {verify_request.email}")
 
     return VerificationResponse(
         success=True,
@@ -371,8 +382,10 @@ async def verify_email(
 
 
 @router.post("/auth/resend-verification", response_model=VerificationResponse)
+@auth_limiter.limit("3/minute")  # Very strict - prevent email bombing
 async def resend_verification_code(
-    request: ResendVerificationRequest,
+    request: Request,
+    resend_request: ResendVerificationRequest,
     session: AsyncSession = Depends(get_session)
 ):
     """
@@ -385,8 +398,8 @@ async def resend_verification_code(
     result = await session.execute(
         select(EmailVerification).where(
             and_(
-                EmailVerification.email == request.email,
-                EmailVerification.verification_type == request.verification_type,
+                EmailVerification.email == resend_request.email,
+                EmailVerification.verification_type == resend_request.verification_type,
                 EmailVerification.created_at > five_minutes_ago
             )
         )
@@ -408,9 +421,9 @@ async def resend_verification_code(
 
     # Create new verification record
     verification = EmailVerification(
-        email=request.email,
+        email=resend_request.email,
         code=code,
-        verification_type=request.verification_type,
+        verification_type=resend_request.verification_type,
         expires_at=expires_at,
     )
 
@@ -419,13 +432,13 @@ async def resend_verification_code(
 
     # We need the first_name for the email - use a generic greeting
     email_sent = email_service.send_verification_email(
-        to_email=request.email,
+        to_email=resend_request.email,
         code=code,
         first_name="User"  # Generic since we don't have first name for resend
     )
 
     if not email_sent:
-        logger.error(f"Failed to resend verification email to {request.email}")
+        logger.error(f"Failed to resend verification email to {resend_request.email}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to send verification email. Please try again later."
@@ -517,8 +530,10 @@ async def register_with_verification(
 
 
 @router.post("/auth/forgot-password", response_model=VerificationResponse)
+@auth_limiter.limit("3/minute")  # Strict - prevent email bombing
 async def forgot_password(
-    request: ResendVerificationRequest,
+    request: Request,
+    forgot_request: ResendVerificationRequest,
     session: AsyncSession = Depends(get_session)
 ):
     """
@@ -528,7 +543,7 @@ async def forgot_password(
     """
     # Check if user exists
     result = await session.execute(
-        select(User).where(User.email == request.email)
+        select(User).where(User.email == forgot_request.email)
     )
     user = result.scalar_one_or_none()
 
@@ -545,7 +560,7 @@ async def forgot_password(
     result = await session.execute(
         select(EmailVerification).where(
             and_(
-                EmailVerification.email == request.email,
+                EmailVerification.email == forgot_request.email,
                 EmailVerification.verification_type == "password_reset",
                 EmailVerification.created_at > five_minutes_ago
             )
@@ -568,7 +583,7 @@ async def forgot_password(
 
     # Create verification record
     verification = EmailVerification(
-        email=request.email,
+        email=forgot_request.email,
         user_id=user.user_id,
         code=code,
         verification_type="password_reset",
@@ -580,13 +595,13 @@ async def forgot_password(
 
     # Send password reset email
     email_sent = email_service.send_password_reset_email(
-        to_email=request.email,
+        to_email=forgot_request.email,
         code=code,
         first_name=user.first_name
     )
 
     if not email_sent:
-        logger.error(f"Failed to send password reset email to {request.email}")
+        logger.error(f"Failed to send password reset email to {forgot_request.email}")
         # Still return success to not reveal email existence
         return VerificationResponse(
             success=True,
@@ -602,8 +617,10 @@ async def forgot_password(
 
 
 @router.post("/auth/reset-password", response_model=VerificationResponse)
+@auth_limiter.limit("5/minute")  # Limit password reset attempts
 async def reset_password(
-    request: ResetPasswordRequest,
+    request: Request,
+    reset_request: ResetPasswordRequest,
     session: AsyncSession = Depends(get_session)
 ):
     """
@@ -615,7 +632,7 @@ async def reset_password(
     result = await session.execute(
         select(EmailVerification).where(
             and_(
-                EmailVerification.email == request.email,
+                EmailVerification.email == reset_request.email,
                 EmailVerification.verification_type == "password_reset",
                 EmailVerification.verified_at.is_(None)
             )
@@ -644,7 +661,7 @@ async def reset_password(
         )
 
     # Verify code
-    if verification.code != request.code:
+    if verification.code != reset_request.code:
         verification.attempts += 1
         await session.commit()
 
@@ -659,7 +676,7 @@ async def reset_password(
 
     # Update user password
     result = await session.execute(
-        select(User).where(User.email == request.email)
+        select(User).where(User.email == reset_request.email)
     )
     user = result.scalar_one_or_none()
 
@@ -669,12 +686,12 @@ async def reset_password(
             detail="User not found"
         )
 
-    user.password_hash = hash_password(request.new_password)
+    user.password_hash = hash_password(reset_request.new_password)
     user.updated_at = datetime.now(timezone.utc)
 
     await session.commit()
 
-    logger.info(f"Password reset successfully for {request.email}")
+    logger.info(f"Password reset successfully for {reset_request.email}")
 
     return VerificationResponse(
         success=True,

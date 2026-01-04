@@ -3,10 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mathvidya - Master CBSE Mathematics Online</title>
-    <meta name="description" content="Practice unlimited CBSE board exam questions online. Get expert guidance, real-time evaluation, and track your progress with AI-powered analytics.">
+    <title>Mathvidya - Master CBSE Mathematics Online | Practice Board Exam Questions</title>
+    <meta name="description" content="Practice unlimited CBSE board exam questions online for Class X and XII. Get expert teacher evaluation, real-time analytics, and predicted board scores. Join 50,000+ students.">
+
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="CBSE mathematics, board exam practice, Class 10 maths, Class 12 maths, MCQ practice, online math tutor, CBSE questions, math practice India">
+    <meta name="author" content="Mathvidya">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://mathvidya.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mathvidya.com/">
+    <meta property="og:title" content="Mathvidya - Master CBSE Mathematics Online">
+    <meta property="og:description" content="Practice unlimited CBSE board exam questions online. Expert teacher evaluation, real-time analytics, and predicted board scores.">
+    <meta property="og:image" content="https://mathvidya.com/images/og-image.png">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:site_name" content="Mathvidya">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://mathvidya.com/">
+    <meta name="twitter:title" content="Mathvidya - Master CBSE Mathematics Online">
+    <meta name="twitter:description" content="Practice unlimited CBSE board exam questions online. Expert teacher evaluation and real-time analytics.">
+    <meta name="twitter:image" content="https://mathvidya.com/images/og-image.png">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "Mathvidya",
+        "url": "https://mathvidya.com",
+        "logo": "https://mathvidya.com/images/logo.png",
+        "description": "Online CBSE Mathematics practice platform for Class X and XII students",
+        "sameAs": [],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-979-136-8540",
+            "contactType": "customer service",
+            "email": "support@mathvidya.com",
+            "availableLanguage": ["English", "Hindi"]
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IN"
+        }
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
     <link rel="stylesheet" href="css/landing.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Analytics -->
+    <script src="js/analytics.js" defer></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -597,6 +652,96 @@
         </div>
     </section>
 
+    <!-- Promotional Banner -->
+    <section class="promo-banner" id="promo-banner">
+        <div class="container">
+            <div class="promo-content">
+                <div class="promo-icon">&#127881;</div>
+                <div class="promo-text">
+                    <h3>Limited Time Offer!</h3>
+                    <p>Use code <strong id="promo-code-display">MATHSTART</strong> at signup for <strong>14 days free trial</strong></p>
+                </div>
+                <button class="promo-copy-btn" onclick="copyPromoCode()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy Code
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .promo-banner {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            padding: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .promo-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .promo-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        .promo-icon {
+            font-size: 2rem;
+        }
+        .promo-text {
+            text-align: center;
+            color: white;
+        }
+        .promo-text h3 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.25rem;
+            color: white;
+        }
+        .promo-text p {
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+        .promo-text strong {
+            color: #fef08a;
+        }
+        .promo-copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: white;
+            color: #059669;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .promo-copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        @media (max-width: 640px) {
+            .promo-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+
     <!-- Pricing Section -->
     <section class="pricing" id="pricing">
         <div class="container">
@@ -806,6 +951,23 @@
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('animate-in'); });
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
         document.querySelectorAll('.feature-card, .mode-card, .step, .testimonial-card, .pricing-card, .stat-card').forEach(el => observer.observe(el));
+
+        // Copy promo code to clipboard
+        function copyPromoCode() {
+            const code = document.getElementById('promo-code-display').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('.promo-copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+                btn.style.background = '#10b981';
+                btn.style.color = 'white';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'white';
+                    btn.style.color = '#059669';
+                }, 2000);
+            });
+        }
     </script>
 </body>
 </html>

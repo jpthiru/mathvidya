@@ -52,6 +52,12 @@ from models.email_verification import EmailVerification
 # Feedback
 from models.feedback import ExamFeedback, QuestionFeedback, FeedbackType, FeedbackStatus
 
+# Site Feedback
+from models.site_feedback import SiteFeedback, FeedbackCategory, FeedbackStatus as SiteFeedbackStatus
+
+# Promo Codes
+from models.promo_code import PromoCode, PromoCodeUsage, PromoType
+
 # Export all models
 __all__ = [
     # Enums
@@ -88,4 +94,12 @@ __all__ = [
     "QuestionFeedback",
     "FeedbackType",
     "FeedbackStatus",
+    # Site Feedback
+    "SiteFeedback",
+    "FeedbackCategory",
+    "SiteFeedbackStatus",
+    # Promo Codes
+    "PromoCode",
+    "PromoCodeUsage",
+    "PromoType",
 ]
