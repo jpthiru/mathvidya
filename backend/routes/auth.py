@@ -69,7 +69,7 @@ async def register(
 ):
     """
     Register a new user
-    
+
     - **email**: Valid email address (unique)
     - **password**: Minimum 8 characters
     - **role**: student, parent, teacher, or admin
@@ -77,6 +77,18 @@ async def register(
     - **last_name**: User's last name
     - **student_class**: Required for students (X or XII)
     """
+    from services.recaptcha_service import verify_recaptcha, get_recaptcha_token_from_request
+
+    # Verify reCAPTCHA token
+    recaptcha_token = get_recaptcha_token_from_request(request)
+    is_valid, score, error_msg = await verify_recaptcha(recaptcha_token, expected_action="register")
+
+    if not is_valid:
+        logger.warning(f"reCAPTCHA verification failed for registration: {register_request.email}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_msg or "reCAPTCHA verification failed"
+        )
 
     # Check if email already exists
     result = await session.execute(
@@ -132,6 +144,18 @@ async def login(
 
     Returns JWT token valid for 24 hours
     """
+    from services.recaptcha_service import verify_recaptcha, get_recaptcha_token_from_request
+
+    # Verify reCAPTCHA token
+    recaptcha_token = get_recaptcha_token_from_request(request)
+    is_valid, score, error_msg = await verify_recaptcha(recaptcha_token, expected_action="login")
+
+    if not is_valid:
+        logger.warning(f"reCAPTCHA verification failed for login attempt: {form_data.username}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_msg or "reCAPTCHA verification failed"
+        )
 
     # Find user by email (OAuth2 uses 'username' field for email)
     result = await session.execute(

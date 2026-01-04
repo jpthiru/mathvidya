@@ -91,6 +91,11 @@ class Settings(BaseSettings):
     WORKING_HOURS_START: int = 9  # 9 AM
     WORKING_HOURS_END: int = 18  # 6 PM
 
+    # reCAPTCHA Configuration
+    RECAPTCHA_SECRET_KEY: str = ""  # Get from Google reCAPTCHA admin console
+    RECAPTCHA_MIN_SCORE: float = 0.5  # Minimum score to pass (0.0-1.0, higher = more likely human)
+    RECAPTCHA_ENABLED: bool = True  # Enable/disable reCAPTCHA verification
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

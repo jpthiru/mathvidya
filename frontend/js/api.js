@@ -127,17 +127,23 @@ class ApiClient {
     return data;
   }
 
-  async login(email, password) {
+  async login(email, password, recaptchaToken = null) {
     // FastAPI OAuth2 expects form data
     const formData = new URLSearchParams();
     formData.append('username', email); // FastAPI OAuth2 uses 'username' field
     formData.append('password', password);
 
+    // Add reCAPTCHA token if provided
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    if (recaptchaToken) {
+      headers['X-Recaptcha-Token'] = recaptchaToken;
+    }
+
     const response = await fetch(`${this.baseURL}/auth/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: headers,
       body: formData,
     });
 
@@ -367,6 +373,16 @@ class ApiClient {
 
   async getStudentDashboardById(studentId) {
     return this.get(`/analytics/dashboard/student/${studentId}`);
+  }
+
+  // ==================== Chatbot ====================
+
+  async sendChatMessage(message) {
+    return this.post('/chat/', { message });
+  }
+
+  async getChatSuggestions() {
+    return this.get('/chat/suggestions');
   }
 }
 

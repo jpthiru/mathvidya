@@ -17,7 +17,7 @@ import logging
 
 from config.settings import settings
 from database import engine
-from routes import auth, exams, questions, evaluations, analytics, subscriptions, notifications, admin, teacher, promo, site_feedback
+from routes import auth, exams, questions, evaluations, analytics, subscriptions, notifications, admin, teacher, promo, site_feedback, chatbot
 from middleware.security import SecurityMiddleware, AuditLogMiddleware
 
 # Configure logging
@@ -143,6 +143,7 @@ app.include_router(admin.router, prefix="/api/v1", tags=["Admin"])
 app.include_router(teacher.router, prefix="/api/v1/teacher", tags=["Teacher"])
 app.include_router(promo.router, prefix="/api/v1", tags=["Promo Codes"])
 app.include_router(site_feedback.router, prefix="/api/v1", tags=["Site Feedback"])
+app.include_router(chatbot.router, prefix="/api/v1", tags=["Chatbot"])
 
 
 @app.get("/")
