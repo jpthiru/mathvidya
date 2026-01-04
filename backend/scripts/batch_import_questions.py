@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 """
-Batch Import Questions from Excel
+Batch Import Questions from Excel/CSV
 
-This script imports questions from Excel files into the Mathvidya database.
+This script imports questions from Excel or CSV files into the Mathvidya database.
 All imported questions are marked as is_verified=false for manual verification.
 
+Features:
+- Supports both Excel (.xlsx, .xls) and CSV (.csv) files
+- Deduplication: Skips questions that already exist in the database
+- Dry-run mode to preview changes without modifying database
+
 Usage:
-    python scripts/batch_import_questions.py <excel_file_path>
+    python scripts/batch_import_questions.py <file_path> [--dry-run]
 
 Example:
     python scripts/batch_import_questions.py ../Data-BatchUpload/MCQ-ClassXII-Batch1.xlsx
+    python scripts/batch_import_questions.py ../Data-BatchUpload/MCQ-ClassXII-Generated.csv
+    python scripts/batch_import_questions.py ../Data-BatchUpload/MCQ-ClassXII-Generated.csv --dry-run
 """
 
 import sys
@@ -17,6 +24,8 @@ import os
 import asyncio
 import uuid
 import json
+import re
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -29,6 +38,25 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from config.settings import settings
+
+
+def normalize_text(text: str) -> str:
+    """Normalize text for comparison by removing extra whitespace and lowercasing."""
+    if not text:
+        return ""
+    # Remove extra whitespace, normalize to lowercase
+    text = re.sub(r'\s+', ' ', text.strip().lower())
+    return text
+
+
+def compute_question_hash(question_text: str, class_level: str, unit: str) -> str:
+    """
+    Compute a hash for deduplication based on normalized question text, class, and unit.
+    This allows detecting duplicate questions even with minor formatting differences.
+    """
+    normalized = normalize_text(question_text)
+    key = f"{class_level}|{unit}|{normalized}"
+    return hashlib.md5(key.encode()).hexdigest()
 
 
 def parse_correct_option(value: str) -> tuple:
@@ -118,17 +146,20 @@ def process_excel_row(row: pd.Series) -> dict:
     # Get marks (default 1 for MCQ)
     marks = int(row.get('Marks', 1)) if pd.notna(row.get('Marks')) else 1
 
+    question_text = clean_text(row.get('Question Text in LaTeX'))
+    unit = clean_text(row.get('Chapter/Unit')) or 'General'
+
     question = {
         'question_id': str(uuid.uuid4()),
         'version': 1,
         'class_level': class_level,
-        'unit': clean_text(row.get('Chapter/Unit')) or 'General',
+        'unit': unit,
         'chapter': None,  # Excel doesn't have separate chapter
         'topic': clean_text(row.get('Topic')),
         'question_type': map_question_type(row.get('Question Type')),
         'marks': marks,
         'difficulty': map_difficulty(row.get('Difficulty')),
-        'question_text': clean_text(row.get('Question Text in LaTeX')),
+        'question_text': question_text,
         'question_image_url': clean_text(row.get('image')),
         'diagram_image_url': None,
         'options': options,
@@ -144,22 +175,34 @@ def process_excel_row(row: pd.Series) -> dict:
         'created_by_user_id': None,  # System import
         'created_at': datetime.now(timezone.utc),
         'updated_at': datetime.now(timezone.utc),
+        # Hash for deduplication
+        'content_hash': compute_question_hash(question_text, class_level, unit),
     }
 
     return question
 
 
-async def import_questions(excel_path: str, dry_run: bool = False):
-    """Import questions from Excel file to database."""
+async def import_questions(file_path: str, dry_run: bool = False):
+    """Import questions from Excel or CSV file to database with deduplication."""
 
-    # Read Excel file
-    print(f"Reading Excel file: {excel_path}")
-    df = pd.read_excel(excel_path)
-    print(f"Found {len(df)} rows in Excel file")
+    # Read file based on extension
+    print(f"Reading file: {file_path}")
+    file_ext = Path(file_path).suffix.lower()
+
+    if file_ext == '.csv':
+        df = pd.read_csv(file_path)
+    elif file_ext in ['.xlsx', '.xls']:
+        df = pd.read_excel(file_path)
+    else:
+        raise ValueError(f"Unsupported file format: {file_ext}. Use .csv, .xlsx, or .xls")
+
+    print(f"Found {len(df)} rows in file")
 
     # Process rows
     questions = []
     errors = []
+    file_hashes = set()  # Track hashes within the file for in-file deduplication
+    file_duplicates = 0
 
     for idx, row in df.iterrows():
         try:
@@ -178,12 +221,21 @@ async def import_questions(excel_path: str, dry_run: bool = False):
                     errors.append(f"Row {idx + 2}: Missing one or more options for MCQ")
                     continue
 
+            # Check for in-file duplicates
+            if question['content_hash'] in file_hashes:
+                file_duplicates += 1
+                errors.append(f"Row {idx + 2}: Duplicate of another row in file (skipped)")
+                continue
+
+            file_hashes.add(question['content_hash'])
             questions.append(question)
 
         except Exception as e:
             errors.append(f"Row {idx + 2}: Error processing - {str(e)}")
 
-    print(f"\nProcessed {len(questions)} valid questions")
+    print(f"\nProcessed {len(questions)} valid unique questions")
+    if file_duplicates > 0:
+        print(f"  Skipped {file_duplicates} duplicate rows within the file")
     if errors:
         print(f"Skipped {len(errors)} rows with errors:")
         for err in errors[:10]:  # Show first 10 errors
@@ -207,12 +259,50 @@ async def import_questions(excel_path: str, dry_run: bool = False):
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     async with async_session() as session:
+        # Fetch existing question hashes from database for deduplication
+        print("Checking for existing questions in database...")
+        existing_hashes = set()
+
+        # We'll compute hashes for existing questions
+        # Query existing questions grouped by class and unit to compute hashes
+        result = await session.execute(text("""
+            SELECT class, unit, question_text FROM questions WHERE status = 'active'
+        """))
+        existing_questions = result.fetchall()
+
+        for row in existing_questions:
+            class_level, unit, question_text = row
+            if question_text:
+                hash_val = compute_question_hash(question_text, class_level or '', unit or '')
+                existing_hashes.add(hash_val)
+
+        print(f"  Found {len(existing_hashes)} existing questions in database")
+
+        # Filter out questions that already exist in database
+        new_questions = []
+        db_duplicates = 0
+        for q in questions:
+            if q['content_hash'] in existing_hashes:
+                db_duplicates += 1
+            else:
+                new_questions.append(q)
+                existing_hashes.add(q['content_hash'])  # Prevent duplicates within batch
+
+        if db_duplicates > 0:
+            print(f"  Skipping {db_duplicates} questions that already exist in database")
+
+        if not new_questions:
+            print("\n⚠ No new questions to import (all are duplicates)")
+            return
+
+        print(f"\nImporting {len(new_questions)} new questions...")
+
         # Insert questions in batches
         batch_size = 50
         inserted_count = 0
 
-        for i in range(0, len(questions), batch_size):
-            batch = questions[i:i + batch_size]
+        for i in range(0, len(new_questions), batch_size):
+            batch = new_questions[i:i + batch_size]
 
             for q in batch:
                 # Build INSERT statement
@@ -270,29 +360,33 @@ async def import_questions(excel_path: str, dry_run: bool = False):
                 inserted_count += 1
 
             await session.commit()
-            print(f"Inserted batch {i // batch_size + 1}: {inserted_count} / {len(questions)} questions")
+            print(f"  Inserted batch {i // batch_size + 1}: {inserted_count} / {len(new_questions)} questions")
 
-        print(f"\n✓ Successfully imported {inserted_count} questions")
-        print(f"  All questions marked as is_verified=false")
+        print(f"\n✓ Successfully imported {inserted_count} new questions")
+        if db_duplicates > 0:
+            print(f"  Skipped {db_duplicates} duplicates (already in database)")
+        print(f"  All new questions marked as is_verified=false")
         print(f"  Use the Verify Questions page to review and verify them")
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python batch_import_questions.py <excel_file_path> [--dry-run]")
+        print("Usage: python batch_import_questions.py <file_path> [--dry-run]")
+        print("\nSupported formats: .csv, .xlsx, .xls")
         print("\nExample:")
         print("  python batch_import_questions.py ../Data-BatchUpload/MCQ-ClassXII-Batch1.xlsx")
-        print("  python batch_import_questions.py ../Data-BatchUpload/MCQ-ClassXII-Batch1.xlsx --dry-run")
+        print("  python batch_import_questions.py ../Data-BatchUpload/MCQ-ClassXII-Generated.csv")
+        print("  python batch_import_questions.py ../Data-BatchUpload/MCQ-ClassXII-Generated.csv --dry-run")
         sys.exit(1)
 
-    excel_path = sys.argv[1]
+    file_path = sys.argv[1]
     dry_run = '--dry-run' in sys.argv
 
-    if not os.path.exists(excel_path):
-        print(f"Error: File not found: {excel_path}")
+    if not os.path.exists(file_path):
+        print(f"Error: File not found: {file_path}")
         sys.exit(1)
 
-    asyncio.run(import_questions(excel_path, dry_run))
+    asyncio.run(import_questions(file_path, dry_run))
 
 
 if __name__ == '__main__':
