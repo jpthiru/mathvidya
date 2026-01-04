@@ -58,6 +58,12 @@ from models.site_feedback import SiteFeedback, FeedbackCategory, FeedbackStatus 
 # Promo Codes
 from models.promo_code import PromoCode, PromoCodeUsage, PromoType
 
+# Payment System
+from models.payment import Payment, PaymentStatus, PaymentMethod
+from models.invoice import Invoice
+from models.discount_code import DiscountCode, DiscountType
+from models.discount_code_usage import DiscountCodeUsage
+
 # Export all models
 __all__ = [
     # Enums
@@ -102,4 +108,12 @@ __all__ = [
     "PromoCode",
     "PromoCodeUsage",
     "PromoType",
+    # Payment System
+    "Payment",
+    "PaymentStatus",
+    "PaymentMethod",
+    "Invoice",
+    "DiscountCode",
+    "DiscountType",
+    "DiscountCodeUsage",
 ]
