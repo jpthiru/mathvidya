@@ -1,6 +1,6 @@
 """Routes module - API endpoints"""
 
-from . import auth, exams, questions, evaluations, analytics, subscriptions, notifications, teacher, admin, promo, site_feedback, chatbot, discount_codes, invoices
+from . import auth, exams, questions, evaluations, analytics, subscriptions, notifications, teacher, admin, promo, site_feedback, chatbot, discount_codes, invoices, subscription_usage
 
 __all__ = [
     "auth",
@@ -16,5 +16,6 @@ __all__ = [
     "site_feedback",
     "chatbot",
     "discount_codes",
-    "invoices"
+    "invoices",
+    "subscription_usage"
 ]
