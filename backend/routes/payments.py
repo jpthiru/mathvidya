@@ -2,8 +2,6 @@
 Payment Routes - Razorpay Integration
 
 API endpoints for payment processing with Razorpay Standard Checkout.
-
-TODO: Add actual Razorpay credentials (key_id, key_secret) when available.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
@@ -13,23 +11,22 @@ from database import get_session
 from models import Payment, User, SubscriptionPlan, Subscription, DiscountCode, DiscountCodeUsage
 from dependencies.auth import get_current_active_user
 from services.invoice_generator import InvoiceGenerator
+from config.settings import settings
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta
 from decimal import Decimal
 import uuid
-import hmac
-import hashlib
+import razorpay
+import logging
 
-# TODO: Import razorpay when credentials are available
-# import razorpay
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/payments", tags=["Payments"])
 
-
-# TODO: Replace with actual credentials from environment variables
-RAZORPAY_KEY_ID = "rzp_test_XXXXXXXXXX"  # TODO: Get from settings
-RAZORPAY_KEY_SECRET = "YOUR_KEY_SECRET"  # TODO: Get from settings
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+razorpay_client.set_app_details({"title": "Mathvidya", "version": "1.0.0"})
 
 
 class CreateOrderRequest(BaseModel):
@@ -139,27 +136,28 @@ async def create_razorpay_order(
     # Convert to paise for Razorpay (INR smallest unit)
     amount_paise = int(total_amount * 100)
 
-    # TODO: Create actual Razorpay order
-    # client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-    # razorpay_order = client.order.create({
-    #     "amount": amount_paise,
-    #     "currency": "INR",
-    #     "receipt": f"order_{current_user.user_id}_{datetime.utcnow().timestamp()}",
-    #     "notes": {
-    #         "plan_type": request.plan_type,
-    #         "user_id": str(current_user.user_id),
-    #         "discount_code": request.discount_code or ""
-    #     }
-    # })
-
-    # STUB: Generate mock order ID
-    razorpay_order_id = f"order_stub_{uuid.uuid4().hex[:10]}"
-    razorpay_order_response = {
-        "id": razorpay_order_id,
-        "amount": amount_paise,
-        "currency": "INR",
-        "status": "created"
-    }
+    # Create Razorpay order
+    try:
+        razorpay_order = razorpay_client.order.create({
+            "amount": amount_paise,
+            "currency": "INR",
+            "receipt": f"order_{current_user.user_id}_{int(datetime.utcnow().timestamp())}",
+            "notes": {
+                "plan_type": request.plan_type,
+                "user_id": str(current_user.user_id),
+                "user_email": current_user.email,
+                "discount_code": request.discount_code or ""
+            }
+        })
+        razorpay_order_id = razorpay_order['id']
+        razorpay_order_response = razorpay_order
+        logger.info(f"Razorpay order created: {razorpay_order_id} for user {current_user.user_id}")
+    except Exception as e:
+        logger.error(f"Razorpay order creation failed: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create payment order: {str(e)}"
+        )
 
     # Create payment record
     payment = Payment(
@@ -189,7 +187,7 @@ async def create_razorpay_order(
         razorpay_order_id=razorpay_order_id,
         amount_inr=float(total_amount),
         currency="INR",
-        razorpay_key_id=RAZORPAY_KEY_ID,
+        razorpay_key_id=settings.RAZORPAY_KEY_ID,
         base_amount_inr=float(base_amount),
         discount_amount_inr=float(discount_amount),
         gst_amount_inr=float(gst_amount),
@@ -238,21 +236,20 @@ async def verify_payment(
             detail="Unauthorized"
         )
 
-    # TODO: Verify signature with actual Razorpay secret
-    # generated_signature = hmac.new(
-    #     RAZORPAY_KEY_SECRET.encode(),
-    #     f"{request.razorpay_order_id}|{request.razorpay_payment_id}".encode(),
-    #     hashlib.sha256
-    # ).hexdigest()
-    #
-    # if generated_signature != request.razorpay_signature:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         detail="Invalid payment signature"
-    #     )
-
-    # STUB: Accept signature for testing
-    # In production, uncomment the verification above
+    # Verify payment signature using Razorpay SDK
+    try:
+        razorpay_client.utility.verify_payment_signature({
+            'razorpay_order_id': request.razorpay_order_id,
+            'razorpay_payment_id': request.razorpay_payment_id,
+            'razorpay_signature': request.razorpay_signature
+        })
+        logger.info(f"Payment signature verified successfully for order {request.razorpay_order_id}")
+    except razorpay.errors.SignatureVerificationError as e:
+        logger.error(f"Payment signature verification failed: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid payment signature. Payment verification failed."
+        )
 
     # Update payment status
     payment.razorpay_payment_id = request.razorpay_payment_id

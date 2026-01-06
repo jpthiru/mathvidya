@@ -96,6 +96,11 @@ class Settings(BaseSettings):
     RECAPTCHA_MIN_SCORE: float = 0.5  # Minimum score to pass (0.0-1.0, higher = more likely human)
     RECAPTCHA_ENABLED: bool = True  # Enable/disable reCAPTCHA verification
 
+    # Razorpay Payment Gateway
+    RAZORPAY_KEY_ID: str = "rzp_test_S05E2ZUm4pPSkj"  # Test environment
+    RAZORPAY_KEY_SECRET: str = "m2iVbs9KX54MhOqNNsTJv2Vo"  # Test environment
+    RAZORPAY_WEBHOOK_SECRET: str = ""  # For webhook signature verification (optional)
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
