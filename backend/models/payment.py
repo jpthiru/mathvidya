@@ -74,9 +74,6 @@ class Payment(Base):
     sgst_inr = Column(Numeric(10, 2))  # State GST (9%)
     igst_inr = Column(Numeric(10, 2))  # Integrated GST (18% for inter-state)
 
-    # Invoice reference
-    invoice_id = Column(UUID(as_uuid=True), ForeignKey("invoices.id"), index=True)
-
     # Refund tracking
     is_refunded = Column(String(10), default="false")  # "true"/"false" as string for consistency
     refund_amount_inr = Column(Numeric(10, 2), default=0)
@@ -100,7 +97,7 @@ class Payment(Base):
     # Relationships
     user = relationship("User", backref="payments")
     plan = relationship("SubscriptionPlan", foreign_keys=[plan_type])
-    invoice = relationship("Invoice", foreign_keys=[invoice_id], backref="payment", uselist=False)
+    invoice = relationship("Invoice", backref="payment", uselist=False)
 
     def is_successful(self) -> bool:
         """Check if payment was successful"""

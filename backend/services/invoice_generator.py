@@ -140,7 +140,7 @@ class InvoiceGenerator:
         if not payment:
             raise ValueError(f"Payment {payment_id} not found")
 
-        if payment.invoice_id:
+        if payment.invoice:
             raise ValueError(f"Payment {payment_id} already has an invoice")
 
         # Get user details
@@ -237,10 +237,7 @@ class InvoiceGenerator:
 
         self.db.add(invoice)
 
-        # Update payment with invoice reference
-        payment.invoice_id = invoice.id
-
-        # Commit both changes
+        # Commit changes (relationship will be established automatically via payment_id)
         await self.db.commit()
         await self.db.refresh(invoice)
 

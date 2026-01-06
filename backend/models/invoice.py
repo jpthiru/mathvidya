@@ -29,7 +29,7 @@ class Invoice(Base):
     # References
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False, index=True)
     payment_id = Column(UUID(as_uuid=True), ForeignKey("payments.id"), nullable=False, unique=True)
-    subscription_id = Column(UUID(as_uuid=True), ForeignKey("user_subscriptions.id"))
+    subscription_id = Column(UUID(as_uuid=True), ForeignKey("subscriptions.subscription_id"))
 
     # Invoice details
     invoice_date = Column(String(100), nullable=False, default=lambda: datetime.utcnow().isoformat())
