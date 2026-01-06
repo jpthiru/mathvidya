@@ -315,21 +315,24 @@ async def send_verification_code(
     session.add(verification)
     await session.commit()
 
-    # Send verification email
-    email_sent = email_service.send_verification_email(
-        to_email=request.email,
-        code=code,
-        first_name=request.first_name
-    )
-
-    if not email_sent:
-        logger.error(f"Failed to send verification email to {request.email}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to send verification email. Please try again later."
+    # Send verification email (if enabled)
+    if settings.EMAIL_VERIFICATION_ENABLED:
+        email_sent = email_service.send_verification_email(
+            to_email=request.email,
+            code=code,
+            first_name=request.first_name
         )
 
-    logger.info(f"Verification code sent to {request.email}")
+        if not email_sent:
+            logger.error(f"Failed to send verification email to {request.email}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to send verification email. Please try again later."
+            )
+
+        logger.info(f"Verification code sent to {request.email}")
+    else:
+        logger.warning(f"Email verification disabled - code {code} for {request.email} (DEV MODE)")
 
     return VerificationResponse(
         success=True,

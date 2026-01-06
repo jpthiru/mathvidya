@@ -71,6 +71,7 @@ class Settings(BaseSettings):
     SMTP_USE_TLS: bool = True  # Gmail requires TLS
 
     # Email Verification
+    EMAIL_VERIFICATION_ENABLED: bool = False  # Disable for testing without SMTP credentials
     EMAIL_VERIFICATION_EXPIRE_MINUTES: int = 15  # OTP expires in 15 minutes
     EMAIL_VERIFICATION_MAX_ATTEMPTS: int = 3  # Max wrong attempts before new code required
 
