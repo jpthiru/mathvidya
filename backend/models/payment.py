@@ -100,7 +100,7 @@ class Payment(Base):
     # Relationships
     user = relationship("User", backref="payments")
     plan = relationship("SubscriptionPlan", foreign_keys=[plan_type])
-    invoice = relationship("Invoice", backref="payment", uselist=False)
+    invoice = relationship("Invoice", foreign_keys=[invoice_id], backref="payment", uselist=False)
 
     def is_successful(self) -> bool:
         """Check if payment was successful"""
