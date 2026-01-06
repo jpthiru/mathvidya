@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Checkout - Mathvidya</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .checkout-container {
+            max-width: 600px;
+            margin: 4rem auto;
+            padding: 2rem;
+        }
+
+        .plan-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .plan-summary h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.75rem;
+        }
+
+        .price-breakdown {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .price-row.total {
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .discount-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .discount-input-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .discount-input-group input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .discount-input-group button {
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .discount-input-group button:hover {
+            background: #5568d3;
+        }
+
+        .discount-input-group button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .discount-message {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .discount-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .discount-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .payment-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .payment-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .payment-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secure-badge {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .secure-badge svg {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 0.25rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Mathvidya</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="login.html">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="checkout-container">
+        <div class="plan-summary" id="planSummary">
+            <h2 id="planName">Loading...</h2>
+            <ul class="feature-list" id="featureList"></ul>
+
+            <div class="price-breakdown">
+                <div class="price-row">
+                    <span>Base Price:</span>
+                    <span id="basePrice">₹0</span>
+                </div>
+                <div class="price-row" id="discountRow" style="display: none;">
+                    <span>Discount:</span>
+                    <span id="discountAmount" style="color: #10b981;">-₹0</span>
+                </div>
+                <div class="price-row">
+                    <span>GST (18%):</span>
+                    <span id="gstAmount">₹0</span>
+                </div>
+                <div class="price-row total">
+                    <span>Total Amount:</span>
+                    <span id="totalAmount">₹0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="discount-section">
+            <h3 style="margin-top: 0;">Have a discount code?</h3>
+            <div class="discount-input-group">
+                <input
+                    type="text"
+                    id="discountCode"
+                    placeholder="Enter code (e.g., LAUNCH50)"
+                    style="text-transform: uppercase;"
+                >
+                <button id="applyDiscountBtn" onclick="applyDiscount()">Apply</button>
+            </div>
+            <div id="discountMessage"></div>
+        </div>
+
+        <button class="payment-button" id="payButton" onclick="initiatePayment()">
+            Proceed to Payment
+        </button>
+
+        <div class="secure-badge">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+            Secure payment powered by Razorpay
+        </div>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        const API_BASE_URL = 'http://localhost:8000/api/v1';
+
+        let selectedPlan = null;
+        let appliedDiscountCode = null;
+        let orderData = null;
+
+        // Plan details
+        const PLANS = {
+            'basic': {
+                name: 'Basic Plan',
+                price: 250,
+                features: ['26 practice exams per month', 'MCQ questions only', 'Instant automated evaluation', 'Performance tracking']
+            },
+            'premium_mcq': {
+                name: 'Premium MCQ Plan',
+                price: 400,
+                features: ['65 practice exams per month', 'MCQ questions only', 'Instant automated evaluation', 'Advanced progress analytics', 'Unit-wise practice']
+            },
+            'premium': {
+                name: 'Premium Plan',
+                price: 1999,
+                features: ['50 exams per month', 'MCQ + VSA + SA questions', 'Expert teacher evaluation', '1 hour monthly coaching', 'Leaderboard access']
+            },
+            'centum': {
+                name: 'Centum Plan',
+                price: 3999,
+                features: ['50 exams per month', 'All question types', 'Same-day evaluation', 'Direct teacher access', 'Premium leaderboard']
+            }
+        };
+
+        // Get plan from URL
+        function getSelectedPlan() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('plan') || 'basic';
+        }
+
+        // Get auth token
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        // Initialize page
+        function initPage() {
+            selectedPlan = getSelectedPlan();
+            const plan = PLANS[selectedPlan];
+
+            if (!plan) {
+                alert('Invalid plan selected');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Check if user is logged in
+            if (!getAuthToken()) {
+                alert('Please login to continue');
+                window.location.href = `login.html?redirect=payment-checkout.html?plan=${selectedPlan}`;
+                return;
+            }
+
+            // Display plan details
+            document.getElementById('planName').textContent = plan.name;
+            const featureList = document.getElementById('featureList');
+            featureList.innerHTML = plan.features.map(f => `<li>${f}</li>`).join('');
+
+            updatePriceDisplay(plan.price, 0);
+        }
+
+        // Update price display
+        function updatePriceDisplay(basePrice, discountAmount) {
+            const taxableAmount = basePrice - discountAmount;
+            const gst = Math.round(taxableAmount * 0.18 * 100) / 100;
+            const total = taxableAmount + gst;
+
+            document.getElementById('basePrice').textContent = `₹${basePrice}`;
+            document.getElementById('gstAmount').textContent = `₹${gst.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `₹${total.toFixed(2)}`;
+
+            if (discountAmount > 0) {
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('discountAmount').textContent = `-₹${discountAmount}`;
+            } else {
+                document.getElementById('discountRow').style.display = 'none';
+            }
+        }
+
+        // Apply discount code
+        async function applyDiscount() {
+            const code = document.getElementById('discountCode').value.trim().toUpperCase();
+            if (!code) {
+                showDiscountMessage('Please enter a discount code', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('applyDiscountBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Applying...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/discount-codes/validate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        plan_type: selectedPlan
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.valid) {
+                    appliedDiscountCode = code;
+                    updatePriceDisplay(data.original_price, data.discount_amount);
+                    showDiscountMessage(`Code applied! You saved ₹${data.discount_amount}`, 'success');
+                    document.getElementById('discountCode').disabled = true;
+                    btn.textContent = 'Applied ✓';
+                } else {
+                    showDiscountMessage(data.message || 'Invalid discount code', 'error');
+                    btn.disabled = false;
+                    btn.textContent = 'Apply';
+                }
+            } catch (error) {
+                console.error('Discount validation error:', error);
+                showDiscountMessage('Failed to validate discount code', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Apply';
+            }
+        }
+
+        // Show discount message
+        function showDiscountMessage(message, type) {
+            const msgDiv = document.getElementById('discountMessage');
+            msgDiv.textContent = message;
+            msgDiv.className = `discount-message ${type}`;
+            msgDiv.style.display = 'block';
+        }
+
+        // Initiate payment
+        async function initiatePayment() {
+            const btn = document.getElementById('payButton');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Creating order...';
+
+            try {
+                // Create order
+                const response = await fetch(`${API_BASE_URL}/payments/create-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({
+                        plan_type: selectedPlan,
+                        discount_code: appliedDiscountCode
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to create order');
+                }
+
+                orderData = await response.json();
+
+                // Open Razorpay checkout
+                const options = {
+                    key: orderData.razorpay_key_id,
+                    amount: Math.round(orderData.amount_inr * 100), // Convert to paise
+                    currency: orderData.currency,
+                    name: 'Mathvidya',
+                    description: orderData.plan_name,
+                    order_id: orderData.razorpay_order_id,
+                    handler: handlePaymentSuccess,
+                    prefill: {
+                        email: '', // Will be filled from user profile
+                    },
+                    theme: {
+                        color: '#667eea'
+                    },
+                    modal: {
+                        ondismiss: function() {
+                            btn.disabled = false;
+                            btn.textContent = 'Proceed to Payment';
+                        }
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
+
+            } catch (error) {
+                console.error('Payment initiation error:', error);
+                alert(error.message || 'Failed to initiate payment. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Proceed to Payment';
+            }
+        }
+
+        // Handle payment success
+        async function handlePaymentSuccess(response) {
+            const btn = document.getElementById('payButton');
+            btn.innerHTML = '<span class="loading"></span>Verifying payment...';
+
+            try {
+                const verifyResponse = await fetch(`${API_BASE_URL}/payments/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature
+                    })
+                });
+
+                const data = await verifyResponse.json();
+
+                if (data.success) {
+                    // Payment successful!
+                    alert('Payment successful! Your subscription is now active.');
+                    window.location.href = 'student/dashboard.html';
+                } else {
+                    throw new Error(data.message || 'Payment verification failed');
+                }
+
+            } catch (error) {
+                console.error('Payment verification error:', error);
+                alert('Payment verification failed. Please contact support if amount was deducted.');
+                btn.disabled = false;
+                btn.textContent = 'Proceed to Payment';
+            }
+        }
+
+        // Initialize on page load
+        initPage();
+    </script>
+</body>
+</html>
