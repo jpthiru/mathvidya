@@ -34,6 +34,9 @@ slowapi==0.1.9
 # HTTP Client
 httpx==0.26.0
 
+# Payment Gateway
+razorpay==2.0.0
+
 # Math & Analytics (for ML features)
 numpy==2.3.3
 pandas==2.3.3
