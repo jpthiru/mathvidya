@@ -361,7 +361,7 @@ async def verify_email(
                 EmailVerification.verification_type == "registration",
                 EmailVerification.verified_at.is_(None)
             )
-        ).order_by(EmailVerification.created_at.desc())
+        ).order_by(EmailVerification.created_at.desc()).limit(1)
     )
     verification = result.scalar_one_or_none()
 
