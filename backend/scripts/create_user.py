@@ -146,7 +146,7 @@ def main():
     create_parser.add_argument("--role", "-r", required=True, choices=["admin", "teacher", "student"], help="User role")
     create_parser.add_argument("--first-name", "-f", required=True, help="First name")
     create_parser.add_argument("--last-name", "-l", required=True, help="Last name")
-    create_parser.add_argument("--class", dest="student_class", choices=["X", "XII"], help="Class level (for students)")
+    create_parser.add_argument("--class", dest="student_class", choices=["IX", "X", "XI", "XII"], help="Class level (for students)")
     create_parser.add_argument("--phone", help="Phone number")
 
     # List users command

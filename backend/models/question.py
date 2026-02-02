@@ -46,7 +46,7 @@ class Question(Base):
     version = Column(Integer, default=1, nullable=False)
 
     # Classification
-    class_level = Column('class', String(10), nullable=False)  # 'X' or 'XII'
+    class_level = Column('class', String(10), nullable=False)  # 'IX', 'X', 'XI', or 'XII'
     unit = Column(String(100), nullable=False)  # CBSE unit name
     chapter = Column(String(100))  # Optional chapter within unit
     topic = Column(String(255))  # Optional topic within unit
@@ -102,7 +102,7 @@ class Question(Base):
             name='mv_marks_match_type'
         ),
         CheckConstraint(
-            'class IN (\'X\', \'XII\')',
+            'class IN (\'IX\', \'X\', \'XI\', \'XII\')',
             name='mv_valid_class'
         ),
         CheckConstraint(

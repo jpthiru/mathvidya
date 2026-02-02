@@ -592,9 +592,23 @@
 
     // Units data (same as in questions.html)
     const units = {
+      'IX': [
+        'Number Systems', 'Polynomials', 'Coordinate Geometry',
+        'Linear Equations in Two Variables', 'Introduction to Euclid\'s Geometry',
+        'Lines and Angles', 'Triangles', 'Quadrilaterals', 'Circles',
+        'Heron\'s Formula', 'Surface Areas and Volumes', 'Statistics'
+      ],
       'X': [
         'Number Systems', 'Algebra', 'Coordinate Geometry', 'Geometry',
         'Trigonometry', 'Mensuration', 'Statistics and Probability'
+      ],
+      'XI': [
+        'Sets', 'Relations and Functions', 'Trigonometric Functions',
+        'Complex Numbers and Quadratic Equations', 'Linear Inequalities',
+        'Permutations and Combinations', 'Binomial Theorem',
+        'Sequences and Series', 'Straight Lines', 'Conic Sections',
+        'Introduction to Three Dimensional Geometry', 'Limits and Derivatives',
+        'Statistics', 'Probability'
       ],
       'XII': [
         'Relations and Functions', 'Inverse Trigonometric Functions',
@@ -650,19 +664,19 @@
       document.getElementById('quickStats').innerHTML = quickStatsHtml || '<p style="color: var(--color-gray-500);">No questions yet</p>';
 
       // Build class accordions
-      const classes = ['X', 'XII'];
+      const classes = ['IX', 'X', 'XI', 'XII'];
       const byClass = stats.by_class || {};
       const byUnit = stats.by_unit || {};
       const byClassUnverified = stats.by_class_unverified || {};
       const byUnitUnverified = stats.by_unit_unverified || {};
 
       // Group units by class (include all units from the predefined list)
-      const unitsByClass = { 'X': {}, 'XII': {} };
+      const unitsByClass = { 'IX': {}, 'X': {}, 'XI': {}, 'XII': {} };
       Object.entries(byUnit).forEach(([unitName, count]) => {
-        if (units['X'].includes(unitName)) {
-          unitsByClass['X'][unitName] = count;
-        } else if (units['XII'].includes(unitName)) {
-          unitsByClass['XII'][unitName] = count;
+        for (const cls of classes) {
+          if (units[cls] && units[cls].includes(unitName)) {
+            unitsByClass[cls][unitName] = (unitsByClass[cls][unitName] || 0) + count;
+          }
         }
       });
 
@@ -672,7 +686,7 @@
         const classCount = byClass[cls] || 0;
         const classUnverified = byClassUnverified[cls] || 0;
         const classUnits = unitsByClass[cls] || {};
-        const iconClass = cls === 'X' ? 'class-x' : 'class-xii';
+        const iconClass = ['IX', 'X'].includes(cls) ? 'class-x' : 'class-xii';
 
         const pendingBadge = classUnverified > 0
           ? `<span class="pending-badge"><i class="fas fa-clock"></i> ${classUnverified} pending</span>`

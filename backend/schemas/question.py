@@ -13,7 +13,7 @@ from models.enums import QuestionType, QuestionDifficulty, QuestionStatus
 class CreateQuestionRequest(BaseModel):
     """Create a new question"""
     question_type: QuestionType
-    class_level: str = Field(..., pattern="^(X|XII)$", description="Class X or XII")
+    class_level: str = Field(..., pattern="^(IX|X|XI|XII)$", description="Class X or XII")
     unit: str = Field(..., min_length=1, max_length=100, description="CBSE Unit name")
     chapter: Optional[str] = Field(None, max_length=100)
     topic: Optional[str] = Field(None, max_length=100)
@@ -72,7 +72,7 @@ class UpdateQuestionRequest(BaseModel):
     """Update an existing question"""
     # Core fields that can be updated
     question_type: Optional[QuestionType] = None
-    class_level: Optional[str] = Field(None, pattern="^(X|XII)$", description="Class X or XII")
+    class_level: Optional[str] = Field(None, pattern="^(IX|X|XI|XII)$", description="Class X or XII")
     unit: Optional[str] = Field(None, min_length=1, max_length=100, description="CBSE Unit name")
     chapter: Optional[str] = Field(None, max_length=100)
     topic: Optional[str] = Field(None, max_length=100)
@@ -233,7 +233,7 @@ class CloneQuestionRequest(BaseModel):
 class CheckDuplicateRequest(BaseModel):
     """Request to check for duplicate questions"""
     question_text: str = Field(..., min_length=10, description="Question text to check")
-    class_level: Optional[str] = Field(None, pattern="^(X|XII)$", description="Optional class filter")
+    class_level: Optional[str] = Field(None, pattern="^(IX|X|XI|XII)$", description="Optional class filter")
     exclude_question_id: Optional[str] = Field(None, description="Question ID to exclude (for updates)")
 
 

@@ -47,7 +47,7 @@ class ExamTemplate(Base):
 
     # Basic details
     template_name = Column(String(255), nullable=False)
-    class_level = Column('class', String(10), nullable=False)  # 'X' or 'XII'
+    class_level = Column('class', String(10), nullable=False)  # 'IX', 'X', 'XI', or 'XII'
     exam_type = Column(PgEnum('mv_exam_type', 30), nullable=False, index=True)
 
     # Template configuration (JSONB for flexibility)
@@ -101,7 +101,7 @@ class ExamTemplate(Base):
             name='mv_unit_practice_requires_unit'
         ),
         CheckConstraint(
-            'class IN (\'X\', \'XII\')',
+            'class IN (\'IX\', \'X\', \'XI\', \'XII\')',
             name='mv_valid_class_level'
         ),
     )

@@ -814,7 +814,9 @@
         <label class="filter-label">Class</label>
         <select class="filter-select" id="filterClass">
           <option value="">All Classes</option>
+          <option value="IX">Class IX</option>
           <option value="X">Class X</option>
+          <option value="XI">Class XI</option>
           <option value="XII">Class XII</option>
         </select>
       </div>
@@ -931,7 +933,9 @@
               <label class="form-label">Class *</label>
               <select class="form-select" id="questionClass" required>
                 <option value="">Select Class</option>
+                <option value="IX">Class IX</option>
                 <option value="X">Class X</option>
+                <option value="XI">Class XI</option>
                 <option value="XII">Class XII</option>
               </select>
             </div>
@@ -1101,9 +1105,23 @@
 
     // Units data
     const units = {
+      'IX': [
+        'Number Systems', 'Polynomials', 'Coordinate Geometry',
+        'Linear Equations in Two Variables', 'Introduction to Euclid\'s Geometry',
+        'Lines and Angles', 'Triangles', 'Quadrilaterals', 'Circles',
+        'Heron\'s Formula', 'Surface Areas and Volumes', 'Statistics'
+      ],
       'X': [
         'Number Systems', 'Algebra', 'Coordinate Geometry', 'Geometry',
         'Trigonometry', 'Mensuration', 'Statistics and Probability'
+      ],
+      'XI': [
+        'Sets', 'Relations and Functions', 'Trigonometric Functions',
+        'Complex Numbers and Quadratic Equations', 'Linear Inequalities',
+        'Permutations and Combinations', 'Binomial Theorem',
+        'Sequences and Series', 'Straight Lines', 'Conic Sections',
+        'Introduction to Three Dimensional Geometry', 'Limits and Derivatives',
+        'Statistics', 'Probability'
       ],
       'XII': [
         'Relations and Functions', 'Inverse Trigonometric Functions',

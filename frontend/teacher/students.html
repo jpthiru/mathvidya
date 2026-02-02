@@ -481,7 +481,9 @@
       </div>
       <select class="filter-select" id="classFilter">
         <option value="">All Classes</option>
+        <option value="IX">Class IX</option>
         <option value="X">Class X</option>
+        <option value="XI">Class XI</option>
         <option value="XII">Class XII</option>
       </select>
       <select class="filter-select" id="examFilter">
@@ -611,7 +613,7 @@
 
         // Update table
         tableBody.innerHTML = response.students.map(student => {
-          const classClass = student.student_class === 'XII' ? 'xii' : 'x';
+          const classClass = ['XI', 'XII'].includes(student.student_class) ? 'xii' : 'x';
           let percentageClass = 'poor';
           let avgDisplay = '-';
 

@@ -673,8 +673,26 @@
           <i class="fas fa-graduation-cap"></i>
         </div>
         <div class="stat-info">
+          <h3 id="classIXCount">0</h3>
+          <p>Class IX Questions</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon class-x">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="stat-info">
           <h3 id="classXCount">0</h3>
           <p>Class X Questions</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon class-xii">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="classXICount">0</h3>
+          <p>Class XI Questions</p>
         </div>
       </div>
       <div class="stat-card">
@@ -695,7 +713,9 @@
           <label for="filterClass">Class</label>
           <select id="filterClass">
             <option value="">All Classes</option>
+            <option value="IX">Class IX</option>
             <option value="X">Class X</option>
+            <option value="XI">Class XI</option>
             <option value="XII">Class XII</option>
           </select>
         </div>
@@ -839,6 +859,12 @@
 
     // CBSE Units
     const units = {
+      'IX': [
+        'Number Systems', 'Polynomials', 'Coordinate Geometry',
+        'Linear Equations in Two Variables', 'Introduction to Euclid\'s Geometry',
+        'Lines and Angles', 'Triangles', 'Quadrilaterals', 'Circles',
+        'Heron\'s Formula', 'Surface Areas and Volumes', 'Statistics'
+      ],
       'X': [
         'Real Numbers',
         'Polynomials',
@@ -854,6 +880,14 @@
         'Surface Areas and Volumes',
         'Statistics',
         'Probability'
+      ],
+      'XI': [
+        'Sets', 'Relations and Functions', 'Trigonometric Functions',
+        'Complex Numbers and Quadratic Equations', 'Linear Inequalities',
+        'Permutations and Combinations', 'Binomial Theorem',
+        'Sequences and Series', 'Straight Lines', 'Conic Sections',
+        'Introduction to Three Dimensional Geometry', 'Limits and Derivatives',
+        'Statistics', 'Probability'
       ],
       'XII': [
         'Relations and Functions',
@@ -877,7 +911,9 @@
       try {
         const stats = await api.getUnverifiedStats();
         document.getElementById('totalPending').textContent = stats.total_unverified || 0;
+        document.getElementById('classIXCount').textContent = stats.by_class?.['IX'] || 0;
         document.getElementById('classXCount').textContent = stats.by_class?.['X'] || 0;
+        document.getElementById('classXICount').textContent = stats.by_class?.['XI'] || 0;
         document.getElementById('classXIICount').textContent = stats.by_class?.['XII'] || 0;
 
         // Populate unit filter based on available data

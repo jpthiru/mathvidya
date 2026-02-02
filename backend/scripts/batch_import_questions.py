@@ -140,7 +140,7 @@ def process_excel_row(row: pd.Series) -> dict:
 
     # Map class level
     class_level = str(row.get('Class', 'XII')).strip().upper()
-    if class_level not in ['X', 'XII']:
+    if class_level not in ['IX', 'X', 'XI', 'XII']:
         class_level = 'XII'  # Default to XII
 
     # Get marks (default 1 for MCQ)

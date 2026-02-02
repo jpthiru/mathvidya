@@ -22,7 +22,7 @@ class UserCreate(UserBase):
     """Schema for user registration"""
     password: str = Field(..., min_length=8, max_length=100)
     role: UserRole
-    student_class: Optional[str] = Field(None, regex=r'^(X|XII)$')
+    student_class: Optional[str] = Field(None, regex=r'^(IX|X|XI|XII)$')
 
     @validator('student_class')
     def validate_student_class(cls, v, values):
